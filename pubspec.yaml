@@ -1,0 +1,82 @@
+name: onbush
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+  flutter_screenutil: ^5.9.0
+  google_fonts: ^6.2.1
+  auto_route: ^8.0.3
+  get_it: ^7.6.8
+  logger: ^2.2.0
+  flashy_tab_bar2: ^0.0.10
+  flutter_svg: ^2.0.10+1
+  gap: ^3.0.1
+  animate_do: ^3.3.4
+  draggable_bottom_sheet:
+    git:
+      url: https://github.com/Brughth/draggable_bottom_sheet_package.git
+      ref: dev_olice
+  shared_preferences: ^2.2.3
+  dio: ^5.4.3+1
+  flutter_bloc: ^8.1.5
+  equatable: ^2.0.5
+  another_flushbar: ^1.12.30
+  intl_phone_number_input: ^0.7.4
+  intl: ^0.19.0
+  form_builder_validators: ^10.0.1
+  firebase_core: ^3.1.0
+  firebase_auth: ^5.1.0
+  cloud_firestore: ^5.0.1
+  crypto: ^3.0.3
+  convert: ^3.1.1
+  json_annotation: ^4.9.0
+  google_sign_in: ^6.2.1
+  http: ^1.2.1
+  provider: ^6.1.2
+  bloc: ^8.1.4
+  fluttertoast: ^8.2.6
+  modal_bottom_sheet: ^3.0.0
+  connectivity_plus: ^6.0.4
+  carousel_slider: ^4.2.1
+  flutter_localizations:
+    sdk: flutter
+  pin_code_fields: ^8.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  auto_route_generator: ^8.0.0
+  build_runner: ^2.4.9
+  flutter_lints: ^3.0.0
+  json_serializable: ^6.8.0
+
+flutter:
+  generate: true
+  uses-material-design: true
+
+  assets:
+    - assets/icons/
+    - assets/images/
+
+
+  fonts:
+    - family: Roboto
+      fonts:
+        # - asset: google_fonts/
+        - asset: google_fonts/Roboto-Regular.ttf
+          style: italic
+
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages
