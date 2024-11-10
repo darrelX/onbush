@@ -18,6 +18,7 @@ class AppButton extends StatelessWidget {
   final String? text;
   final double? width;
   final Color? textColor;
+  final double? minWidth;
 
   const AppButton({
     super.key,
@@ -29,9 +30,10 @@ class AppButton extends StatelessWidget {
     this.loading = false,
     this.haveTop = true,
     this.height = 50.0,
-    this.width = 100,
+    this.width,
     this.loadingColor,
     this.text,
+    this.minWidth,
     this.textColor,
   });
 
@@ -39,10 +41,10 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: height,
-      // width: width,
+      width: width,
 
-      padding: EdgeInsets.symmetric(horizontal: 10.r),
-      constraints: BoxConstraints(minWidth: width!),
+      padding: child == null ? EdgeInsets.symmetric(horizontal: 10.r) : null,
+      // constraints: BoxConstraints(minWidth: width!),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: enable ? bgColor : bgColor?.withOpacity(.6),

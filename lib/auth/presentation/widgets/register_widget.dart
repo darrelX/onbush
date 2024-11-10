@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:onbush/shared/extensions/context_extensions.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 import 'package:onbush/shared/widget/app_bottom_sheet.dart';
+import 'package:onbush/shared/widget/app_button.dart';
 import 'package:onbush/shared/widget/app_input.dart';
 
 class RegisterWidget extends StatefulWidget {
@@ -38,7 +39,19 @@ class RegisterWidget extends StatefulWidget {
 class _RegisterWidgetState extends State<RegisterWidget> {
   DateTime? _selectedDate;
   int gender = 1;
-  final TextEditingController _seachController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+  final List<String> _allItems = [
+    'Pomme',
+    'Banane',
+    'Orange',
+    'Mangue',
+    'Ananas',
+    'Raisin',
+    'Papaye',
+    'Citron',
+  ];
+
+  List<String> _filteredItems = [];
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -59,69 +72,92 @@ class _RegisterWidgetState extends State<RegisterWidget> {
 
   Future<void> _selectSchool(BuildContext context) async {
     AppBottomSheet.showModelBottomSheet(
-      context: context,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Icon(Icons.arrow_back),
-                const Spacer(),
-                Text(
-                  "Choississez votre\necole/universite",
-                  style: context.textTheme.titleLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
+        context: context,
+        child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setModalState) {
+          void filterItems() {
+            final query = _searchController.text.toLowerCase();
+            setModalState(() {
+              _filteredItems = _allItems
+                  .where((item) => item.toLowerCase().contains(query))
+                  .toList();
+            });
+          }
+
+          _searchController.addListener(filterItems);
+          return Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  AppButton(
+                    onPressed: () => context.router.popForced(),
+                    child: const Icon(Icons.arrow_back),
                   ),
-                  textAlign: TextAlign.center,
+                  const Spacer(),
+                  Text(
+                    "Choississez votre\necole/universite",
+                    style: context.textTheme.titleMedium!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const Spacer()
+                ],
+              ),
+              Gap(20.h),
+              AppInput(
+                controller: _searchController,
+                prefix: const Icon(Icons.search),
+                hint: "Chercher ...",
+                validators: [],
+              ),
+              Gap(20.h),
+              Expanded(
+                child: ListView.separated(
+                  itemCount: _filteredItems.length,
+                  separatorBuilder: (context, i) => Gap(20.h),
+                  itemBuilder: (context, index) {
+                    return Row(
+                      children: [
+                        Container(
+                            decoration:
+                                const BoxDecoration(shape: BoxShape.circle),
+                            child: Checkbox(
+                                value: true,
+                                side: BorderSide.none,
+                                shape: const CircleBorder(),
+                                onChanged: (value) {})),
+                        Container(
+                            constraints: BoxConstraints(maxWidth: 280.w),
+                            child: Text(
+                              _filteredItems[index],
+                              style: context.textTheme.bodyMedium!
+                                  .copyWith(fontWeight: FontWeight.bold),
+                            ))
+                      ],
+                    );
+                  },
                 ),
-                const Spacer()
-              ],
-            ),
-            Gap(20.h),
-            AppInput(
-              prefix: Icon(Icons.search),
-              hint: "Chercher ...",
-              validators: [],
-            ),
-            Gap(20.h),
-            Row(
-              children: [
-                Container(
-                    // width: 70.w,
-                    decoration: BoxDecoration(shape: BoxShape.circle),
-                    child: Checkbox(
-                        value: true,
-                        side: BorderSide.none,
-                        shape: CircleBorder(),
-                        onChanged: (value) {})),
-                Container(
-                    constraints: BoxConstraints(maxWidth: 280.w),
-                    child: Text(
-                      "Ecole Nationale Superieure de Polytechnique de Douala",
-                      style: context.textTheme.bodyLarge!
-                          .copyWith(fontWeight: FontWeight.bold),
-                    ))
-              ],
-            ),
-            Row(
-              children: [
-                Checkbox(value: true, onChanged: (value) {}),
-                Text("Ecole Nationale Superieure de Polytechnique de Douala")
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+              ),
+            ],
+          );
+        }));
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
   void dispose() {
+    _searchController.dispose();
     // widget.firstNameController.dispose();
     // widget.lastNameController.dispose();
     // widget.phoneController.dispose();
     // widget.dateController.dispose();
+
     super.dispose();
   }
 
@@ -247,9 +283,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           ),
           Gap(20.h),
           AppInput(
-            controller: widget.phoneController,
-            // label: 'Tel',
-
+            controller: widget.schoolController,
             hint: 'Choisir votre ecole/universite',
             labelColors: AppColors.black.withOpacity(0.7),
             readOnly: true,

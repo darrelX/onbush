@@ -63,10 +63,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        centerTitle: true,
-      ),
       body: BlocConsumer<AuthCubit, AuthState>(
         bloc: _cubit,
         listener: (context, state) {
@@ -94,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         builder: (context, state) {
           return Container(
-            height: context.height,
+            // height: context.height,
             padding: EdgeInsets.symmetric(
               horizontal: 25.w,
             ),
@@ -105,6 +101,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    Gap(40.h),
+
                     Image.asset(
                       "assets/images/onbush.png",
                       width: 200,
@@ -116,9 +114,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       currentIndex: _currentIndex,
                     ),
                     Gap(20.h),
-
                     SizedBox(
-                      height: 400.h,
+                      height: 480.h,
                       child: PageView(
                         controller: _pageController,
                         onPageChanged: (int page) => setState(() {
@@ -164,9 +161,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                    Gap(180.h),
+                    Gap(25.h),
                     AppButton(
                       loading: state is LoginLoading,
+                      width: 250.w,
                       bgColor: AppColors.primary,
                       text: "Connectez-vous",
                       onPressed: () {
@@ -178,7 +176,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                       },
                     ),
-                    Gap(80.h),
                     // Center(
                     //   child: Text.rich(
                     //     TextSpan(

@@ -84,6 +84,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   AppButton(
+                    width: 120.w,
                     bgColor: AppColors.third,
                     text: _currentIndex == 0 ? "Passer" : "Precedent",
                     textColor: AppColors.primary,
@@ -98,6 +99,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     },
                   ),
                   AppButton(
+                    width: 120.w,
                     bgColor: AppColors.secondary,
                     text: _currentIndex != 2 ? "Suivant" : "Commencer",
                     textColor: AppColors.white,
