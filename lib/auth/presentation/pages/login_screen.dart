@@ -6,6 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
+import 'package:onbush/auth/presentation/widgets/auh_switcher_widget.dart';
+import 'package:onbush/auth/presentation/widgets/register_widget.dart';
 import 'package:onbush/shared/extensions/context_extensions.dart';
 import 'package:onbush/shared/routing/app_router.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
@@ -26,11 +28,22 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _schoolController = TextEditingController();
+  final TextEditingController _academicLevelController =
+      TextEditingController();
+  final TextEditingController _majorStudyController = TextEditingController();
   final AuthCubit _cubit = AuthCubit();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final ScrollController _scrollController = ScrollController();
+  final PageController _pageController = PageController();
+  final TextEditingController _dateController = TextEditingController();
+  DateTime? _selectedDate;
+  int _currentIndex = 0;
   // final bool _isChecked = false;
   // final _networkCubit = getIt.get<NetworkCubit>();
 
@@ -97,66 +110,61 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 200,
                       // height: 300,
                     ),
-                    Gap(50.h),
-
-                    Container(
-                      width: 280.w,
-                      height: 55.h,
-                      decoration: BoxDecoration(
-                          color: AppColors.third,
-                          borderRadius: BorderRadius.circular(25.r)),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            AppButton(
-                              width: 120,
-                              text: "Connexion",
-                              onPressed: () {},
-                              bgColor: AppColors.primary,
-                              height: 40.h,
-                            ),
-                            AppButton(
-                              width: 120,
-                              text: "S'inscrire",
-                              onPressed: () {},
-                              // bgColor: AppColors.primary,
-                              textColor: AppColors.secondary,
-                              height: 40.h,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Gap(30.h),
-
-                    Text(
-                      "Accède rapidement à tes cours et à tes révisions en quelques clics.",
-                      style: context.textTheme.bodyLarge!
-                          .copyWith(fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    Gap(70.h),
-
-                    AppInput(
-                      controller: _phoneController,
-                      // label: 'Tel',
-                      border: false,
-                      hint: 'Numero de telephone',
-                      labelColors: AppColors.black.withOpacity(0.7),
-                      keyboardType: TextInputType.phone,
-                      validators: [
-                        FormBuilderValidators.required(
-                          errorText: 'Numero de telephone requis',
-                        ),
-                        FormBuilderValidators.numeric()
-                      ],
+                    Gap(40.h),
+                    AuhSwitcherWidget(
+                      pageController: _pageController,
+                      currentIndex: _currentIndex,
                     ),
                     Gap(20.h),
 
-                    Gap(200.h),
-
-                    // Gap(50.h),
+                    SizedBox(
+                      height: 400.h,
+                      child: PageView(
+                        controller: _pageController,
+                        onPageChanged: (int page) => setState(() {
+                          _currentIndex = page;
+                        }),
+                        children: [
+                          Column(
+                            children: [
+                              Gap(30.h),
+                              Text(
+                                "Accède rapidement à tes cours et à tes révisions en quelques clics.",
+                                style: context.textTheme.bodyLarge!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                              Gap(100.h),
+                              AppInput(
+                                controller: _phoneController,
+                                // label: 'Tel',
+                                border: false,
+                                hint: 'Numero de telephone',
+                                labelColors: AppColors.black.withOpacity(0.7),
+                                keyboardType: TextInputType.phone,
+                                validators: [
+                                  FormBuilderValidators.required(
+                                    errorText: 'Numero de telephone requis',
+                                  ),
+                                  FormBuilderValidators.numeric()
+                                ],
+                              ),
+                            ],
+                          ),
+                          RegisterWidget(
+                            firstNameController: _firstNameController,
+                            lastNameController: _lastNameController,
+                            phoneController: _phoneController,
+                            dateController: _dateController,
+                            genderController: _genderController,
+                            schoolController: _schoolController,
+                            academicLevelController: _academicLevelController,
+                            majorStudyController: _majorStudyController,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Gap(180.h),
                     AppButton(
                       loading: state is LoginLoading,
                       bgColor: AppColors.primary,

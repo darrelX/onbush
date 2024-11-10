@@ -35,7 +35,7 @@ void setupLocator() {
   // Dio
   getIt.registerSingleton<Dio>(
     Dio(BaseOptions(
-      baseUrl: 'https://onbush-api.symphonisocial.com/api',
+      baseUrl: 'https://api.data.onbush237.com/v1',
       connectTimeout: const Duration(seconds: 12),
       receiveTimeout: const Duration(seconds: 12),
       headers: {

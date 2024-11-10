@@ -53,38 +53,36 @@ class AppButton extends StatelessWidget {
               )
             : null,
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: (!loading && enable && onPressed != null) ? onPressed : null,
-          borderRadius: BorderRadius.circular(15.r),
-          child: Center(
-            child: loading
-                ? CupertinoTheme(
-                    data: CupertinoTheme.of(context).copyWith(
-                      brightness: bgColor == AppColors.primary
-                          ? Brightness.dark
-                          : Brightness.light,
-                    ),
-                    child: CupertinoActivityIndicator(
-                      radius: 16,
-                      color: loadingColor,
-                    ),
-                  )
-                : text != null
-                    ? Text(
-                        text!,
-                        style: context.textTheme.titleMedium?.copyWith(
-                          color: textColor != null
-                              ? textColor!
-                              : bgColor == AppColors.primary
-                                  ? AppColors.white
-                                  : null,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      )
-                    : child,
-          ),
+      child: InkWell(
+        onTap: (!loading && enable && onPressed != null) ? onPressed : null,
+        borderRadius: BorderRadius.circular(15.r),
+        highlightColor: Colors.transparent, // Supprime l'effet de surbrillance
+        child: Center(
+          child: loading
+              ? CupertinoTheme(
+                  data: CupertinoTheme.of(context).copyWith(
+                    brightness: bgColor == AppColors.primary
+                        ? Brightness.dark
+                        : Brightness.light,
+                  ),
+                  child: CupertinoActivityIndicator(
+                    radius: 16,
+                    color: loadingColor,
+                  ),
+                )
+              : text != null
+                  ? Text(
+                      text!,
+                      style: context.textTheme.titleMedium?.copyWith(
+                        color: textColor != null
+                            ? textColor!
+                            : bgColor == AppColors.primary
+                                ? AppColors.white
+                                : null,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )
+                  : child,
         ),
       ),
     );

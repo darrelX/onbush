@@ -52,8 +52,21 @@ class AppRouter extends _$AppRouter {
         AutoRoute(
           page: GameRoute.page,
         ),
-        AutoRoute(
+        CustomRoute(
           page: LoginRoute.page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            var tween = Tween(begin: Offset(1.0, 0.0), end: Offset.zero);
+            var curvedAnimation = CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeInOut,
+            );
+
+            return SlideTransition(
+              position: tween.animate(curvedAnimation),
+              child: child,
+            );
+          },
+          durationInMilliseconds: 500,
         ),
         AutoRoute(page: HistoryGameRoute.page),
         AutoRoute(page: OTPInputRoute.page),
@@ -65,7 +78,6 @@ class AppRouter extends _$AppRouter {
         ),
         AutoRoute(page: ForgetPasswordRoute.page),
         AutoRoute(page: NewPasswordRoute.page),
-        AutoRoute(page: OTPInputRoute.page),
         AutoRoute(page: OnboardingRoute.page),
       ];
 }
