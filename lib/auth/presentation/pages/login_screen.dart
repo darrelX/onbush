@@ -49,15 +49,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        title: Text(
-          "  Log In",
-          style: context.textTheme.displaySmall!
-              .copyWith(color: Colors.white, fontWeight: FontWeight.w900),
-        ),
-        toolbarHeight: 110.h,
-        // centerTitle: true,
+        backgroundColor: AppColors.white,
+        centerTitle: true,
       ),
       body: BlocConsumer<AuthCubit, AuthState>(
         bloc: _cubit,
@@ -87,12 +82,6 @@ class _LoginScreenState extends State<LoginScreen> {
         builder: (context, state) {
           return Container(
             height: context.height,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(30),
-              ),
-              color: Colors.white,
-            ),
             padding: EdgeInsets.symmetric(
               horizontal: 25.w,
             ),
@@ -101,25 +90,54 @@ class _LoginScreenState extends State<LoginScreen> {
                 key: _formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Gap(40.h),
-                    Text(
-                      "Bienvenue",
-                      style: context.textTheme.headlineLarge?.copyWith(
-                        fontWeight: FontWeight.w900,
+                    Image.asset(
+                      "assets/images/onbush.png",
+                      width: 200,
+                      // height: 300,
+                    ),
+                    Gap(50.h),
+
+                    Container(
+                      width: 280.w,
+                      height: 55.h,
+                      decoration: BoxDecoration(
+                          color: AppColors.third,
+                          borderRadius: BorderRadius.circular(25.r)),
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            AppButton(
+                              width: 120,
+                              text: "Connexion",
+                              onPressed: () {},
+                              bgColor: AppColors.primary,
+                              height: 40.h,
+                            ),
+                            AppButton(
+                              width: 120,
+                              text: "S'inscrire",
+                              onPressed: () {},
+                              // bgColor: AppColors.primary,
+                              textColor: AppColors.secondary,
+                              height: 40.h,
+                            ),
+                          ],
+                        ),
                       ),
+                    ),
+                    Gap(30.h),
+
+                    Text(
+                      "Accède rapidement à tes cours et à tes révisions en quelques clics.",
+                      style: context.textTheme.bodyLarge!
+                          .copyWith(fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
-                    Gap(8.h),
-                    Text(
-                      "Pour rester en contact avec nous, veuillez vous connecter avec vos informations personnelles.",
-                      style: context.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          color: AppColors.black.withOpacity(0.6)),
-                      textAlign: TextAlign.start,
-                    ),
                     Gap(70.h),
+
                     AppInput(
                       controller: _phoneController,
                       // label: 'Tel',
@@ -135,49 +153,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                     Gap(20.h),
-                    AppInput(
-                      controller: _passwordController,
-                      // label: 'Password',
-                      hint: 'Mot de passe',
-                      labelColors: AppColors.black.withOpacity(0.7),
-                      keyboardType: TextInputType.visiblePassword,
-                      autofillHints: const [
-                        AutofillHints.password,
-                      ],
-                      showEyes: true,
-                      obscureText: true,
-                      validators: [
-                        FormBuilderValidators.required(
-                          errorText: 'Mot de passe requis',
-                        ),
-                      ],
-                    ),
-                    Gap(70.h),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.end,
-                    //   children: [
-                    // Align(
-                    //       alignment: Alignment.bottomRight,
-                    //       child: GestureDetector(
-                    //         onTap: () {
-                    //           context.router.push(ForgetPasswordRoute(
-                    //               title1: "Retrouver mon compte",
-                    //               hasForgottenPassword: true,
-                    //               title2:
-                    //                   "Entrer un numero de votre whatsapp associé à votre compte",
-                    //               description: "Retrouver mon compte"));
-                    //         },
-                    //         child: Text(
-                    //           "Mot de passe oublié",
-                    //           style: context.textTheme.bodySmall?.copyWith(
-                    //               fontWeight: FontWeight.w900,
-                    //               color: AppColors.primary),
-                    //           textAlign: TextAlign.right,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
+
+                    Gap(200.h),
+
                     // Gap(50.h),
                     AppButton(
                       loading: state is LoginLoading,
@@ -193,43 +171,43 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                     Gap(80.h),
-                    Center(
-                      child: Text.rich(
-                        TextSpan(
-                          text: 'Avez vous un\n',
-                          style: TextStyle(
-                              color: AppColors.black.withOpacity(0.6)),
-                          children: [
-                            TextSpan(
-                              text: "compte ?  ",
-                              style: TextStyle(
-                                  color: AppColors.black.withOpacity(0.6)),
-                            ),
-                            TextSpan(
-                              text: "Inscription",
-                              style: context.textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.w900,
-                                color: AppColors.primary,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  context.router.push(ForgetPasswordRoute(
-                                      title1: "Creer un compte",
-                                      hasForgottenPassword: false,
-                                      title2: "Creer un compte",
-                                      description:
-                                          "Bienvenue dans l'application onbush"));
-                                },
-                            ),
-                          ],
-                        ),
-                        textAlign: TextAlign.center,
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
-                    Gap(9.h),
+                    // Center(
+                    //   child: Text.rich(
+                    //     TextSpan(
+                    //       text: 'Avez vous un\n',
+                    //       style: TextStyle(
+                    //           color: AppColors.black.withOpacity(0.6)),
+                    //       children: [
+                    //         TextSpan(
+                    //           text: "compte ?  ",
+                    //           style: TextStyle(
+                    //               color: AppColors.black.withOpacity(0.6)),
+                    //         ),
+                    //         TextSpan(
+                    //           text: "Inscription",
+                    //           style: context.textTheme.bodyLarge?.copyWith(
+                    //             fontWeight: FontWeight.w900,
+                    //             color: AppColors.primary,
+                    //           ),
+                    //           recognizer: TapGestureRecognizer()
+                    //             ..onTap = () {
+                    //               context.router.push(ForgetPasswordRoute(
+                    //                   title1: "Creer un compte",
+                    //                   hasForgottenPassword: false,
+                    //                   title2: "Creer un compte",
+                    //                   description:
+                    //                       "Bienvenue dans l'application onbush"));
+                    //             },
+                    //         ),
+                    //       ],
+                    //     ),
+                    //     textAlign: TextAlign.center,
+                    //     style: context.textTheme.bodyLarge?.copyWith(
+                    //       fontWeight: FontWeight.w900,
+                    //     ),
+                    //   ),
+                    // ),
+                    // Gap(9.h),
                   ],
                 ),
               ),

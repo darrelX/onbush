@@ -58,3 +58,10 @@ final class CheckAuthStateSuccess extends AuthState {
   @override
   List<Object> get props => [user];
 }
+
+final class AuthOnboardingState extends AuthState {
+  const AuthOnboardingState();
+
+  @override
+  List<Object> get props => [];
+}

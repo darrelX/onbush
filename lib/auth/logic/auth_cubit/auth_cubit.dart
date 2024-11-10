@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:equatable/equatable.dart';
 import 'package:onbush/auth/data/models/user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,17 +59,24 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> checkAuthState() async {
     final storage = await repository.prefs!;
-    final token = storage.getString('token');
+    final String? token = storage.getString('token');
+
     try {
       emit(CheckAuthStateLoading());
-      if (token != null || token!.isEmpty) {
+
+      if (token != null) {
         var user = await repository.getUser();
         emit(CheckAuthStateSuccess(user: user!));
+      } else if (token == null) {
+        print("darrel");
+
+        emit(const AuthOnboardingState());
       } else {
         emit(CheckAuthStateFailure(
             message: Utils.extractErrorMessage('User is not authenticated')));
       }
     } catch (e) {
+
       emit(CheckAuthStateFailure(message: Utils.extractErrorMessage(e)));
     }
   }

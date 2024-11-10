@@ -97,7 +97,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 25.w),
                 decoration: BoxDecoration(
                   borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(20)),
+                      const BorderRadius.vertical(top: Radius.circular(40)),
                   color: context.theme.scaffoldBackgroundColor,
                 ),
                 height: context.height,

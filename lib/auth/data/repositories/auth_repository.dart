@@ -26,7 +26,7 @@ class AuthRepository {
     if (token == null) {
       log("No token found in storage.");
       return null;
-    }
+    } 
 
     try {
       Response response = await dio.get(

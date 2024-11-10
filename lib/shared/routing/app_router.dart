@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:onbush/auth/presentation/pages/new_password_screen.dart';
+import 'package:onbush/onboarding/onboarding_screen.dart';
 
 import '../../app_init_screen.dart';
 import '../../auth/presentation/pages/login_screen.dart';
@@ -65,5 +66,6 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: ForgetPasswordRoute.page),
         AutoRoute(page: NewPasswordRoute.page),
         AutoRoute(page: OTPInputRoute.page),
+        AutoRoute(page: OnboardingRoute.page),
       ];
 }
