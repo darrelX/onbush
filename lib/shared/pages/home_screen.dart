@@ -156,11 +156,7 @@ class _PlaceABetWidgetState extends State<PlaceABetWidget> {
                   text: "Commencer le jeu",
                   onPressed: () {
                     if (_formKey.currentState?.validate() ?? false) {
-                      context.router.popAndPush(
-                        GameRoute(
-                          bet: double.parse(_amountController.text),
-                        ),
-                      );
+                
                     }
                   },
                 )

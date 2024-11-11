@@ -162,7 +162,7 @@ class _AppInputState extends State<AppInput> {
           child: Center(
             child: TextFormField(
               controller: widget.controller,
-              style: context.textTheme.titleLarge,
+              style: context.textTheme.titleSmall,
               buildCounter: !widget.showHelper
                   ? (
                       context, {

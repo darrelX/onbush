@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
+import 'package:onbush/auth/data/models/college_model.dart';
+import 'package:onbush/auth/data/models/specialtie_model.dart';
 import 'package:onbush/auth/data/models/user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:onbush/auth/data/repositories/auth_repository.dart';
@@ -76,8 +78,33 @@ class AuthCubit extends Cubit<AuthState> {
             message: Utils.extractErrorMessage('User is not authenticated')));
       }
     } catch (e) {
-
       emit(CheckAuthStateFailure(message: Utils.extractErrorMessage(e)));
     }
+  }
+
+  Future<List<CollegeModel>> allCollege() async {
+    return [
+      const CollegeModel(
+          id: 1,
+          name: "Poslytechique de Douala",
+          sigle: "ENPD",
+          city: "Douala",
+          country: "Cameroun",
+          totalStudyLevels: 5),
+      const CollegeModel(
+          id: 1,
+          name: "Institut Universitaire de la Cote",
+          sigle: "ENPD",
+          city: "Douala",
+          country: "Cameroun",
+          totalStudyLevels: 5),
+    ];
+  }
+
+  Future<List<SpecialtieModel>> allSpecialities() async {
+    return [
+      const SpecialtieModel(id: 1, name: "name", sigle: "sigle", level: "level"),
+      const SpecialtieModel(id: 1, name: "name", sigle: "sigle", level: "level"),
+    ];
   }
 }

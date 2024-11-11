@@ -30,18 +30,18 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _phoneLoginController = TextEditingController();
+  final TextEditingController _phoneSignUpController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController dateController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
   final TextEditingController _schoolController = TextEditingController();
   final TextEditingController _academicLevelController =
       TextEditingController();
   final TextEditingController _majorStudyController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
   final AuthCubit _cubit = AuthCubit();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final PageController _pageController = PageController();
-  final TextEditingController _dateController = TextEditingController();
   DateTime? _selectedDate;
   int _currentIndex = 0;
   // final bool _isChecked = false;
@@ -101,21 +101,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Gap(40.h),
-
+                    Gap(50.h),
                     Image.asset(
                       "assets/images/onbush.png",
-                      width: 200,
+                      width: 200.w,
                       // height: 300,
                     ),
-                    Gap(40.h),
+                    Gap(25.h),
                     AuhSwitcherWidget(
                       pageController: _pageController,
                       currentIndex: _currentIndex,
                     ),
-                    Gap(20.h),
+                    Gap(25.h),
                     SizedBox(
-                      height: 480.h,
+                      height: 520.h,
                       child: PageView(
                         controller: _pageController,
                         onPageChanged: (int page) => setState(() {
@@ -124,7 +123,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           Column(
                             children: [
-                              Gap(30.h),
                               Text(
                                 "Accède rapidement à tes cours et à tes révisions en quelques clics.",
                                 style: context.textTheme.bodyLarge!
@@ -133,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               Gap(100.h),
                               AppInput(
-                                controller: _phoneController,
+                                controller: _phoneLoginController,
                                 // label: 'Tel',
                                 border: false,
                                 hint: 'Numero de telephone',
@@ -151,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           RegisterWidget(
                             firstNameController: _firstNameController,
                             lastNameController: _lastNameController,
-                            phoneController: _phoneController,
+                            phoneController: _phoneSignUpController,
                             dateController: _dateController,
                             genderController: _genderController,
                             schoolController: _schoolController,
@@ -161,58 +159,41 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                    Gap(25.h),
-                    AppButton(
-                      loading: state is LoginLoading,
-                      width: 250.w,
-                      bgColor: AppColors.primary,
-                      text: "Connectez-vous",
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          _cubit.login(
-                            phone: _phoneController.text,
-                            password: _passwordController.text,
-                          );
-                        }
-                      },
-                    ),
-                    // Center(
-                    //   child: Text.rich(
-                    //     TextSpan(
-                    //       text: 'Avez vous un\n',
-                    //       style: TextStyle(
-                    //           color: AppColors.black.withOpacity(0.6)),
-                    //       children: [
-                    //         TextSpan(
-                    //           text: "compte ?  ",
-                    //           style: TextStyle(
-                    //               color: AppColors.black.withOpacity(0.6)),
-                    //         ),
-                    //         TextSpan(
-                    //           text: "Inscription",
-                    //           style: context.textTheme.bodyLarge?.copyWith(
-                    //             fontWeight: FontWeight.w900,
-                    //             color: AppColors.primary,
-                    //           ),
-                    //           recognizer: TapGestureRecognizer()
-                    //             ..onTap = () {
-                    //               context.router.push(ForgetPasswordRoute(
-                    //                   title1: "Creer un compte",
-                    //                   hasForgottenPassword: false,
-                    //                   title2: "Creer un compte",
-                    //                   description:
-                    //                       "Bienvenue dans l'application onbush"));
-                    //             },
-                    //         ),
-                    //       ],
-                    //     ),
-                    //     textAlign: TextAlign.center,
-                    //     style: context.textTheme.bodyLarge?.copyWith(
-                    //       fontWeight: FontWeight.w900,
-                    //     ),
-                    //   ),
-                    // ),
-                    // Gap(9.h),
+                    Gap(20.h),
+                    _currentIndex == 0
+                        ? AppButton(
+                            loading: state is LoginLoading,
+                            width: context.width - 25.w,
+                            bgColor: AppColors.primary,
+                            text: "Connectez-vous",
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                _cubit.login(
+                                  phone: _phoneLoginController.text,
+                                  password: _passwordController.text,
+                                );
+                              }
+                            },
+                          )
+                        : AppButton(
+                            loading: state is LoginLoading,
+                            width: context.width - 25.w,
+                            bgColor: AppColors.primary,
+                            text: "incrivez-vous",
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                context.router.pushAll([
+                                  OTPInputRoute(
+                                      number: _phoneSignUpController.text)
+                                ]);
+                                // _cubit.register(
+                                //   phone: _phoneLoginController.text,
+                                //   password: _passwordController.text,
+                                // );
+                              }
+                            },
+                          ),
+                    Gap(5.h),
                   ],
                 ),
               ),

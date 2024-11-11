@@ -85,7 +85,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 children: [
                   AppButton(
                     width: 120.w,
-                    bgColor: AppColors.third,
+                    bgColor: AppColors.ternary,
                     text: _currentIndex == 0 ? "Passer" : "Precedent",
                     textColor: AppColors.primary,
                     onPressed: () {

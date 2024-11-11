@@ -1,12 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:onbush/auth/presentation/pages/new_password_screen.dart';
-import 'package:onbush/onboarding/onboarding_screen.dart';
+import 'package:onbush/auth/presentation/pages/price_screen.dart';
+import 'package:onbush/onboarding/pages/onboarding_screen.dart';
 
 import '../../app_init_screen.dart';
-import '../../auth/presentation/pages/login_screen.dart';
-import '../../auth/presentation/pages/register_screen.dart';
-import '../../game/presentation/pages/game_screen.dart';
+import '../../auth/presentation/pages/auth_screen.dart';
+// import '../../auth/presentation/pages/register_screen.dart';
 import '../../topup/presentation/topup_screen.dart';
 import '../pages/application_screen.dart';
 import '../../history/presentation/pages/history_screen.dart';
@@ -49,9 +49,6 @@ class AppRouter extends _$AppRouter {
             ),
           ],
         ),
-        AutoRoute(
-          page: GameRoute.page,
-        ),
         CustomRoute(
           page: LoginRoute.page,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -71,13 +68,11 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: HistoryGameRoute.page),
         AutoRoute(page: OTPInputRoute.page),
         AutoRoute(
-          page: RegisterRoute.page,
-        ),
-        AutoRoute(
           page: TopUpRoute.page,
         ),
         AutoRoute(page: ForgetPasswordRoute.page),
         AutoRoute(page: NewPasswordRoute.page),
         AutoRoute(page: OnboardingRoute.page),
+        AutoRoute(page: PriceRoute.page),
       ];
 }

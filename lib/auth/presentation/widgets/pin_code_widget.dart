@@ -22,63 +22,60 @@ class PinCodeWidget extends StatefulWidget {
 class _PinCodeWidgetState extends State<PinCodeWidget> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 290.w,
-      // height: 0.h,
-      child: Column(
-        children: [
-          PinCodeTextField(
-            appContext: context,
-            length: 4,
-            autoDisposeControllers: false,
-            obscureText: false,
-            animationType: AnimationType.fade,
-            pinTheme: PinTheme(
-              shape: PinCodeFieldShape.box,
-              borderRadius: BorderRadius.circular(5),
-              fieldHeight: 80.h,
-              fieldWidth: 50.w,
-              activeFillColor: Colors.white,
-              inactiveFillColor: Colors.white,
-              selectedFillColor: Colors.white,
-              activeColor: const Color(0xFFCD6E24),
-              inactiveColor: const Color(0xFFCD6E24),
-              selectedColor: const Color(0xFFCD6E24),
-            ),
-            animationDuration: const Duration(milliseconds: 300),
-            enableActiveFill: true,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            controller: widget.textEditingController,
-            keyboardType: const TextInputType.numberWithOptions(
-                signed: true, decimal: true),
-            onCompleted: (v) {
-              setState(() {
-                print("Completed");
-              });
-            },
-
-            // inputFormatters: [
-            //   FilteringTextInputFormatter.digitsOnly,
-            // ],
-            onChanged: widget.onCompleted,
-            beforeTextPaste: (text) {
-              return true;
-            },
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        PinCodeTextField(
+          appContext: context,
+          length: 4,
+          autoDisposeControllers: false,
+          obscureText: false,
+          animationType: AnimationType.fade,
+          pinTheme: PinTheme(
+            shape: PinCodeFieldShape.box,
+            borderRadius: BorderRadius.circular(5),
+            fieldHeight: 80.h,
+            fieldWidth: 50.w,
+            activeFillColor: Colors.white,
+            inactiveFillColor: Colors.white,
+            selectedFillColor: Colors.white,
+            activeColor: AppColors.primary,
+            inactiveColor: AppColors.black.withOpacity(0.6),
+            selectedColor: AppColors.ternary,
           ),
-          widget.error == null
-              ? const SizedBox()
-              : Row(
-                  children: [
-                    Text(widget.error!,
-                        style: context.textTheme.bodyLarge!.copyWith(
-                            color: AppColors.red, fontWeight: FontWeight.w900)
-                        // textAlign: TextAlign.left,
-                        ),
-                    const Spacer(),
-                  ],
-                ),
-        ],
-      ),
+          animationDuration: const Duration(milliseconds: 300),
+          enableActiveFill: true,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          controller: widget.textEditingController,
+          keyboardType: const TextInputType.numberWithOptions(
+              signed: true, decimal: true),
+          onCompleted: (v) {
+            setState(() {
+              print("Completed");
+            });
+          },
+
+          // inputFormatters: [
+          //   FilteringTextInputFormatter.digitsOnly,
+          // ],
+          onChanged: widget.onCompleted,
+          beforeTextPaste: (text) {
+            return true;
+          },
+        ),
+        widget.error == null
+            ? const SizedBox()
+            : Row(
+                children: [
+                  Text(widget.error!,
+                      style: context.textTheme.bodyLarge!.copyWith(
+                          color: AppColors.red, fontWeight: FontWeight.w900)
+                      // textAlign: TextAlign.left,
+                      ),
+                  const Spacer(),
+                ],
+              ),
+      ],
     );
   }
 }

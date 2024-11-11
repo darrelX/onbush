@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
@@ -39,20 +38,18 @@ class RegisterWidget extends StatefulWidget {
 class _RegisterWidgetState extends State<RegisterWidget> {
   DateTime? _selectedDate;
   int gender = 1;
-  final TextEditingController _searchController = TextEditingController();
-  final List<String> _allItems = [
-    'Pomme',
-    'Banane',
-    'Orange',
-    'Mangue',
-    'Ananas',
-    'Raisin',
-    'Papaye',
-    'Citron',
+
+  final List<String> levels = ["1", "2", "3", "4", "5"];
+  final List<String> specialities = [
+    "Genie Electrique",
+    "Genie Mecanique",
+    " Genie Energetique"
   ];
 
-  List<String> _filteredItems = [];
-
+  final List<String> school = [
+    "Ecole Nationale Superieure de Polytechnique de Douala",
+    "Institut Universitaire de la Cote"
+  ];
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -70,79 +67,17 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     }
   }
 
-  Future<void> _selectSchool(BuildContext context) async {
-    AppBottomSheet.showModelBottomSheet(
+  Future<void> _bottomSheetSelect(
+    BuildContext context, {
+    String? title,
+    required List<String> allItems,
+    required TextEditingController controller,
+  }) async {
+    AppBottomSheet.showSearchBottomSheet(
+        allItems: allItems,
         context: context,
-        child: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setModalState) {
-          void filterItems() {
-            final query = _searchController.text.toLowerCase();
-            setModalState(() {
-              _filteredItems = _allItems
-                  .where((item) => item.toLowerCase().contains(query))
-                  .toList();
-            });
-          }
-
-          _searchController.addListener(filterItems);
-          return Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  AppButton(
-                    onPressed: () => context.router.popForced(),
-                    child: const Icon(Icons.arrow_back),
-                  ),
-                  const Spacer(),
-                  Text(
-                    "Choississez votre\necole/universite",
-                    style: context.textTheme.titleMedium!.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const Spacer()
-                ],
-              ),
-              Gap(20.h),
-              AppInput(
-                controller: _searchController,
-                prefix: const Icon(Icons.search),
-                hint: "Chercher ...",
-                validators: [],
-              ),
-              Gap(20.h),
-              Expanded(
-                child: ListView.separated(
-                  itemCount: _filteredItems.length,
-                  separatorBuilder: (context, i) => Gap(20.h),
-                  itemBuilder: (context, index) {
-                    return Row(
-                      children: [
-                        Container(
-                            decoration:
-                                const BoxDecoration(shape: BoxShape.circle),
-                            child: Checkbox(
-                                value: true,
-                                side: BorderSide.none,
-                                shape: const CircleBorder(),
-                                onChanged: (value) {})),
-                        Container(
-                            constraints: BoxConstraints(maxWidth: 280.w),
-                            child: Text(
-                              _filteredItems[index],
-                              style: context.textTheme.bodyMedium!
-                                  .copyWith(fontWeight: FontWeight.bold),
-                            ))
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
-        }));
+        title: title,
+        resultController: controller);
   }
 
   @override
@@ -152,12 +87,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
 
   @override
   void dispose() {
-    _searchController.dispose();
-    // widget.firstNameController.dispose();
-    // widget.lastNameController.dispose();
-    // widget.phoneController.dispose();
-    // widget.dateController.dispose();
-
     super.dispose();
   }
 
@@ -166,20 +95,19 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          Gap(30.h),
           Text(
             "Crée ton compte en un instant et commence à apprendre dès maintenant.",
             style: context.textTheme.bodyLarge!
                 .copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
-          Gap(20.h),
+          Gap(15.h),
           AppInput(
             controller: widget.lastNameController,
             border: false,
             hint: 'Nom(s)',
             labelColors: AppColors.black.withOpacity(0.7),
-            keyboardType: TextInputType.phone,
+            keyboardType: TextInputType.name,
             validators: [
               FormBuilderValidators.required(
                 errorText: 'Entrer votre nom',
@@ -187,14 +115,14 @@ class _RegisterWidgetState extends State<RegisterWidget> {
               // FormBuilderValidators.()
             ],
           ),
-          Gap(20.h),
+          Gap(15.h),
           AppInput(
             controller: widget.firstNameController,
             // label: 'Tel',
             border: false,
             hint: 'Prenom(s)',
             labelColors: AppColors.black.withOpacity(0.7),
-            keyboardType: TextInputType.phone,
+            keyboardType: TextInputType.name,
             validators: [
               FormBuilderValidators.required(
                 errorText: 'Entrer votre nom',
@@ -202,7 +130,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
               // FormBuilderValidators.()
             ],
           ),
-          Gap(20.h),
+          Gap(15.h),
           AppInput(
             controller: widget.phoneController,
             // label: 'Tel',
@@ -217,7 +145,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
               // FormBuilderValidators.()
             ],
           ),
-          Gap(20.h),
+          Gap(15.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -281,18 +209,57 @@ class _RegisterWidgetState extends State<RegisterWidget> {
               ),
             ],
           ),
-          Gap(20.h),
+          Gap(15.h),
           AppInput(
             controller: widget.schoolController,
             hint: 'Choisir votre ecole/universite',
             labelColors: AppColors.black.withOpacity(0.7),
             readOnly: true,
-            onTap: () => _selectSchool(context),
+            onTap: () => _bottomSheetSelect(context,
+                title: "Selectionner l'ecole",
+                allItems: school,
+                controller: widget.schoolController),
             // keyboardType: TextInputType.phone,
 
             validators: [
               FormBuilderValidators.required(
                 errorText: "Entrer l'ecole",
+              ),
+              // FormBuilderValidators.()
+            ],
+          ),
+          Gap(15.h),
+          AppInput(
+            controller: widget.majorStudyController,
+            hint: 'Choisir votre specialite',
+            labelColors: AppColors.black.withOpacity(0.7),
+            readOnly: true,
+            onTap: () => _bottomSheetSelect(context,
+                allItems: specialities,
+                title: "Selectionner la filiere",
+                controller: widget.majorStudyController),
+            // keyboardType: TextInputType.phone,
+
+            validators: [
+              FormBuilderValidators.required(
+                errorText: "Entrer votre specialite",
+              ),
+              // FormBuilderValidators.()
+            ],
+          ),
+          Gap(15.h),
+          AppInput(
+            controller: widget.academicLevelController,
+            hint: 'Choisir votre niveau',
+            labelColors: AppColors.black.withOpacity(0.7),
+            readOnly: true,
+            onTap: () => _bottomSheetSelect(context,
+                allItems: levels,
+                controller: widget.academicLevelController,
+                title: "Selectionner le niveau"),
+            validators: [
+              FormBuilderValidators.required(
+                errorText: "Entrer votre niveau",
               ),
               // FormBuilderValidators.()
             ],

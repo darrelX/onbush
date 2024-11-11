@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:auto_route/auto_route.dart';
-import 'package:draggable_bottom_sheet/draggable_bottom_sheet.dart';
+// import 'package:draggable_bottom_sheet/draggable_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -54,21 +54,21 @@ class _ShopScreenState extends State<ShopScreen> {
           }
 
           if (state is ProductUpdatedState) {
-            return Scaffold(
-                body: DraggableBottomSheet(
-              minExtent: context.height * 0.2,
-              useSafeArea: false,
-              curve: Curves.easeIn,
-              previewWidget: PreviewWidget(),
-              expandedWidget: CartWidget(
-                state: state,
-              ),
-              backgroundWidget: ShopHomeWidget(
-                state: state,
-              ),
-              maxExtent: context.height * 0.7,
-              onDragging: (pos) {},
-            ));
+            return Scaffold(body: Container());
+            //      DraggableBottomSheet(
+            //   minExtent: context.height * 0.2,
+            //   useSafeArea: false,
+            //   curve: Curves.easeIn,
+            //   previewWidget: PreviewWidget(),
+            //   expandedWidget: CartWidget(
+            //     state: state,
+            //   ),
+            //   backgroundWidget: ShopHomeWidget(
+            //     state: state,
+            //   ),
+            //   maxExtent: context.height * 0.7,
+            //   onDragging: (pos) {},
+            // ));
           }
 
           if (state is ProductFailure) {

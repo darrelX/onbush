@@ -40,16 +40,6 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
-    GameRoute.name: (routeData) {
-      final args = routeData.argsAs<GameRouteArgs>();
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: GameScreen(
-          key: args.key,
-          bet: args.bet,
-        ),
-      );
-    },
     HistoryGameRoute.name: (routeData) {
       final args = routeData.argsAs<HistoryGameRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -101,16 +91,16 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const OnboardingScreen(),
       );
     },
+    PriceRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const PriceScreen(),
+      );
+    },
     ProfileRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const ProfileScreen(),
-      );
-    },
-    RegisterRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const RegisterScreen(),
       );
     },
     ShopRoute.name: (routeData) {
@@ -206,43 +196,6 @@ class ForgetPasswordRouteArgs {
   @override
   String toString() {
     return 'ForgetPasswordRouteArgs{key: $key, title1: $title1, hasForgottenPassword: $hasForgottenPassword, description: $description, title2: $title2}';
-  }
-}
-
-/// generated route for
-/// [GameScreen]
-class GameRoute extends PageRouteInfo<GameRouteArgs> {
-  GameRoute({
-    Key? key,
-    required double bet,
-    List<PageRouteInfo>? children,
-  }) : super(
-          GameRoute.name,
-          args: GameRouteArgs(
-            key: key,
-            bet: bet,
-          ),
-          initialChildren: children,
-        );
-
-  static const String name = 'GameRoute';
-
-  static const PageInfo<GameRouteArgs> page = PageInfo<GameRouteArgs>(name);
-}
-
-class GameRouteArgs {
-  const GameRouteArgs({
-    this.key,
-    required this.bet,
-  });
-
-  final Key? key;
-
-  final double bet;
-
-  @override
-  String toString() {
-    return 'GameRouteArgs{key: $key, bet: $bet}';
   }
 }
 
@@ -398,6 +351,20 @@ class OnboardingRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [PriceScreen]
+class PriceRoute extends PageRouteInfo<void> {
+  const PriceRoute({List<PageRouteInfo>? children})
+      : super(
+          PriceRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'PriceRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [ProfileScreen]
 class ProfileRoute extends PageRouteInfo<void> {
   const ProfileRoute({List<PageRouteInfo>? children})
@@ -407,20 +374,6 @@ class ProfileRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'ProfileRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [RegisterScreen]
-class RegisterRoute extends PageRouteInfo<void> {
-  const RegisterRoute({List<PageRouteInfo>? children})
-      : super(
-          RegisterRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'RegisterRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
