@@ -133,7 +133,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               AppInput(
                                 controller: _phoneLoginController,
                                 // label: 'Tel',
-                                border: false,
                                 hint: 'Numero de telephone',
                                 labelColors: AppColors.black.withOpacity(0.7),
                                 keyboardType: TextInputType.phone,

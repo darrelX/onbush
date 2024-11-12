@@ -47,7 +47,7 @@ class AppInput extends StatefulWidget {
   final bool isItalic;
   final int? maxValue;
   final double? width;
-  final bool border;
+  final Color? colorBorder;
   final int? errorMaxLines;
 
   const AppInput({
@@ -98,8 +98,8 @@ class AppInput extends StatefulWidget {
     this.isItalic = false,
     this.labelColors,
     this.width,
-    this.border = true,
     this.errorMaxLines,
+    this.colorBorder,
   });
 
   @override
@@ -153,7 +153,7 @@ class _AppInputState extends State<AppInput> {
           ),
         Container(
           width: widget.width ?? 320.w,
-          // height: 60.h,
+          // height: 50.h,
           decoration: BoxDecoration(
             // color: const Color.fromRGBO(240, 244, 245, 10),
             // Couleur de fond souhaitée
@@ -206,14 +206,15 @@ class _AppInputState extends State<AppInput> {
                 border: OutlineInputBorder(
                     borderRadius:
                         BorderRadius.circular(10.r), // Rayon des bords
-                    borderSide: BorderSide(color: Colors.red)),
+                    borderSide: const BorderSide(color: Colors.red)),
 
                 focusedBorder: null,
                 // enabledBorder: widget.border ? InputBorder.none : null,
                 enabledBorder: OutlineInputBorder(
                     borderRadius:
                         BorderRadius.circular(10.r), // Rayon des bords
-                    borderSide: BorderSide(color: Colors.grey)
+                    borderSide:
+                        BorderSide(color: widget.colorBorder ?? Colors.grey)
                     // borderSide: const BorderSide(color: Colors.transparent)
                     ),
                 filled: true,
@@ -222,7 +223,7 @@ class _AppInputState extends State<AppInput> {
 
                 hintStyle: TextStyle(
                   fontWeight: FontWeight.normal,
-                  fontSize: 15.sp,
+                  // fontSize: 15.sp,
                   color: Colors.grey.shade500,
                   fontStyle: widget.isItalic ? FontStyle.italic : null,
                 ),

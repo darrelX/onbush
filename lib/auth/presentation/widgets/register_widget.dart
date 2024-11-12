@@ -104,7 +104,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           Gap(15.h),
           AppInput(
             controller: widget.lastNameController,
-            border: false,
             hint: 'Nom(s)',
             labelColors: AppColors.black.withOpacity(0.7),
             keyboardType: TextInputType.name,
@@ -119,7 +118,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           AppInput(
             controller: widget.firstNameController,
             // label: 'Tel',
-            border: false,
             hint: 'Prenom(s)',
             labelColors: AppColors.black.withOpacity(0.7),
             keyboardType: TextInputType.name,
@@ -134,7 +132,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           AppInput(
             controller: widget.phoneController,
             // label: 'Tel',
-            border: false,
             hint: 'Numero de telephone (Whatsapp)',
             labelColors: AppColors.black.withOpacity(0.7),
             keyboardType: TextInputType.phone,

@@ -285,10 +285,7 @@ class _TopUpScreenState extends State<TopUpScreen> {
                                   pm!,
                                   int.parse(_amountController.value.text),
                                   _number!.phoneNumber!.substring(4));
-                              // if (!context.mounted) return;
-
-                              // context.router.pushAndPopUntil(const HomeRoute(),
-                              //     predicate: (route) => false);
+                  
                             }
                           },
                           bgColor: AppColors.primary,
