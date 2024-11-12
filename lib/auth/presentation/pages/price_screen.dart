@@ -82,7 +82,7 @@ class _PriceScreenState extends State<PriceScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Gap(380.h),
+                      Gap(370.h),
                       Text(
                         "Apprends sans limites avec OnBush",
                         style: context.textTheme.headlineMedium!.copyWith(
@@ -97,7 +97,7 @@ class _PriceScreenState extends State<PriceScreen> {
                             fontWeight: FontWeight.w900),
                         textAlign: TextAlign.center,
                       ),
-                      Gap(20.h),
+                      Gap(30.h),
                       const _Widget(
                           title:
                               "Profitez de tous les cours, fiches TD, et corrigés disponibles."),
@@ -132,7 +132,7 @@ class _PriceScreenState extends State<PriceScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 30.w),
                   child: Column(
                     children: [
-                      Gap(380.h),
+                      Gap(370.h),
                       Text(
                         "Choisis ton moyen de paiement",
                         style: context.textTheme.headlineMedium!.copyWith(
@@ -147,7 +147,7 @@ class _PriceScreenState extends State<PriceScreen> {
                             fontWeight: FontWeight.w900),
                         textAlign: TextAlign.center,
                       ),
-                      Gap(40.h),
+                      Gap(45.h),
                       AppRadioListTile(
                         activeColor: AppColors.primary,
                         groupeValue: _pm,
@@ -181,7 +181,7 @@ class _PriceScreenState extends State<PriceScreen> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        Gap(380.h),
+                        Gap(370.h),
                         Row(
                           children: [
                             AppButton(
@@ -210,7 +210,7 @@ class _PriceScreenState extends State<PriceScreen> {
                             const Spacer()
                           ],
                         ),
-                        Gap(40.h),
+                        Gap(30.h),
                         InternationalPhoneNumberInput(
                           onInputChanged: (PhoneNumber value) {
                             setState(() {
@@ -248,7 +248,7 @@ class _PriceScreenState extends State<PriceScreen> {
                           //     .copyWith(
                           //         borderSide: BorderSide(color: Colors.red)),
                         ),
-                        Gap(20.h),
+                        Gap(10.h),
                         AppInput(
                           hint: "Code de reduction",
                           controller: _sponsorCodeController,
@@ -260,7 +260,7 @@ class _PriceScreenState extends State<PriceScreen> {
                             ),
                           ],
                         ),
-                        Gap(20.h),
+                        Gap(10.h),
                         AppInput(
                           hint: "Code de parrainage",
                           colorBorder: AppColors.black,
@@ -272,7 +272,7 @@ class _PriceScreenState extends State<PriceScreen> {
                             ),
                           ],
                         ),
-                        Gap(30.h),
+                        Gap(20.h),
                         Row(
                           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -344,7 +344,10 @@ class _PriceScreenState extends State<PriceScreen> {
                       }
                       if (_currentIndex == 2) {
                         if (_formKey.currentState!.validate()) {
-                          context.router.pushAll([const HomeRoute()]);
+                          context.router.pushAndPopUntil(
+                            const ApplicationRoute(),
+                            predicate: (route) => false,
+                          );
                         }
                       }
                     },

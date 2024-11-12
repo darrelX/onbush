@@ -31,43 +31,27 @@ class _OnbushAppBarState extends State<OnbushAppBar> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(
-          child: Text(widget.title),
+        Image.asset(
+          'assets/images/onbush.png',
+          width: 100.w,
+          color: Colors.white,
         ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Image.asset(
-              'assets/images/wallet2.png',
-              width: 30.w,
-              height: 30.h,
-            ),
-            Row(
-              children: [
-                BlocBuilder<ApplicationCubit, ApplicationState>(
-                  bloc: getIt.get<ApplicationCubit>(),
-                  builder: (context, state) {
-                    if (state is ApplicationStateInitial) {
-                      return Text(
-                        double.parse(state.user!.balance!.toString())
-                            .toStringAsFixed(2),
-                      );
-                    }
-                    return const SizedBox();
-                  },
-                ),
-                Gap(1.w),
-                Text(
-                  "  nkap",
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.white,
-                  ),
-                )
-              ],
-            )
-          ],
+        BlocBuilder<ApplicationCubit, ApplicationState>(
+          bloc: getIt.get<ApplicationCubit>(),
+          builder: (context, state) {
+            // if (state is ApplicationStateInitial) {
+            //   return Text(
+            //     double.parse(state.user!.balance!.toString())
+            //         .toStringAsFixed(2),
+            //   );
+            // }
+            return const SizedBox();
+          },
         ),
+        Spacer(),
+        Image.asset("assets/icons/leading-icon.png"),
+        Gap(10.w),
+        Image.asset("assets/icons/trailing-icon.png"),
       ],
     );
   }

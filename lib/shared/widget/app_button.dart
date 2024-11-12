@@ -19,6 +19,7 @@ class AppButton extends StatelessWidget {
   final double? width;
   final Color? textColor;
   final double? minWidth;
+  final TextStyle? style;
 
   const AppButton({
     super.key,
@@ -34,7 +35,7 @@ class AppButton extends StatelessWidget {
     this.loadingColor,
     this.text,
     this.minWidth,
-    this.textColor,
+    this.textColor, this.style,
   });
 
   @override
@@ -43,7 +44,7 @@ class AppButton extends StatelessWidget {
       height: height,
       width: width,
 
-      padding: child == null ? EdgeInsets.symmetric(horizontal: 10.r) : null,
+      padding: child == null ? EdgeInsets.symmetric(horizontal: 10.w) : null,
       // constraints: BoxConstraints(minWidth: width!),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -51,7 +52,7 @@ class AppButton extends StatelessWidget {
         border: borderColor != null
             ? Border.all(
                 color: borderColor!,
-                width: 1.5,
+                width: 1.5.w,
               )
             : null,
       ),
@@ -75,7 +76,7 @@ class AppButton extends StatelessWidget {
               : text != null
                   ? Text(
                       text!,
-                      style: context.textTheme.titleMedium?.copyWith(
+                      style: style ?? context.textTheme.titleMedium?.copyWith(
                         color: textColor != null
                             ? textColor!
                             : bgColor == AppColors.primary

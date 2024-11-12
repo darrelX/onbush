@@ -22,52 +22,252 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      backgroundColor: AppColors.quaternaire,
+      body: Stack(
         children: [
-          const Spacer(
-            flex: 2,
-          ),
-          Center(
-            child: Image.asset(
-              'assets/images/play.png',
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            width: context.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Gap(20.h),
+                Row(
+                  children: [
+                    Image.asset(
+                      "assets/images/account_image.png",
+                      height: 43.h,
+                      fit: BoxFit.fitHeight,
+                    ),
+                    Gap(5.w),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Salut",
+                          style: context.textTheme.titleMedium!.copyWith(),
+                        ),
+                        Text(
+                          "Annastasie",
+                          style: context.textTheme.titleLarge!
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    Spacer(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Niveau : 4",
+                          style: context.textTheme.titleMedium!.copyWith(),
+                        ),
+                        Text(
+                          "Enspd",
+                          style: context.textTheme.titleLarge!
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Gap(20.h),
+                Stack(
+                  children: [
+                    Container(
+                      height: 180.h,
+                      padding: EdgeInsets.all(20.r),
+                      decoration: BoxDecoration(
+                          color: AppColors.secondary,
+                          borderRadius: BorderRadius.circular(10.r)),
+                      child: Row(
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                  width: 180.w,
+                                  child: Text(
+                                    "Deviens Ambassadeur, Partage et Récolte des Récompenses !",
+                                    style: context.textTheme.bodyMedium!
+                                        .copyWith(
+                                            fontSize: 18.r,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.white),
+                                    textAlign: TextAlign.left,
+                                    maxLines: 3,
+                                  )),
+                              AppButton(
+                                text: "Devenir Ambassadeur",
+                                bgColor: AppColors.sponsorButton,
+                                width: 160.w,
+                                height: 35.h,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12.r,
+                                    color: AppColors.white),
+                              )
+                            ],
+                          ),
+                          Spacer(),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                        right: 10.r,
+                        bottom: 0,
+                        child: Image.asset(
+                          "assets/images/5.png",
+                          height: 190.h,
+                          fit: BoxFit.fitHeight,
+                        )),
+                  ],
+                ),
+                Gap(25.h),
+                Text(
+                  "Vos progrès",
+                  style: context.textTheme.titleLarge!
+                      .copyWith(fontWeight: FontWeight.bold),
+                ),
+                Gap(10.h),
+                Container(
+                  padding: EdgeInsets.all(20.r),
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 0.5.r, color: AppColors.primary),
+                    color: AppColors.white,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: 60.w,
+                        height: 59.h,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/icons/course.png",
+                              width: 27.w,
+                              fit: BoxFit.fitWidth,
+                            ),
+                            const Spacer(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "10",
+                                  style: context.textTheme.headlineMedium!
+                                      .copyWith(
+                                          fontSize: 24.r,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.primary),
+                                ),
+                                // Gap(5.h),
+                                Text(
+                                  "Cours",
+                                  style: context.textTheme.bodySmall!.copyWith(
+                                      fontSize: 10.r,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primary),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 90.w,
+                        height: 50.h,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/icons/pencil.png",
+                              height: 36.h,
+                              fit: BoxFit.fitHeight,
+                            ),
+                            const Spacer(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "6",
+                                  style: context.textTheme.headlineMedium!
+                                      .copyWith(
+                                          fontSize: 24.r,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.primary),
+                                ),
+                                // Gap(5.h),
+                                Text(
+                                  "Sujets traites",
+                                  style: context.textTheme.bodySmall!.copyWith(
+                                      fontSize: 10.r,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primary),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 90.w,
+                        height: 59.h,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/icons/course.png",
+                              width: 27.w,
+                              fit: BoxFit.fitWidth,
+                            ),
+                            const Spacer(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "13",
+                                  style: context.textTheme.headlineMedium!
+                                      .copyWith(
+                                          fontSize: 24.r,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.primary),
+                                ),
+                                // Gap(5.h),
+                                Text(
+                                  "Fiches de TD",
+                                  style: context.textTheme.bodySmall!.copyWith(
+                                      fontSize: 10.r,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primary),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Gap(20.h),
+                Text(
+                  "Raccourci",
+                  style: context.textTheme.titleLarge!
+                      .copyWith(fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           ),
-          const Gap(30),
-          Text(
-            "Bienvenue au \njeu de onbush",
-            textAlign: TextAlign.center,
-            style: context.textTheme.headlineLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              // fontSize: 40.sp,
-            ),
-          ),
-          const Gap(20),
-          Text(
-            "Commencez à gagner dès maintenant.",
-            style: context.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-          const Spacer(),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.width * .1,
-            ),
-            child: AppButton(
-              bgColor: AppColors.primary,
-              height: 55.h,
-              text: 'Commencer',
-              onPressed: () {
-                AppDialog.showDialog(
-                  context: context,
-                  width: 300.w,
-                  height: 300.h,
-                  child: const PlaceABetWidget(),
-                );
-              },
-            ),
-          ),
-          const Spacer(),
+          // CarouselView(itemExtent: itemExtent, children: [
+          //   Container(height: ,)
+          // ])
         ],
       ),
     );
@@ -155,9 +355,7 @@ class _PlaceABetWidgetState extends State<PlaceABetWidget> {
                   bgColor: AppColors.primary,
                   text: "Commencer le jeu",
                   onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                
-                    }
+                    if (_formKey.currentState?.validate() ?? false) {}
                   },
                 )
               ],

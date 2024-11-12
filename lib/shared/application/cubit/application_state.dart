@@ -5,14 +5,14 @@ sealed class ApplicationState extends Equatable {
   const ApplicationState({this.user});
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [user];
 }
 
 final class ApplicationStateInitial extends ApplicationState {
   const ApplicationStateInitial({super.user});
 
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [super.user];
 }
 
 final class ApplicationStateSuccess extends ApplicationState {
@@ -20,7 +20,7 @@ final class ApplicationStateSuccess extends ApplicationState {
 
   
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [super.user];
 }
 
 final class ApplicationStatePending extends ApplicationState {
@@ -28,7 +28,7 @@ final class ApplicationStatePending extends ApplicationState {
 
   
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [super.user];
 }
 
 final class ApplicationStateFailure extends ApplicationState {
@@ -36,5 +36,5 @@ final class ApplicationStateFailure extends ApplicationState {
 
   
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [super.user];
 }
