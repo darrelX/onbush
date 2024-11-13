@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
 import 'package:onbush/service_locator.dart';
-import 'package:onbush/shop/logic/cubit/product_cubit.dart';
 
 _setupApplication() {
   /// Hide status bar for splash screen
@@ -27,10 +26,9 @@ bootstrap({
       WidgetsFlutterBinding.ensureInitialized();
       _setupApplication();
       setupLocator();
-      runApp(MultiBlocProvider(providers: [
-        BlocProvider<ProductCubit>(
-          create: (context) => ProductCubit(),
-        ),
+      runApp(
+
+        MultiBlocProvider(providers: [
         BlocProvider<AuthCubit>(
           create: (context) => AuthCubit(),
         ),

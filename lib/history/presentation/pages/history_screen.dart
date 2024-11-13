@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:onbush/history/logic/cubit/ticket_cubit.dart';
-import 'package:onbush/history/presentation/widgets/category_selector_widget.dart';
+import 'package:onbush/history/logic/history_cubit/game_history_cubit.dart';
+import 'package:onbush/history/presentation/widgets/game_history_widget.dart';
 import 'package:onbush/shared/extensions/context_extensions.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 
@@ -17,137 +17,166 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  final TicketCubit _cubit = TicketCubit();
-  bool _isFirstDropdownOpen = false;
-  bool _isSecondDropdownOpen = false;
-
-  Future<void> _onRefresh() async {
-    await _cubit.fetchTicketsList();
-  }
-
-  void _toggleFirstDropdown() {
-    setState(() {
-      _isFirstDropdownOpen = !_isFirstDropdownOpen;
-    });
-  }
-
-  void _toggleSecondDropdown() {
-    setState(() {
-      _isSecondDropdownOpen = !_isSecondDropdownOpen;
-    });
-  }
+  final GameHistoryCubit _cubit = GameHistoryCubit();
+  final ScrollController _scrollController = ScrollController();
+  final int _page = 1;
 
   @override
   void initState() {
     super.initState();
-    _cubit.fetchTicketsList();
+    // _cubit.fetch(); // Initial fetch of data
+    // _scrollController.addListener(_onScroll);
   }
+
+  // void _onScroll() {
+  //   if (_scrollController.position.pixels >=
+  //       _scrollController.position.maxScrollExtent) {
+  //     _cubit.fetch();
+  //   }
+  // }
+
+  // Future<void> _onRefresh() async {
+  //   await _cubit.fetch(); // Reload data on pull-to-refresh
+  // }
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _cubit.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<TicketCubit, TicketState>(
-      bloc: _cubit,
-      listener: (context, state) {
-        if (state is TicketStateToggle) {}
-      },
-      builder: (context, state) {
-        if (state is TicketStateLoading) {
-          return Center(
-            child: Transform.scale(
-              scale: 2, // Réduire de moitié la taille du widget
-              child: const CircularProgressIndicator(),
-            ),
-          );
-        }
-        if (state is TicketStateSuccess) {
-          return Scaffold(
-            body: RefreshIndicator(
-              onRefresh: _onRefresh,
-              child: SingleChildScrollView(
-                child: Container(
-                  width: double.maxFinite,
-                  padding: EdgeInsets.symmetric(horizontal: 5.w),
-                  height: MediaQuery.of(context).size.height - 70.h,
-                  // decoration: const BoxDecoration(
-                  //   color: Colors.transparent,
-                  //   // borderRadius: BorderRadius.circular(15),
-                  //   // border: Border.all(width: 0.05),
-                  // ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Gap(20.h),
-                        TicketCategoryDropdown(
-                          onPressed: _toggleFirstDropdown,
-                          title: "Tickets non traités",
-                          isDropOpen: _isFirstDropdownOpen,
-                          totalTickets: state.treatedTickets.length,
-                          tickets: state.treatedTickets,
-                          status: false,
-                        ),
-                        Gap(30.h),
-                        TicketCategoryDropdown(
-                          onPressed: _toggleSecondDropdown,
-                          title: "Tickets traités",
-                          status: true,
-                          isDropOpen: _isSecondDropdownOpen,
-                          totalTickets: state.notTreatedTickets.length,
-                          tickets: state.notTreatedTickets,
-                        ),
-                        Gap(49.h),
-                      ],
-                    ),
+    return Scaffold(
+      backgroundColor: AppColors.quaternaire,
+      body: BlocBuilder<GameHistoryCubit, GameHistoryState>(
+        bloc: _cubit,
+        builder: (context, state) {
+          if (state is GameHistoryStateSuccess) {
+            return Column(
+              children: [
+                Expanded(
+                  child: ListView.separated(
+                    controller: _scrollController,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 30.h),
+                    itemCount: _cubit.hasReachedMax
+                        ? state.listGameHistory.length
+                        : state.listGameHistory.length + 1,
+                    separatorBuilder: (context, i) => Gap(26.h),
+                    itemBuilder: (context, index) {
+                      if (index < state.listGameHistory.length) {
+                        final gameHistory = state.listGameHistory[index];
+                        return GameHistoryWidget(
+                          amount: gameHistory.amount,
+                          cote: gameHistory.cote,
+                          createdAt: gameHistory.createdAt,
+                          gain: gameHistory.gain,
+                        );
+                      }
+                      if (!_cubit.hasReachedMax) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      return const SizedBox();
+                    },
                   ),
                 ),
-              ),
-            ),
-          );
-        }
-        if (state is TicketFailure) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text("Échec du chargement. Veuillez réessayer."),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: _onRefresh,
-                  child: Text(
+              ],
+            );
+          }
+          if (state is GameHistoryStateFailure) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Échec du chargement. Veuillez réessayer."),
+                  const SizedBox(height: 16),
+                  Text(
                     "Réessayer",
                     style: context.textTheme.bodyMedium?.copyWith(
                       color: AppColors.black,
                     ),
                   ),
-                ),
+                ],
+              ),
+            );
+          }
+          if (state is GameHistoryStateLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return Container(
+            width: context.width,
+            padding: EdgeInsets.symmetric(horizontal: 15.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Gap(40.h),
+                Text("Votre historique"),
+                Gap(20.h),
+                Container(
+                  height: 90.h,
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+                  decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(20.r)),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        "assets/icons/leading-icon.png",
+                        fit: BoxFit.fill,
+                        height: 60.h,
+                        color: AppColors.black,
+                      ),
+                      Spacer(),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 200.w,
+                            child: Text(
+                              "Lorem ipsum indolors apsum Lorem ipsum indolors apsum",
+                              style: context.textTheme.bodyLarge!
+                                  .copyWith(fontSize: 14.r),
+                              maxLines: 2,
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          Spacer(),
+                          Container(
+                            width: 220.w,
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Resume de cours",
+                                  style: context.textTheme.bodyLarge!
+                                      .copyWith(fontSize: 10.r),
+                                ),
+                                Spacer(),
+                                Text(
+                                  "Il y'a 2h",
+                                  style: context.textTheme.bodyLarge!
+                                      .copyWith(fontSize: 10.r),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      Spacer(),
+                      Icon(Icons.arrow_forward_ios_outlined)
+                    ],
+                  ),
+                )
               ],
             ),
           );
-        }
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Échec du chargement. Veuillez réessayer."),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _onRefresh,
-                child: Text(
-                  "Réessayer",
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.black,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 }

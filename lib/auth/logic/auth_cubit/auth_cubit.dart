@@ -70,8 +70,6 @@ class AuthCubit extends Cubit<AuthState> {
         var user = await repository.getUser();
         emit(CheckAuthStateSuccess(user: user!));
       } else if (token == null) {
-        print("darrel");
-
         emit(const AuthOnboardingState());
       } else {
         emit(CheckAuthStateFailure(
@@ -103,8 +101,10 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<List<SpecialtieModel>> allSpecialities() async {
     return [
-      const SpecialtieModel(id: 1, name: "name", sigle: "sigle", level: "level"),
-      const SpecialtieModel(id: 1, name: "name", sigle: "sigle", level: "level"),
+      const SpecialtieModel(
+          id: 1, name: "name", sigle: "sigle", level: "level"),
+      const SpecialtieModel(
+          id: 1, name: "name", sigle: "sigle", level: "level"),
     ];
   }
 }

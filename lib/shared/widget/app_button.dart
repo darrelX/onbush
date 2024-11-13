@@ -9,6 +9,7 @@ class AppButton extends StatelessWidget {
   final Widget? child;
   final VoidCallback? onPressed;
   final Color? bgColor;
+  final Color? activeBgColor;
   final Color? borderColor;
   final bool enable;
   final bool haveTop;
@@ -16,6 +17,7 @@ class AppButton extends StatelessWidget {
   final Color? loadingColor;
   final double height;
   final String? text;
+  final BoxConstraints? constraints;
   final double? width;
   final Color? textColor;
   final double? minWidth;
@@ -35,32 +37,34 @@ class AppButton extends StatelessWidget {
     this.loadingColor,
     this.text,
     this.minWidth,
-    this.textColor, this.style,
+    this.textColor,
+    this.style,
+    this.constraints,
+    this.activeBgColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      width: width,
-
-      padding: child == null ? EdgeInsets.symmetric(horizontal: 10.w) : null,
-      // constraints: BoxConstraints(minWidth: width!),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: enable ? bgColor : bgColor?.withOpacity(.6),
-        border: borderColor != null
-            ? Border.all(
-                color: borderColor!,
-                width: 1.5.w,
-              )
-            : null,
-      ),
-      child: InkWell(
-        onTap: (!loading && enable && onPressed != null) ? onPressed : null,
-        borderRadius: BorderRadius.circular(15.r),
-        highlightColor: Colors.transparent, // Supprime l'effet de surbrillance
-        child: Center(
+    return InkWell(
+      onTap: (!loading && enable && onPressed != null) ? onPressed : null,
+      borderRadius: BorderRadius.circular(15.r),
+      highlightColor: Colors.transparent,
+      child: Container(
+          height: height,
+          width: width,
+          constraints: constraints,
+          padding:
+              child == null ? EdgeInsets.symmetric(horizontal: 10.w) : null,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: enable ? bgColor : bgColor?.withOpacity(.6),
+            border: borderColor != null
+                ? Border.all(
+                    color: borderColor!,
+                    width: 1.5.w,
+                  )
+                : null,
+          ),
           child: loading
               ? CupertinoTheme(
                   data: CupertinoTheme.of(context).copyWith(
@@ -69,25 +73,29 @@ class AppButton extends StatelessWidget {
                         : Brightness.light,
                   ),
                   child: CupertinoActivityIndicator(
-                    radius: 16,
+                    radius: 16.r,
                     color: loadingColor,
                   ),
                 )
-              : text != null
-                  ? Text(
-                      text!,
-                      style: style ?? context.textTheme.titleMedium?.copyWith(
-                        color: textColor != null
-                            ? textColor!
-                            : bgColor == AppColors.primary
-                                ? AppColors.white
-                                : null,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )
-                  : child,
-        ),
-      ),
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    text != null
+                        ? Text(
+                            text!,
+                            style: style ??
+                                context.textTheme.titleMedium?.copyWith(
+                                  color: textColor != null
+                                      ? textColor!
+                                      : bgColor == AppColors.primary
+                                          ? AppColors.white
+                                          : null,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          )
+                        : child ?? SizedBox()
+                  ],
+                )),
     );
   }
 }

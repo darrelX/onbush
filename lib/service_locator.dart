@@ -5,8 +5,6 @@ import 'package:onbush/auth/logic/otp_cubit/otp_bloc.dart';
 import 'package:onbush/history/data/repositories/ticket_repository.dart';
 import 'package:onbush/shared/application/cubit/application_cubit.dart';
 import 'package:onbush/shared/connectivity/bloc/network_cubit.dart';
-import 'package:onbush/shop/data/repositories/product_repository.dart';
-import 'package:onbush/shop/logic/cubit/product_cubit.dart';
 import 'package:onbush/topup/cubit/transaction_cubit.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -57,16 +55,7 @@ void setupLocator() {
         dio: getIt.get<Dio>(), prefs: getIt.get<Future<SharedPreferences>>()),
   );
 
-  getIt.registerSingleton<ProductRepository>(ProductRepository());
 
-  getIt.registerSingleton<TicketRepository>(
-    TicketRepository(
-        dio: getIt.get<Dio>(),
-        prefs: getIt.get<Future<SharedPreferences>>(),
-        repository: getIt.get<ProductRepository>()),
-  );
-
-  getIt.registerSingleton<ProductCubit>(ProductCubit());
 
   getIt.registerSingleton<TransactionCubit>(TransactionCubit());
 

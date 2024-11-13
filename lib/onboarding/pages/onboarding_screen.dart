@@ -93,7 +93,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         _currentIndex == 0
                             ? _pageController.jumpToPage(2)
                             : _pageController.previousPage(
-                                duration: const Duration(milliseconds: 400),
+                                duration: const Duration(milliseconds: 300),
                                 curve: Curves.linear);
                       });
                     },
@@ -106,9 +106,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     onPressed: () {
                       _currentIndex != 2
                           ? _pageController.nextPage(
-                              duration: const Duration(milliseconds: 400),
+                              duration: const Duration(milliseconds: 300),
                               curve: Curves.linear)
                           : context.router.replaceAll([const LoginRoute()]);
+                      // : context.router.replaceAll([const ProfilRoute()]);
                     },
                   ),
                 ]),

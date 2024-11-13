@@ -9,7 +9,6 @@ import 'package:onbush/shared/routing/app_router.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 import 'package:onbush/shared/widget/onbush_app_bar.dart';
 
-
 @RoutePage()
 class ApplicationScreen extends StatefulWidget {
   const ApplicationScreen({super.key});
@@ -47,25 +46,22 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
             );
           case 3:
             return AppBar(
-              title: const Text("Profile"),
+              title: const OnbushAppBar(
+                title: "Profil",
+              ),
               toolbarHeight: 70.h,
-              actions: [
-                SvgPicture.asset(
-                  'assets/icons/settings.svg',
-                ),
-                const Gap(10),
-              ],
+              // actions: [
+              //   SvgPicture.asset(
+              //     'assets/icons/settings.svg',
+              //   ),
+              //   const Gap(10),
+              // ],
             );
           default:
             return AppBar();
         }
       },
-      routes: const [
-        HomeRoute(),
-        ShopRoute(),
-        HistoryRoute(),
-        ProfileRoute(),
-      ],
+      routes: const [HomeRoute(), CourseRoute(), HistoryRoute(), ProfilRoute()],
       bottomNavigationBuilder: (_, tabsRouter) {
         return FlashyTabBar(
           selectedIndex: tabsRouter.activeIndex,
@@ -89,12 +85,13 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
             ),
             FlashyTabBarItem(
               icon: Image.asset(
-                'assets/icons/shop.png',
+                'assets/icons/course.png',
                 height: 25,
                 width: 25,
+                color: AppColors.icon,
               ),
               title: Image.asset(
-                'assets/icons/shop.png',
+                'assets/icons/course.png',
                 height: 30,
                 width: 30,
                 color: AppColors.primary,
@@ -103,15 +100,14 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
               inactiveColor: AppColors.icon,
             ),
             FlashyTabBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/history.svg',
+              icon: Icon(
+                Icons.history,
+                size: 30.r,
               ),
-              title: SvgPicture.asset(
-                'assets/icons/history.svg',
-                colorFilter: const ColorFilter.mode(
-                  AppColors.primary,
-                  BlendMode.srcIn,
-                ),
+              title: Icon(
+                Icons.history,
+                size: 30.r,
+                color: AppColors.primary,
               ),
               activeColor: AppColors.primary,
               inactiveColor: AppColors.icon,
