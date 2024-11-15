@@ -194,6 +194,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                           ignoring: _isExpired,
                           child: AppButton(
                               bgColor: AppColors.primary,
+                              width: double.infinity,
                               loading: state is OtpVerifying,
                               text: "Valider",
                               onPressed: () {
@@ -204,7 +205,8 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                                     _textEditingController.clear();
                                     // context.read<OtpBloc>().add(
                                     //     OtpReset(phoneNumber: widget.number!));
-                                    context.router.pushAll([const PriceRoute()]);
+                                    context.router
+                                        .pushAll([const PriceRoute()]);
                                   });
                                 }
                               }),
@@ -217,6 +219,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                           ignoring: !_isExpired,
                           child: AppButton(
                               bgColor: AppColors.primary,
+                              width: double.infinity,
                               loading: state is OtpVerifying,
                               text: "Renvoyer le code OTP",
                               onPressed: () {

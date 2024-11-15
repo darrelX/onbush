@@ -23,47 +23,46 @@ class _ProfilScreenState extends State<ProfilScreen> {
       backgroundColor: AppColors.quaternaire,
       body: Container(
           width: context.width,
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Gap(20.h),
+              Gap(10.h),
               Container(
                 height: 140.h,
-                padding: EdgeInsets.symmetric(horizontal: 5.w),
                 // decoration: BoxDecoration(color: Colors.red),
                 child: Row(
                   children: [
                     Image.asset(
                       "assets/images/account_image.png",
-                      height: 100.h,
+                      height: 105.h,
                       fit: BoxFit.fitHeight,
                     ),
-                    Gap(15.w),
+                    Gap(10.w),
                     SizedBox(
-                      height: 100.h,
+                      height: 105.h,
+                      width: 239.w,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Annastasie Irene NGATCHOU",
-                            style: context.textTheme.bodyLarge!.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18.r,
-                                shadows: [
-                                  const Shadow(
-                                    offset: Offset(0.5, 0.5),
-                                    blurRadius: 3.0,
-                                    color: Color(0xFF969DAC),
-                                  ),
-                                ]),
-                          ),
+                          Text("Annastasie Irene NGATCHOU",
+                              style: context.textTheme.bodyLarge!.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18.r,
+                                  shadows: [
+                                    const Shadow(
+                                      offset: Offset(0.5, 0.5),
+                                      blurRadius: 3.0,
+                                      color: Color(0xFF969DAC),
+                                    ),
+                                  ]),
+                              overflow: TextOverflow.ellipsis),
                           const Spacer(),
                           Text(
                             "Niveau: 4",
                             style: context.textTheme.bodyLarge!.copyWith(
-                              fontSize: 12.r,
+                              fontSize: 14.r,
                               color: Color(0xFF969DAC),
                             ),
                           ),
@@ -72,7 +71,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                             child: Text(
                               "Filiere: Genie Informatique et telecommunication",
                               style: context.textTheme.bodyLarge!.copyWith(
-                                fontSize: 12.r,
+                                fontSize: 14.r,
                                 height: 1.3.h,
                                 color: Color(0xFF969DAC),
                               ),
@@ -82,7 +81,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                           Text(
                             "ENSPD",
                             style: context.textTheme.bodyLarge!.copyWith(
-                                fontSize: 12.r,
+                                fontSize: 14.r,
                                 color: Color(0xFF969DAC),
                                 shadows: [
                                   const Shadow(

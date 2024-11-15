@@ -1,21 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
-import 'package:onbush/service_locator.dart';
-import 'package:onbush/shared/application/cubit/application_cubit.dart';
 import 'package:onbush/shared/extensions/context_extensions.dart';
-import 'package:onbush/shared/routing/app_router.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
-import 'package:onbush/shared/utils/const.dart';
 import 'package:onbush/shared/widget/app_button.dart';
 import 'package:onbush/shared/widget/app_carousel_widget.dart';
-import 'package:onbush/shared/widget/app_dialog.dart';
-import 'package:onbush/shared/widget/app_input.dart';
 
 @RoutePage()
 class HomeScreen extends StatelessWidget {
@@ -50,12 +41,12 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Text(
                             "Salut",
-                            style: context.textTheme.titleMedium!.copyWith(),
+                            style: context.textTheme.titleSmall!.copyWith(),
                           ),
                           Text(
-                            "Annastasie",
-                            style: context.textTheme.titleLarge!
-                                .copyWith(fontWeight: FontWeight.bold),
+                            "Annastasies",
+                            style: context.textTheme.titleMedium!.copyWith(
+                                fontWeight: FontWeight.bold, fontSize: 12.r),
                           ),
                         ],
                       ),
@@ -65,22 +56,22 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Text(
                             "Niveau : 4",
-                            style: context.textTheme.titleMedium!.copyWith(),
+                            style: context.textTheme.titleSmall!.copyWith(),
                           ),
                           Text(
                             "Enspd",
-                            style: context.textTheme.titleLarge!
+                            style: context.textTheme.titleMedium!
                                 .copyWith(fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
                     ],
                   ),
-                  Gap(15.h),
+                  Gap(20.h),
                   Stack(
                     children: [
                       Container(
-                        height: 180.h,
+                        height: 150.h,
                         padding: EdgeInsets.all(20.r),
                         decoration: BoxDecoration(
                             color: AppColors.secondary,
@@ -88,7 +79,7 @@ class HomeScreen extends StatelessWidget {
                         child: Row(
                           children: [
                             Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 SizedBox(
@@ -107,7 +98,7 @@ class HomeScreen extends StatelessWidget {
                                   text: "Devenir Ambassadeur",
                                   bgColor: AppColors.sponsorButton,
                                   width: 160.w,
-                                  height: 35.h,
+                                  height: 30.h,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 12.r,
@@ -124,7 +115,7 @@ class HomeScreen extends StatelessWidget {
                           bottom: 0,
                           child: Image.asset(
                             "assets/images/5.png",
-                            height: 170.h,
+                            height: 150.h,
                             fit: BoxFit.fitHeight,
                           )),
                     ],
@@ -132,12 +123,12 @@ class HomeScreen extends StatelessWidget {
                   Gap(20.h),
                   Text(
                     "Vos progrès",
-                    style: context.textTheme.titleLarge!
+                    style: context.textTheme.titleMedium!
                         .copyWith(fontWeight: FontWeight.bold),
                   ),
                   Gap(10.h),
                   Container(
-                    padding: EdgeInsets.all(20.r),
+                    padding: EdgeInsets.all(10.r),
                     decoration: BoxDecoration(
                         border:
                             Border.all(width: 0.5.r, color: AppColors.ternary),
@@ -186,7 +177,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(
-                          width: 90.w,
+                          width: 105.w,
                           height: 50.h,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -224,7 +215,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(
-                          width: 85.w,
+                          width: 95.w,
                           height: 59.h,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -265,10 +256,10 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Gap(10.h),
+                  Gap(25.h),
                   Text(
-                    "Raccourci",
-                    style: context.textTheme.titleLarge!
+                    "Raccourcis",
+                    style: context.textTheme.titleMedium!
                         .copyWith(fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -304,8 +295,7 @@ class _Shortcut extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),
-      margin: EdgeInsets.only(left: 19.w),
-      width: 120.w,
+      width: 140.w,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(width: 2.r, color: AppColors.ternary),
@@ -325,7 +315,7 @@ class _Shortcut extends StatelessWidget {
           const Spacer(),
           Text(
             title,
-            style: context.textTheme.bodyMedium!
+            style: context.textTheme.bodySmall!
                 .copyWith(fontSize: 14.r, fontWeight: FontWeight.bold),
           )
         ],

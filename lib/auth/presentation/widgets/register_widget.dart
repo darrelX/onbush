@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:onbush/shared/extensions/context_extensions.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 import 'package:onbush/shared/widget/app_bottom_sheet.dart';
@@ -38,6 +39,8 @@ class RegisterWidget extends StatefulWidget {
 class _RegisterWidgetState extends State<RegisterWidget> {
   DateTime? _selectedDate;
   int gender = 1;
+  PhoneNumber? _number = PhoneNumber(isoCode: "CM");
+  String _isoCode = "";
 
   final List<String> levels = ["1", "2", "3", "4", "5"];
   final List<String> specialities = [
@@ -129,18 +132,55 @@ class _RegisterWidgetState extends State<RegisterWidget> {
             ],
           ),
           Gap(15.h),
-          AppInput(
-            controller: widget.phoneController,
-            // label: 'Tel',
-            hint: 'Numero de telephone (Whatsapp)',
-            labelColors: AppColors.black.withOpacity(0.7),
-            keyboardType: TextInputType.phone,
-            validators: [
-              FormBuilderValidators.required(
-                errorText: 'Entrer votre nom',
-              ),
-              // FormBuilderValidators.()
-            ],
+          Container(
+            // color: Colors.red,
+            // decoration: BoxDecoration(border: Border.all(color: Colors.red)),
+            child: InternationalPhoneNumberInput(
+                onInputChanged: (PhoneNumber value) {
+                  setState(() {
+                    _number = value;
+                  });
+                },
+                initialValue: _number,
+                selectorConfig: const SelectorConfig(
+                  selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+                  useBottomSheetSafeArea: true,
+                  setSelectorButtonAsPrefixIcon: true,
+                  leadingPadding: 10,
+                ),
+                ignoreBlank: false,
+                inputDecoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.grey.shade500,
+                            style: BorderStyle.solid),
+                        borderRadius: BorderRadius.circular(10.r)),
+                    errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.grey.shade500,
+                            style: BorderStyle.solid),
+                        borderRadius: BorderRadius.circular(10.r)),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.grey.shade500,
+                            style: BorderStyle.solid),
+                        borderRadius: BorderRadius.circular(10.r)),
+                    disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.grey.shade500,
+                            style: BorderStyle.solid),
+                        borderRadius: BorderRadius.circular(10.r)),
+                    // enabledBorder: InputBorder.none,
+                    hintStyle: TextStyle(color: Colors.grey.shade500),
+                    hintText: "Numero de telephone"),
+                autoValidateMode: AutovalidateMode.onUserInteraction,
+                // selectorTextStyle: TextStyle(color: Colors.grey.shade500),
+                // textStyle: TextStyle(color: Colors.grey.shade500),
+                textFieldController: widget.phoneController,
+                // formatInput: true,
+                keyboardType: const TextInputType.numberWithOptions(
+                    signed: true, decimal: true),
+                inputBorder: InputBorder.none),
           ),
           Gap(15.h),
           Row(

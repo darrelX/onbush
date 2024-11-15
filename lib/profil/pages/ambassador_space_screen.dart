@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/shared/extensions/context_extensions.dart';
-import 'package:onbush/shared/pages/home_screen.dart';
+import 'package:onbush/home/pages/home_screen.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 import 'package:onbush/shared/widget/app_button.dart';
 
@@ -27,10 +27,10 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
       ),
       body: Container(
           width: context.width,
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Column(
             children: [
-              Gap(20.h),
+              Gap(15.h),
               Row(
                 children: [
                   Image.asset(
@@ -116,13 +116,14 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
                   )
                 ],
               ),
-              Gap(20.h),
-              const AppButton(
+              Gap(50.h),
+              AppButton(
                 text: "Faire un retrait",
+                width: context.width,
                 bgColor: AppColors.grey,
                 // textColor: ,
               ),
-              Gap(20.h),
+              Gap(40.h),
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.r),
@@ -150,7 +151,7 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
                   ),
                 ),
               ),
-              Gap(20.h),
+              Gap(30.h),
               Container(
                 child: const Row(
                   children: [

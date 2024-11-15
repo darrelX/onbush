@@ -32,7 +32,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
                 SizedBox(
                   child: Image.asset(
                     elt["image"],
-                    // height: 330.h,
+                    height: 350.h,
                     fit: BoxFit.fitWidth,
                   ),
                 ),

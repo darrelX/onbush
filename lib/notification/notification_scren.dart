@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/shared/extensions/context_extensions.dart';
-import 'package:onbush/shared/pages/home_screen.dart';
+import 'package:onbush/home/pages/home_screen.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 
 @RoutePage()

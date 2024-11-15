@@ -33,7 +33,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         children: [
           Column(
             children: [
-              Gap(650.h),
+              Gap(640.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(3, (index) {
@@ -77,7 +77,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
               ]),
           Positioned(
-            bottom: 25.h,
+            bottom: 35.h,
             left: 0,
             right: 0,
             child: Row(

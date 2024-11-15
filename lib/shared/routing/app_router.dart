@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:onbush/auth/presentation/pages/new_password_screen.dart';
-import 'package:onbush/auth/presentation/pages/price_screen.dart';
+import 'package:onbush/onboarding/pages/price_screen.dart';
 import 'package:onbush/course/course_screen.dart';
 import 'package:onbush/download/download_screen.dart';
 import 'package:onbush/notification/notification_scren.dart';
@@ -13,7 +13,7 @@ import '../../auth/presentation/pages/auth_screen.dart';
 import '../../topup/presentation/topup_screen.dart';
 import '../pages/application_screen.dart';
 import '../../history/presentation/pages/history_screen.dart';
-import '../pages/home_screen.dart';
+import '../../home/pages/home_screen.dart';
 import '../../auth/presentation/pages/profil_screen.dart';
 import 'package:onbush/auth/presentation/pages/otp_input_screen.dart';
 import 'package:onbush/auth/presentation/pages/forget_password_screen.dart';

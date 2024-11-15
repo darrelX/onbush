@@ -162,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     _currentIndex == 0
                         ? AppButton(
                             loading: state is LoginLoading,
-                            width: context.width - 25.w,
+                            width: context.width,
                             bgColor: AppColors.primary,
                             text: "Connectez-vous",
                             onPressed: () {
