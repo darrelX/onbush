@@ -141,7 +141,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 ),
                 child: ListTile(
                   onTap: () {
-                    context.router.push(const TopUpRoute());
+                    // context.router.push(const TopUpRoute());
                   },
                   leading: Icon(Icons.language_outlined),
                   title: Text(
@@ -165,7 +165,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 ),
                 child: ListTile(
                   onTap: () {
-                    context.router.push(const TopUpRoute());
+                    // context.router.push(const TopUpRoute());
                   },
                   leading: Icon(Icons.warning),
                   title: Text(
@@ -189,7 +189,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 ),
                 child: ListTile(
                   onTap: () {
-                    context.router.push(const TopUpRoute());
+                    // context.router.push(const TopUpRoute());
                   },
                   leading: Icon(Icons.message),
                   title: Text(

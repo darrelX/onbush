@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:onbush/auth/presentation/widgets/pin_code_widget.dart';
 import 'package:onbush/shared/extensions/context_extensions.dart';
 import 'package:onbush/shared/routing/app_router.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
@@ -262,32 +261,6 @@ class _PriceScreenState extends State<PriceScreen> {
                               // inputBorder: context.theme.inputDecorationTheme.border!
                               //     .copyWith(
                               //         borderSide: BorderSide(color: Colors.red)),
-                            ),
-                            Gap(10.h),
-                            AppInput(
-                              width: context.width,
-                              hint: "Code de reduction",
-                              controller: _sponsorCodeController,
-                              keyboardType: TextInputType.number,
-                              colorBorder: AppColors.black,
-                              validators: [
-                                FormBuilderValidators.required(
-                                  errorText: 'Code de reduction requis',
-                                ),
-                              ],
-                            ),
-                            Gap(10.h),
-                            AppInput(
-                              width: context.width,
-                              hint: "Code de parrainage",
-                              colorBorder: AppColors.black,
-                              controller: _codePromoController,
-                              keyboardType: TextInputType.number,
-                              validators: [
-                                FormBuilderValidators.required(
-                                  errorText: 'Code de parrainage requis',
-                                ),
-                              ],
                             ),
                             Gap(30.h),
                             Row(

@@ -11,69 +11,55 @@ TextTheme buildTextTheme(
 ) {
   return base
       .copyWith(
-        displayLarge: GoogleFonts.getFont(
-          fontHeader,
+        displayLarge: GoogleFonts.baloo2(
           textStyle: base.displayLarge!.copyWith(
             fontWeight: FontWeight.w700,
           ),
-        ).copyWith(
-          fontFamily: fontFamily,
         ),
-        displayMedium: GoogleFonts.getFont(
-          fontHeader,
+        displayMedium: GoogleFonts.baloo2(
           textStyle: base.displayMedium!.copyWith(
             fontWeight: FontWeight.w700,
           ),
         ),
-        displaySmall: GoogleFonts.getFont(
-          fontHeader,
+        displaySmall: GoogleFonts.baloo2(
           textStyle: base.displaySmall!.copyWith(
             fontWeight: FontWeight.w700,
           ),
         ),
-        headlineMedium: GoogleFonts.getFont(
-          fontHeader,
+        headlineMedium: GoogleFonts.baloo2(
           textStyle: base.headlineMedium!.copyWith(
             fontWeight: FontWeight.w700,
           ),
         ),
-        headlineSmall: GoogleFonts.getFont(
-          fontHeader,
+        headlineSmall: GoogleFonts.baloo2(
           textStyle: base.headlineSmall!.copyWith(
             fontWeight: FontWeight.w500,
           ),
         ),
-        titleLarge: GoogleFonts.getFont(
-          fontHeader,
+        titleLarge: GoogleFonts.baloo2(
           textStyle: base.titleLarge!.copyWith(
             fontWeight: FontWeight.normal,
           ),
         ),
-        bodySmall: GoogleFonts.getFont(
-          fontFamily,
+        bodySmall: GoogleFonts.baloo2(
           textStyle: base.bodySmall!.copyWith(
             fontWeight: FontWeight.w400,
             fontSize: 15.0,
           ),
         ),
-        titleMedium: GoogleFonts.getFont(
-          fontFamily,
+        titleMedium: GoogleFonts.baloo2(
           textStyle: base.titleMedium!.copyWith(),
         ),
-        titleSmall: GoogleFonts.getFont(
-          fontFamily,
+        titleSmall: GoogleFonts.baloo2(
           textStyle: base.titleSmall!.copyWith(),
         ),
-        bodyLarge: GoogleFonts.getFont(
-          fontFamily,
+        bodyLarge: GoogleFonts.baloo2(
           textStyle: base.bodyLarge!.copyWith(),
         ),
-        bodyMedium: GoogleFonts.getFont(
-          fontFamily,
+        bodyMedium: GoogleFonts.baloo2(
           textStyle: base.bodyMedium!.copyWith(),
         ),
-        labelLarge: GoogleFonts.getFont(
-          fontFamily,
+        labelLarge: GoogleFonts.baloo2(
           textStyle: base.labelLarge!.copyWith(
             fontWeight: FontWeight.w400,
             fontSize: 15.0,

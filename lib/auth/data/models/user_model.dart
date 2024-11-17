@@ -2,39 +2,67 @@ class UserModel {
   final int? id;
   final String? name;
   final String? email;
-  final double? balance;
   final String? phoneNumber;
+  final String? studentId;
+  final String? avatar;
+  final String? role;
+  final int? majorSchoolId;
+  final int? schoolId;
+  final String? sponsorCode;
+  final int? academiclevel;
+  final String? birthday;
 
   UserModel({
+    required this.studentId,
+    required this.avatar,
+    required this.role,
+    required this.majorSchoolId,
+    required this.schoolId,
+    required this.sponsorCode,
+    required this.academiclevel,
+    required this.birthday,
     required this.id,
     required this.name,
     required this.email,
-    required this.balance,
     required this.phoneNumber,
   });
 
-  UserModel copyWith(
-      {int? id,
-      String? name,
-      String? email,
-      double? balance,
-      String? phoneNumber}) {
-    return UserModel(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      email: email ?? this.email,
-      balance: balance ?? this.balance,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-    );
-  }
+  // UserModel copyWith(
+  //     {int? id,
+  //     String? name,
+  //     String? email,
+  //     double? balance,
+  //     String? phoneNumber}) {
+  //   return UserModel(
+  //     id: id ?? this.id,
+  //     name: name ?? this.name,
+  //     email: email ?? this.email,
+  //     phoneNumber: phoneNumber ?? this.phoneNumber,
+  //     studentId: studentId ?? this.studentId,
+  //     avatar: avatad,
+  //     role: '',
+  //     majorSchoolId: null,
+  //     schoolId: null,
+  //     sponsorCode: '',
+  //     academiclevel: null,
+  //     birthday: '',
+  //   );
+  // }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: int.parse(json['id'].toString()) as int?,
       name: json['name'] as String?,
       email: json['email'] as String?,
-      balance: double.parse(json['balance'].toString()) as double?,
       phoneNumber: json['phone_number'] as String?,
+      studentId: json['matricule'] as String?,
+      avatar: json['avatar'] as String?,
+      role: json['role'] as String?,
+      majorSchoolId: json['filiere_id'] as int?,
+      schoolId: json['etablissement_id'] as int?,
+      sponsorCode: json['code_parrrain'] as String?,
+      academiclevel: json['niveau'] as int?,
+      birthday: json['birthday'] as String?,
     );
   }
 

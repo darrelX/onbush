@@ -32,23 +32,22 @@ class _OnbushAppBarState extends State<OnbushAppBar> {
     return Row(
       children: [
         Image.asset(
-          'assets/images/onbush.png',
+          'assets/images/logo.png',
           width: 100.w,
-          color: Colors.white,
         ),
-        BlocBuilder<ApplicationCubit, ApplicationState>(
-          bloc: getIt.get<ApplicationCubit>(),
-          builder: (context, state) {
-            // if (state is ApplicationStateInitial) {
-            //   return Text(
-            //     double.parse(state.user!.balance!.toString())
-            //         .toStringAsFixed(2),
-            //   );
-            // }
-            return const SizedBox();
-          },
-        ),
-        Spacer(),
+        // BlocBuilder<ApplicationCubit, ApplicationState>(
+        //   bloc: getIt.get<ApplicationCubit>(),
+        //   builder: (context, state) {
+        //     if (state is ApplicationStateInitial) {
+        //       return Text(
+        //         double.parse(state.user!.balance!.toString())
+        //             .toStringAsFixed(2),
+        //       );
+        //     }
+        //     return const SizedBox();
+        //   },
+        // ),
+        const Spacer(),
         Image.asset("assets/icons/leading-icon.png"),
         Gap(10.w),
         Image.asset("assets/icons/trailing-icon.png"),

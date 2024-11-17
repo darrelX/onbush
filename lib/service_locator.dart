@@ -5,7 +5,6 @@ import 'package:onbush/auth/logic/otp_cubit/otp_bloc.dart';
 import 'package:onbush/history/data/repositories/ticket_repository.dart';
 import 'package:onbush/shared/application/cubit/application_cubit.dart';
 import 'package:onbush/shared/connectivity/bloc/network_cubit.dart';
-import 'package:onbush/topup/cubit/transaction_cubit.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -57,7 +56,6 @@ void setupLocator() {
 
 
 
-  getIt.registerSingleton<TransactionCubit>(TransactionCubit());
 
   getIt.registerSingleton<OtpBloc>(OtpBloc());
 

@@ -25,38 +25,40 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
         switch (tabsRouter.activeIndex) {
           case 0:
             return AppBar(
-              title: const OnbushAppBar(
-                title: "Home",
-              ),
-              toolbarHeight: 70.h,
-            );
+                title: const OnbushAppBar(
+                  title: "Home",
+                ),
+                toolbarHeight: 70.h,
+                automaticallyImplyLeading: false);
           case 1:
             return AppBar(
-              title: const OnbushAppBar(
-                title: "onbush shop",
-              ),
-              toolbarHeight: 70.h,
-            );
+                title: const OnbushAppBar(
+                  title: "onbush shop",
+                ),
+                toolbarHeight: 70.h,
+                automaticallyImplyLeading: false);
           case 2:
             return AppBar(
-              title: const OnbushAppBar(
-                title: "History",
-              ),
-              toolbarHeight: 70.h,
-            );
+                title: const OnbushAppBar(
+                  title: "History",
+                ),
+                toolbarHeight: 70.h,
+                automaticallyImplyLeading: false);
           case 3:
             return AppBar(
-              title: const OnbushAppBar(
-                title: "Profil",
-              ),
-              toolbarHeight: 70.h,
-              // actions: [
-              //   SvgPicture.asset(
-              //     'assets/icons/settings.svg',
-              //   ),
-              //   const Gap(10),
-              // ],
-            );
+                title: const OnbushAppBar(
+                  title: "Profil",
+                ),
+                toolbarHeight: 70.h,
+                automaticallyImplyLeading: false
+
+                // actions: [
+                //   SvgPicture.asset(
+                //     'assets/icons/settings.svg',
+                //   ),
+                //   const Gap(10),
+                // ],
+                );
           default:
             return AppBar();
         }

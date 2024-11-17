@@ -3,6 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
 import 'package:onbush/service_locator.dart';
@@ -45,7 +46,7 @@ class _AppInitScreenState extends State<AppInitScreen> {
         listener: (context, state) {
           if (state is CheckAuthStateFailure) {
             context.router.pushAndPopUntil(
-              const LoginRoute(),
+              const AuthRoute(),
               predicate: (route) => false,
             );
           }
@@ -73,7 +74,7 @@ class _AppInitScreenState extends State<AppInitScreen> {
                 from: 1.5,
                 child: Image.asset(
                   'assets/images/onbush.png',
-                  width: context.width - 130,
+                  width: context.width - 200.w,
                   // color: AppColors.white,
                 ),
               ),

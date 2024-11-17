@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/auth/logic/otp_cubit/otp_bloc.dart';
 import 'package:onbush/auth/presentation/widgets/pin_code_widget.dart';
@@ -11,6 +12,7 @@ import 'package:onbush/shared/extensions/context_extensions.dart';
 import 'package:onbush/shared/routing/app_router.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 import 'package:onbush/shared/widget/app_button.dart';
+import 'package:onbush/shared/widget/app_input.dart';
 
 @RoutePage()
 class OTPInputScreen extends StatefulWidget {
@@ -29,7 +31,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
   String? _currentText;
   final GlobalKey<FormState> _formField = GlobalKey<FormState>();
   String? _error;
-  final String _secretCode = "0000";
+  TextEditingController _codeController = TextEditingController();
   bool _isExpired = false;
 
   late final OtpBloc _bloc = context.read<OtpBloc>();
@@ -37,7 +39,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
   String _formatSeconds(int totalSeconds) {
     int minutes = totalSeconds ~/ 60;
     int seconds = totalSeconds % 60;
-    return '${minutes.toString().padLeft(2)}:${seconds.toString().padLeft(2, "0")}';
+    return '${minutes.toString().padLeft(2)}:${seconds.toString().padLeft(2, "0")}min';
   }
 
   @override
@@ -154,15 +156,16 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                         textAlign: TextAlign.center,
                       ),
                       Gap(40.h),
-                      PinCodeWidget(
-                        error: _error,
-                        textEditingController: _textEditingController,
-                        onCompleted: (value) async {
-                          setState(() {
-                            _currentText = value;
-                            // print("currentx $_currentText");
-                          });
-                        },
+                      AppInput(
+                        hint: "Code",
+                        controller: _codeController,
+                        keyboardType: TextInputType.number,
+                        validators: [
+                          FormBuilderValidators.numeric(),
+                          FormBuilderValidators.equalLength(6, errorText: ""),
+                          FormBuilderValidators.required(
+                              errorText: "Veillez entrer le code"),
+                        ],
                       ),
                       Gap(10.h),
                       Visibility(
@@ -187,7 +190,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                                   ])),
                         ),
                       ),
-                      Gap(80.h),
+                      Gap(140.h),
                       Opacity(
                         opacity: _isExpired ? 0.5 : 1,
                         child: IgnorePointer(
@@ -241,7 +244,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                               }),
                         ),
                       ),
-                      Gap(120.h),
+                      Gap(160.h),
                       Image.asset(
                         "assets/images/onbush.png",
                         height: 50.h,

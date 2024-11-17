@@ -25,139 +25,140 @@ class _CourseScreenState extends State<CourseScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.quaternaire,
-      body: SizedBox(
-        width: context.width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Gap(20.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: const Text(
-                "Mes cours",
-                style: TextStyle(fontWeight: FontWeight.bold),
+      body: SingleChildScrollView(
+        child: SizedBox(
+          width: context.width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Gap(20.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.w),
+                child: Text(
+                  "Mes cours",
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
+                ),
               ),
-            ),
-            Gap(20.h),
-            AppCarouselWidget(
-              carouselController: _carouselController,
-              height: 40.h,
-              viewportFraction: 0.35,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: 18.w),
-                  child: AppButton(
+              Gap(20.h),
+              AppCarouselWidget(
+                carouselController: _carouselController,
+                height: 40.h,
+                viewportFraction: 0.35,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 18.w),
+                    child: AppButton(
+                      width: 120.w,
+                      text: "Semestre 1",
+                      bgColor: AppColors.grey,
+                    ),
+                  ),
+                  AppButton(
                     width: 120.w,
-                    text: "Semestre 1",
+                    text: "Semestre 2",
                     bgColor: AppColors.grey,
                   ),
-                ),
-                AppButton(
-                  width: 120.w,
-                  text: "Semestre 2",
-                  bgColor: AppColors.grey,
-                ),
-                AppButton(
-                  width: 120.w,
-                  text: "Semestre 3",
-                  bgColor: AppColors.grey,
-                ),
-                AppButton(
-                  width: 120.w,
-                  text: "Semestre 4",
-                  bgColor: AppColors.grey,
-                ),
-              ],
-            ),
-            Gap(20.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: const AppInput(
-                hint: "Chercher un cours",
-                prefix: Icon(Icons.search),
-              ),
-            ),
-            Row(
-              children: [Container()],
-            ),
-            Gap(20.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ListTile(
-                    onTap: () {
-                      // context.router.push(const AmbassadorSpaceRoute());
-                    },
-                    // leading: Icon(Icons.star),
-                    title: Text(
-                      'Espace ambassadeur',
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: Color(0xffA7A7AB),
-                    ),
+                  AppButton(
+                    width: 120.w,
+                    text: "Semestre 3",
+                    bgColor: AppColors.grey,
                   ),
-                  ListTile(
-                    onTap: () {
-                      // context.router.push(const AmbassadorSpaceRoute());
-                    },
-                    // leading: Icon(Icons.star),
-                    title: Text(
-                      'Crytograohie',
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: Color(0xffA7A7AB),
-                    ),
-                  ),
-                  ListTile(
-                    onTap: () {
-                      // context.router.push(const AmbassadorSpaceRoute());
-                    },
-                    // leading: Icon(Icons.star),
-                    title: Text(
-                      'Théorie de la décision',
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: Color(0xffA7A7AB),
-                    ),
-                  ),
-                  ListTile(
-                    onTap: () {
-                      // context.router.push(const AmbassadorSpaceRoute());
-                    },
-                    // leading: Icon(Icons.star),
-                    title: Text(
-                      'Resaeu LAN',
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: Color(0xffA7A7AB),
-                    ),
+                  AppButton(
+                    width: 120.w,
+                    text: "Semestre 4",
+                    bgColor: AppColors.grey,
                   ),
                 ],
               ),
-            ),
-          ],
+              Gap(40.h),
+
+              // Row(
+              //   children: [Container()],
+              // ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    AppInput(
+                      hint: "Chercher un cours",
+                      width: context.width,
+                      prefix: Icon(Icons.search),
+                    ),
+                    ListTile(
+                      onTap: () {
+                        // context.router.push(const AmbassadorSpaceRoute());
+                      },
+                      // leading: Icon(Icons.star),
+                      title: Text(
+                        'Espace ambassadeur',
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Color(0xffA7A7AB),
+                      ),
+                    ),
+                    ListTile(
+                      onTap: () {
+                        // context.router.push(const AmbassadorSpaceRoute());
+                      },
+                      // leading: Icon(Icons.star),
+                      title: Text(
+                        'Cryptographie',
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Color(0xffA7A7AB),
+                      ),
+                    ),
+                    ListTile(
+                      onTap: () {
+                        // context.router.push(const AmbassadorSpaceRoute());
+                      },
+                      // leading: Icon(Icons.star),
+                      title: Text(
+                        'Théorie de la décision',
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Color(0xffA7A7AB),
+                      ),
+                    ),
+                    ListTile(
+                      onTap: () {
+                        // context.router.push(const AmbassadorSpaceRoute());
+                      },
+                      // leading: Icon(Icons.star),
+                      title: Text(
+                        'Resaeu LAN',
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Color(0xffA7A7AB),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

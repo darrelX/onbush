@@ -16,6 +16,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final CarouselSliderController _carouselController =
         CarouselSliderController();
+
     return Scaffold(
       backgroundColor: AppColors.quaternaire,
       body: SingleChildScrollView(
@@ -27,7 +28,7 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Gap(15.h),
+                  Gap(10.h),
                   Row(
                     children: [
                       Image.asset(
@@ -36,19 +37,30 @@ class HomeScreen extends StatelessWidget {
                         fit: BoxFit.fitHeight,
                       ),
                       Gap(5.w),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Salut",
-                            style: context.textTheme.titleSmall!.copyWith(),
-                          ),
-                          Text(
-                            "Annastasies",
-                            style: context.textTheme.titleMedium!.copyWith(
-                                fontWeight: FontWeight.bold, fontSize: 12.r),
-                          ),
-                        ],
+                      Container(
+                        height: 49.h,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Salut",
+                              style: context.textTheme.titleSmall!.copyWith(),
+                            ),
+                            Text(
+                              "Annastasies",
+                              style: context.textTheme.titleMedium!.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  shadows: [
+                                    const Shadow(
+                                      offset: Offset(0.5, 0.5),
+                                      blurRadius: 1.0,
+                                      color: Colors.grey,
+                                    ),
+                                  ]),
+                            ),
+                          ],
+                        ),
                       ),
                       const Spacer(),
                       Column(
@@ -60,8 +72,15 @@ class HomeScreen extends StatelessWidget {
                           ),
                           Text(
                             "Enspd",
-                            style: context.textTheme.titleMedium!
-                                .copyWith(fontWeight: FontWeight.bold),
+                            style: context.textTheme.titleMedium!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                shadows: [
+                                  const Shadow(
+                                    offset: Offset(0.5, 0.5),
+                                    blurRadius: 1.0,
+                                    color: Colors.grey,
+                                  ),
+                                ]),
                           ),
                         ],
                       ),
@@ -71,7 +90,7 @@ class HomeScreen extends StatelessWidget {
                   Stack(
                     children: [
                       Container(
-                        height: 150.h,
+                        height: 190.h,
                         padding: EdgeInsets.all(20.r),
                         decoration: BoxDecoration(
                             color: AppColors.secondary,
@@ -79,8 +98,8 @@ class HomeScreen extends StatelessWidget {
                         child: Row(
                           children: [
                             Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
                                     width: 180.w,
@@ -88,7 +107,7 @@ class HomeScreen extends StatelessWidget {
                                       "Deviens Ambassadeur, Partage et Récolte des Récompenses !",
                                       style: context.textTheme.bodyMedium!
                                           .copyWith(
-                                              fontSize: 18.r,
+                                              fontSize: 17.r,
                                               fontWeight: FontWeight.bold,
                                               color: AppColors.white),
                                       textAlign: TextAlign.left,
@@ -97,11 +116,11 @@ class HomeScreen extends StatelessWidget {
                                 AppButton(
                                   text: "Devenir Ambassadeur",
                                   bgColor: AppColors.sponsorButton,
-                                  width: 160.w,
-                                  height: 30.h,
+                                  width: 158.w,
+                                  height: 35.h,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 12.r,
+                                      fontSize: 13.r,
                                       color: AppColors.white),
                                 )
                               ],
@@ -111,11 +130,11 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                          right: 10.r,
+                          right: 5.w,
                           bottom: 0,
                           child: Image.asset(
                             "assets/images/5.png",
-                            height: 150.h,
+                            height: 170.h,
                             fit: BoxFit.fitHeight,
                           )),
                     ],
@@ -256,7 +275,7 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Gap(25.h),
+                  Gap(20.h),
                   Text(
                     "Raccourcis",
                     style: context.textTheme.titleMedium!
@@ -265,11 +284,11 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Gap(10.h),
+            Gap(5.h),
             AppCarouselWidget(
               carouselController: _carouselController,
-              height: 180.h,
-              viewportFraction: 0.39,
+              height: 170.h,
+              viewportFraction: 0.44,
               children: const [
                 _Shortcut(
                   title: "Resume de cours",
@@ -294,7 +313,7 @@ class _Shortcut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),
+      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
       width: 140.w,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.r),
@@ -302,21 +321,20 @@ class _Shortcut extends StatelessWidget {
         color: AppColors.white,
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Container(
-            height: 95.h,
+            height: 90.h,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.r),
               border: Border.all(width: 2.r, color: AppColors.ternary),
               color: AppColors.ternary,
             ),
           ),
-          const Spacer(),
           Text(
             title,
             style: context.textTheme.bodySmall!
-                .copyWith(fontSize: 14.r, fontWeight: FontWeight.bold),
+                .copyWith(fontSize: 13.r, fontWeight: FontWeight.bold),
           )
         ],
       ),

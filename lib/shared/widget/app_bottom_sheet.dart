@@ -117,27 +117,28 @@ class AppBottomSheet {
                   children: [
                     // Titre et bouton de retour
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
                       child: Row(
                         children: [
-                          AppButton(
-                            onPressed: () => context.router.popForced(),
-                            child: const Icon(Icons.arrow_back),
-                          ),
-                          if (title != null)
-                            Expanded(
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  title,
-                                  style:
-                                      context.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
+                          Expanded(
+                            flex: 1,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: AppButton(
+                                onPressed: () => context.router.popForced(),
+                                child: const Icon(Icons.arrow_back),
                               ),
                             ),
+                          ),
+                          if (title != null)
+                            Text(
+                              title,
+                              style: context.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          const Spacer()
                         ],
                       ),
                     ),
@@ -155,11 +156,16 @@ class AppBottomSheet {
                     Expanded(
                       child: ListView.separated(
                         itemCount: filteredItems.length,
-                        separatorBuilder: (_, __) => Gap(20.h),
+                        separatorBuilder: (_, __) => Gap(10.h),
                         itemBuilder: (context, index) {
                           final item = filteredItems[index];
                           return CheckboxListTile(
+                            // shape:
+                            //     const CircleBorder(), // Applique une forme circulaire
+                            checkboxShape: const CircleBorder(),
                             value: selectedCheckboxIndex == index,
+                            side: const BorderSide(
+                                color: AppColors.primary, width: 2),
                             onChanged: (bool? isSelected) {
                               if (isSelected == true) {
                                 setModalState(() {

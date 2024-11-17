@@ -113,7 +113,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Gap(40.h),
-                Text("Votre historique"),
+                Text(
+                  "Votre historique",
+                  style: context.textTheme.titleMedium!.copyWith(),
+                ),
                 Gap(20.h),
                 Container(
                   height: 90.h,
@@ -133,34 +136,37 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       ),
                       Spacer(),
                       Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             width: 200.w,
                             child: Text(
-                              "Lorem ipsum indolors apsum Lorem ipsum indolors apsum",
-                              style: context.textTheme.bodyLarge!
-                                  .copyWith(fontSize: 14.r),
+                              "Lorem ipsum indolors apsum Lorem ipsum indolors apsum 90",
+                              style: context.textTheme.bodyLarge!.copyWith(
+                                  fontSize: 14.r, fontWeight: FontWeight.bold),
                               maxLines: 2,
                               textAlign: TextAlign.left,
+                              overflow: TextOverflow.clip,
                             ),
                           ),
-                          Spacer(),
-                          Container(
+                          // Spacer(),
+                          SizedBox(
                             width: 220.w,
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   "Resume de cours",
-                                  style: context.textTheme.bodyLarge!
-                                      .copyWith(fontSize: 10.r),
+                                  style: context.textTheme.bodyLarge!.copyWith(
+                                      fontSize: 13.r,
+                                      color: Colors.grey.shade600),
                                 ),
-                                Spacer(),
                                 Text(
                                   "Il y'a 2h",
-                                  style: context.textTheme.bodyLarge!
-                                      .copyWith(fontSize: 10.r),
+                                  style: context.textTheme.bodyLarge!.copyWith(
+                                      fontSize: 13.r,
+                                      color: Colors.grey.shade600),
                                 ),
                               ],
                             ),
@@ -168,7 +174,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         ],
                       ),
                       Spacer(),
-                      Icon(Icons.arrow_forward_ios_outlined)
+                      Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        size: 16.r,
+                      )
                     ],
                   ),
                 )

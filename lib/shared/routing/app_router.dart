@@ -10,11 +10,9 @@ import 'package:onbush/profil/pages/ambassador_space_screen.dart';
 import 'package:onbush/profil/pages/profil_screen.dart';
 import '../../app_init_screen.dart';
 import '../../auth/presentation/pages/auth_screen.dart';
-import '../../topup/presentation/topup_screen.dart';
 import '../pages/application_screen.dart';
 import '../../history/presentation/pages/history_screen.dart';
 import '../../home/pages/home_screen.dart';
-import '../../auth/presentation/pages/profil_screen.dart';
 import 'package:onbush/auth/presentation/pages/otp_input_screen.dart';
 import 'package:onbush/auth/presentation/pages/forget_password_screen.dart';
 
@@ -51,12 +49,12 @@ class AppRouter extends _$AppRouter {
           ],
         ),
         CustomRoute(
-          page: LoginRoute.page,
+          page: AuthRoute.page,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             var tween = Tween(begin: Offset(1.0, 0.0), end: Offset.zero);
             var curvedAnimation = CurvedAnimation(
               parent: animation,
-              curve: Curves.easeInOut,
+              curve: Curves.elasticOut,
             );
 
             return SlideTransition(
@@ -64,7 +62,7 @@ class AppRouter extends _$AppRouter {
               child: child,
             );
           },
-          durationInMilliseconds: 500,
+          durationInMilliseconds: 700,
         ),
         AutoRoute(page: OTPInputRoute.page),
         AutoRoute(page: DownloadRoute.page),

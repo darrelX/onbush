@@ -93,7 +93,7 @@ class AppButton extends StatelessWidget {
                                   fontWeight: FontWeight.w600,
                                 ),
                           )
-                        : child ?? SizedBox()
+                        : child ?? const SizedBox()
                   ],
                 )),
     );

@@ -12,25 +12,28 @@ import 'package:onbush/shared/widget/app_button.dart';
 import 'package:onbush/shared/widget/app_input.dart';
 
 class RegisterWidget extends StatefulWidget {
-  final TextEditingController lastNameController;
-  final TextEditingController firstNameController;
   final TextEditingController phoneController;
-  final TextEditingController dateController;
+  final TextEditingController birthdayController;
   final TextEditingController genderController;
   final TextEditingController schoolController;
   final TextEditingController academicLevelController;
   final TextEditingController majorStudyController;
+  final TextEditingController emailController;
+  final TextEditingController userNameController;
+
+  final TextEditingController studentIdController;
 
   const RegisterWidget(
       {super.key,
-      required this.dateController,
-      required this.lastNameController,
-      required this.firstNameController,
+      required this.birthdayController,
       required this.phoneController,
       required this.genderController,
       required this.schoolController,
       required this.academicLevelController,
-      required this.majorStudyController});
+      required this.majorStudyController,
+      required this.studentIdController,
+      required this.emailController,
+      required this.userNameController});
 
   @override
   State<RegisterWidget> createState() => _RegisterWidgetState();
@@ -64,7 +67,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {
         _selectedDate = pickedDate;
-        widget.dateController.text =
+        widget.birthdayController.text =
             DateFormat('dd/MM/yyyy').format(pickedDate); // Formatage de la date
       });
     }
@@ -106,89 +109,87 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           ),
           Gap(15.h),
           AppInput(
-            controller: widget.lastNameController,
-            hint: 'Nom(s)',
+            controller: widget.userNameController,
+            hint: 'Noms et prenoms',
             labelColors: AppColors.black.withOpacity(0.7),
             keyboardType: TextInputType.name,
             validators: [
               FormBuilderValidators.required(
-                errorText: 'Entrer votre nom',
+                errorText: 'Entrer votre noms et prenoms',
               ),
               // FormBuilderValidators.()
             ],
           ),
           Gap(15.h),
           AppInput(
-            controller: widget.firstNameController,
+            controller: widget.emailController,
             // label: 'Tel',
-            hint: 'Prenom(s)',
+            hint: 'Adresse email',
             labelColors: AppColors.black.withOpacity(0.7),
-            keyboardType: TextInputType.name,
+            keyboardType: TextInputType.emailAddress,
+            autofillHints: const [AutofillHints.email],
+
             validators: [
               FormBuilderValidators.required(
-                errorText: 'Entrer votre nom',
+                errorText: 'Entrer votre adresse email',
               ),
+              FormBuilderValidators.email(errorText: "E-mail est requis")
               // FormBuilderValidators.()
             ],
           ),
           Gap(15.h),
-          Container(
-            // color: Colors.red,
-            // decoration: BoxDecoration(border: Border.all(color: Colors.red)),
-            child: InternationalPhoneNumberInput(
-                onInputChanged: (PhoneNumber value) {
-                  setState(() {
-                    _number = value;
-                  });
-                },
-                initialValue: _number,
-                selectorConfig: const SelectorConfig(
-                  selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
-                  useBottomSheetSafeArea: true,
-                  setSelectorButtonAsPrefixIcon: true,
-                  leadingPadding: 10,
-                ),
-                ignoreBlank: false,
-                inputDecoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.grey.shade500,
-                            style: BorderStyle.solid),
-                        borderRadius: BorderRadius.circular(10.r)),
-                    errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.grey.shade500,
-                            style: BorderStyle.solid),
-                        borderRadius: BorderRadius.circular(10.r)),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.grey.shade500,
-                            style: BorderStyle.solid),
-                        borderRadius: BorderRadius.circular(10.r)),
-                    disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.grey.shade500,
-                            style: BorderStyle.solid),
-                        borderRadius: BorderRadius.circular(10.r)),
-                    // enabledBorder: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.grey.shade500),
-                    hintText: "Numero de telephone"),
-                autoValidateMode: AutovalidateMode.onUserInteraction,
-                // selectorTextStyle: TextStyle(color: Colors.grey.shade500),
-                // textStyle: TextStyle(color: Colors.grey.shade500),
-                textFieldController: widget.phoneController,
-                // formatInput: true,
-                keyboardType: const TextInputType.numberWithOptions(
-                    signed: true, decimal: true),
-                inputBorder: InputBorder.none),
-          ),
+          InternationalPhoneNumberInput(
+              onInputChanged: (PhoneNumber value) {
+                setState(() {
+                  _number = value;
+                });
+              },
+              initialValue: _number,
+              selectorConfig: const SelectorConfig(
+                selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+                useBottomSheetSafeArea: true,
+                setSelectorButtonAsPrefixIcon: true,
+                leadingPadding: 10,
+              ),
+              ignoreBlank: false,
+              autofillHints: const [AutofillHints.telephoneNumber],
+              inputDecoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.grey.shade500,
+                          style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(10.r)),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.grey.shade500,
+                          style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(10.r)),
+                  disabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.grey.shade500,
+                          style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(10.r)),
+                  // enabledBorder: InputBorder.none,
+                  hintStyle: TextStyle(color: Colors.grey.shade500),
+                  hintText: "Numero de telephone"),
+              autoValidateMode: AutovalidateMode.onUserInteraction,
+              // selectorTextStyle: TextStyle(color: Colors.grey.shade500),
+              // textStyle: TextStyle(color: Colors.grey.shade500),
+
+              textFieldController: widget.phoneController,
+              // formatInput: true,
+              keyboardType: const TextInputType.numberWithOptions(
+                  signed: true, decimal: true),
+              inputBorder: InputBorder.none),
           Gap(15.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               AppInput(
                   width: 150.w,
-                  controller: widget.dateController,
+                  controller: widget.birthdayController,
                   hint: "DD/MM/AA",
                   readOnly: true,
                   onTap: () => _selectDate(context),
@@ -212,23 +213,23 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     child: Column(
                       children: [
                         ListTile(
-                          title: const Text("Male"),
+                          title: const Text("male"),
                           selected: gender == 1,
                           onTap: () {
                             setState(() {
                               gender = 1;
-                              widget.genderController.text = "Male";
+                              widget.genderController.text = "male";
                               context.router.maybePop();
                             });
                           },
                         ),
                         ListTile(
-                          title: const Text("Female"),
+                          title: const Text("female"),
                           selected: gender == 0,
                           onTap: () {
                             setState(() {
                               gender = 0;
-                              widget.genderController.text = "Female";
+                              widget.genderController.text = "female";
                               context.router.maybePop();
                             });
                           },
@@ -266,6 +267,45 @@ class _RegisterWidgetState extends State<RegisterWidget> {
             ],
           ),
           Gap(15.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppInput(
+                controller: widget.academicLevelController,
+                width: 150.w,
+                hint: 'Choisir votre niveau',
+                labelColors: AppColors.black.withOpacity(0.7),
+                readOnly: true,
+                onTap: () => _bottomSheetSelect(context,
+                    allItems: levels,
+                    controller: widget.academicLevelController,
+                    title: "Selectionner le niveau"),
+                validators: [
+                  FormBuilderValidators.required(
+                    errorText: "Entrer votre niveau",
+                  ),
+                  // FormBuilderValidators.()
+                ],
+              ),
+              AppInput(
+                width: 150.w,
+
+                controller: widget.studentIdController,
+                // label: 'Tel',
+                hint: 'Matricule',
+                labelColors: AppColors.black.withOpacity(0.7),
+                keyboardType: TextInputType.name,
+                validators: [
+                  FormBuilderValidators.required(
+                    errorText: 'Entrer votre matricule',
+                  ),
+                  // FormBuilderValidators.()
+                ],
+              ),
+            ],
+          ),
+          Gap(15.h),
           AppInput(
             controller: widget.majorStudyController,
             hint: 'Choisir votre specialite',
@@ -285,22 +325,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
             ],
           ),
           Gap(15.h),
-          AppInput(
-            controller: widget.academicLevelController,
-            hint: 'Choisir votre niveau',
-            labelColors: AppColors.black.withOpacity(0.7),
-            readOnly: true,
-            onTap: () => _bottomSheetSelect(context,
-                allItems: levels,
-                controller: widget.academicLevelController,
-                title: "Selectionner le niveau"),
-            validators: [
-              FormBuilderValidators.required(
-                errorText: "Entrer votre niveau",
-              ),
-              // FormBuilderValidators.()
-            ],
-          ),
+          Gap(15.h),
         ],
       ),
     );
