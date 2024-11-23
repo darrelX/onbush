@@ -51,19 +51,6 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const DownloadScreen(),
       );
     },
-    ForgetPasswordRoute.name: (routeData) {
-      final args = routeData.argsAs<ForgetPasswordRouteArgs>();
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: ForgetPasswordScreen(
-          key: args.key,
-          title1: args.title1,
-          hasForgottenPassword: args.hasForgottenPassword,
-          description: args.description,
-          title2: args.title2,
-        ),
-      );
-    },
     HistoryRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -74,6 +61,12 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const HomeScreen(),
+      );
+    },
+    LanguageRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const LanguageScreen(),
       );
     },
     NotificationRoute.name: (routeData) {
@@ -88,6 +81,7 @@ abstract class _$AppRouter extends RootStackRouter {
         routeData: routeData,
         child: OTPInputScreen(
           key: args.key,
+          email: args.email,
           number: args.number,
           hasForgottenPassword: args.hasForgottenPassword,
         ),
@@ -100,9 +94,13 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     PriceRoute.name: (routeData) {
+      final args = routeData.argsAs<PriceRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const PriceScreen(),
+        child: PriceScreen(
+          key: args.key,
+          email: args.email,
+        ),
       );
     },
     ProfilRoute.name: (routeData) {
@@ -199,59 +197,6 @@ class DownloadRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [ForgetPasswordScreen]
-class ForgetPasswordRoute extends PageRouteInfo<ForgetPasswordRouteArgs> {
-  ForgetPasswordRoute({
-    Key? key,
-    required String title1,
-    bool hasForgottenPassword = true,
-    required String description,
-    required String title2,
-    List<PageRouteInfo>? children,
-  }) : super(
-          ForgetPasswordRoute.name,
-          args: ForgetPasswordRouteArgs(
-            key: key,
-            title1: title1,
-            hasForgottenPassword: hasForgottenPassword,
-            description: description,
-            title2: title2,
-          ),
-          initialChildren: children,
-        );
-
-  static const String name = 'ForgetPasswordRoute';
-
-  static const PageInfo<ForgetPasswordRouteArgs> page =
-      PageInfo<ForgetPasswordRouteArgs>(name);
-}
-
-class ForgetPasswordRouteArgs {
-  const ForgetPasswordRouteArgs({
-    this.key,
-    required this.title1,
-    this.hasForgottenPassword = true,
-    required this.description,
-    required this.title2,
-  });
-
-  final Key? key;
-
-  final String title1;
-
-  final bool hasForgottenPassword;
-
-  final String description;
-
-  final String title2;
-
-  @override
-  String toString() {
-    return 'ForgetPasswordRouteArgs{key: $key, title1: $title1, hasForgottenPassword: $hasForgottenPassword, description: $description, title2: $title2}';
-  }
-}
-
-/// generated route for
 /// [HistoryScreen]
 class HistoryRoute extends PageRouteInfo<void> {
   const HistoryRoute({List<PageRouteInfo>? children})
@@ -280,15 +225,15 @@ class HomeRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [NewPasswordScreen]
-class NewPasswordRoute extends PageRouteInfo<void> {
-  const NewPasswordRoute({List<PageRouteInfo>? children})
+/// [LanguageScreen]
+class LanguageRoute extends PageRouteInfo<void> {
+  const LanguageRoute({List<PageRouteInfo>? children})
       : super(
-          NewPasswordRoute.name,
+          LanguageRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'NewPasswordRoute';
+  static const String name = 'LanguageRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -312,6 +257,7 @@ class NotificationRoute extends PageRouteInfo<void> {
 class OTPInputRoute extends PageRouteInfo<OTPInputRouteArgs> {
   OTPInputRoute({
     Key? key,
+    required String email,
     required String? number,
     bool hasForgottenPassword = true,
     List<PageRouteInfo>? children,
@@ -319,6 +265,7 @@ class OTPInputRoute extends PageRouteInfo<OTPInputRouteArgs> {
           OTPInputRoute.name,
           args: OTPInputRouteArgs(
             key: key,
+            email: email,
             number: number,
             hasForgottenPassword: hasForgottenPassword,
           ),
@@ -334,11 +281,14 @@ class OTPInputRoute extends PageRouteInfo<OTPInputRouteArgs> {
 class OTPInputRouteArgs {
   const OTPInputRouteArgs({
     this.key,
+    required this.email,
     required this.number,
     this.hasForgottenPassword = true,
   });
 
   final Key? key;
+
+  final String email;
 
   final String? number;
 
@@ -346,7 +296,7 @@ class OTPInputRouteArgs {
 
   @override
   String toString() {
-    return 'OTPInputRouteArgs{key: $key, number: $number, hasForgottenPassword: $hasForgottenPassword}';
+    return 'OTPInputRouteArgs{key: $key, email: $email, number: $number, hasForgottenPassword: $hasForgottenPassword}';
   }
 }
 
@@ -366,16 +316,39 @@ class OnboardingRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [PriceScreen]
-class PriceRoute extends PageRouteInfo<void> {
-  const PriceRoute({List<PageRouteInfo>? children})
-      : super(
+class PriceRoute extends PageRouteInfo<PriceRouteArgs> {
+  PriceRoute({
+    Key? key,
+    required String email,
+    List<PageRouteInfo>? children,
+  }) : super(
           PriceRoute.name,
+          args: PriceRouteArgs(
+            key: key,
+            email: email,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'PriceRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<PriceRouteArgs> page = PageInfo<PriceRouteArgs>(name);
+}
+
+class PriceRouteArgs {
+  const PriceRouteArgs({
+    this.key,
+    required this.email,
+  });
+
+  final Key? key;
+
+  final String email;
+
+  @override
+  String toString() {
+    return 'PriceRouteArgs{key: $key, email: $email}';
+  }
 }
 
 /// generated route for

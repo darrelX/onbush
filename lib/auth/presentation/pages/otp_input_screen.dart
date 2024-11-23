@@ -13,25 +13,29 @@ import 'package:onbush/shared/routing/app_router.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 import 'package:onbush/shared/widget/app_button.dart';
 import 'package:onbush/shared/widget/app_input.dart';
+import 'package:onbush/shared/widget/app_snackbar.dart';
 
 @RoutePage()
 class OTPInputScreen extends StatefulWidget {
   final String? number;
+  final String email;
   final bool hasForgottenPassword;
 
   const OTPInputScreen(
-      {super.key, required this.number, this.hasForgottenPassword = true});
+      {super.key,
+      required this.email,
+      required this.number,
+      this.hasForgottenPassword = true});
 
   @override
   State createState() => _OtpInputScreenState();
 }
 
 class _OtpInputScreenState extends State<OTPInputScreen> {
-  final TextEditingController _textEditingController = TextEditingController();
   String? _currentText;
   final GlobalKey<FormState> _formField = GlobalKey<FormState>();
   String? _error;
-  TextEditingController _codeController = TextEditingController();
+  final TextEditingController _codeController = TextEditingController();
   bool _isExpired = false;
 
   late final OtpBloc _bloc = context.read<OtpBloc>();
@@ -45,19 +49,22 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
   @override
   void initState() {
     super.initState();
-    // _bloc.add(OtpInitialized(
-    //     phoneNumber: widget.number!, duration: _bloc.state.countDown));
+    _bloc.add(OtpInitialized(
+        phoneNumber: widget.number!,
+        duration: _bloc.state.countDown,
+        email: widget.email));
   }
 
   @override
   void dispose() {
-    _textEditingController.dispose();
+    _codeController.dispose();
     super.dispose();
   }
 
   Future<void> _reFresh() async {
     _bloc.add(OtpInitialized(
         phoneNumber: widget.number!.replaceAll(' ', ''),
+        email: widget.email,
         duration: _bloc.state.countDown));
   }
 
@@ -76,11 +83,14 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
         backgroundColor: AppColors.white,
       ),
       body: BlocConsumer<OtpBloc, OtpState>(
-        bloc: _bloc,
         listener: (context, state) {
-          if (state is OtpVerificationFailure) {
+          if (state is OtpSendFailure) {
             setState(() {
               _error = state.errorMessage;
+              AppSnackBar.showError(
+                message: state.errorMessage,
+                context: context,
+              );
             });
           }
           if (state is OtpExpired) {
@@ -89,12 +99,11 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
             });
           }
           if (state is OtpVerificationSuccess) {
-            // widget.hasForgottenPassword
-            //     ? context.router.push(const NewPasswordRoute())
-            //     : context.router.push(const RegisterRoute());
+            context.router.pushAll([PriceRoute(email: widget.email)]);
           }
         },
         builder: (context, state) {
+          print(state);
           if (state is OtpLoadingState) {
             return Container(
               decoration: const BoxDecoration(
@@ -134,6 +143,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
               ),
             );
           }
+
           return SafeArea(
             child: Form(
               key: _formField,
@@ -190,7 +200,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                                   ])),
                         ),
                       ),
-                      Gap(140.h),
+                      Gap(170.h),
                       Opacity(
                         opacity: _isExpired ? 0.5 : 1,
                         child: IgnorePointer(
@@ -202,14 +212,17 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                               text: "Valider",
                               onPressed: () {
                                 if (_formField.currentState!.validate()) {
+                                  context.read<OtpBloc>().add(OtpSubmitted(
+                                      otp: _codeController.text
+                                          .replaceAll(' ', ''),
+                                      phoneNumber: widget.number!,
+                                      email: widget.email));
                                   setState(() {
                                     _isExpired = !_isExpired;
                                     _error = null;
-                                    _textEditingController.clear();
+                                    _codeController.clear();
                                     // context.read<OtpBloc>().add(
                                     //     OtpReset(phoneNumber: widget.number!));
-                                    context.router
-                                        .pushAll([const PriceRoute()]);
                                   });
                                 }
                               }),
@@ -230,9 +243,11 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                                   setState(() {
                                     _isExpired = !_isExpired;
                                     _error = null;
-                                    _textEditingController.clear();
-                                    context.read<OtpBloc>().add(
-                                        OtpReset(phoneNumber: widget.number!));
+                                    _codeController.clear();
+                                    context.read<OtpBloc>().add(OtpReset(
+                                        phoneNumber: widget.number!,
+                                        code: "0000",
+                                        email: widget.email));
                                     if (state is OtpVerificationSuccess) {
                                       print("Success");
                                     } else if (state
@@ -244,7 +259,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                               }),
                         ),
                       ),
-                      Gap(160.h),
+                      Gap(140.h),
                       Image.asset(
                         "assets/images/onbush.png",
                         height: 50.h,

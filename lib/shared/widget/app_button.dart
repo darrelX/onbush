@@ -22,6 +22,7 @@ class AppButton extends StatelessWidget {
   final Color? textColor;
   final double? minWidth;
   final TextStyle? style;
+  final double? radius;
 
   const AppButton({
     super.key,
@@ -33,6 +34,7 @@ class AppButton extends StatelessWidget {
     this.loading = false,
     this.haveTop = true,
     this.height = 50.0,
+    this.radius,
     this.width,
     this.loadingColor,
     this.text,
@@ -56,7 +58,7 @@ class AppButton extends StatelessWidget {
           padding:
               child == null ? EdgeInsets.symmetric(horizontal: 10.w) : null,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(radius ?? 16.r),
             color: enable ? bgColor : bgColor?.withOpacity(.6),
             border: borderColor != null
                 ? Border.all(

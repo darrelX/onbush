@@ -30,6 +30,7 @@ class HttpLoggerInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, handler) {
+    appLogger.f(response);
     return handler.next(response);
   }
 

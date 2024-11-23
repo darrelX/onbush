@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:onbush/auth/data/repositories/otp_repository.dart';
@@ -11,7 +12,7 @@ part 'otp_event.dart';
 
 class OtpBloc extends Bloc<OtpEvent, OtpState> {
   Timer? _timer;
-  static const int totalDuration = 120;
+  static const int totalDuration = 90;
   final OtpRepository _repository;
   int _currentDuration = totalDuration;
 
@@ -21,6 +22,7 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
     on<OtpSubmitted>(_onSubmit);
     on<OtpReset>(_onReset);
     on<OtpInitialized>(_onInitialized);
+    on<OtpVerification>(_onVerification);
     on<_OtpTick>(_onTick); // Utilisation d'un event spécifique au timer
   }
 
@@ -29,20 +31,40 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
       emit(OtpVerifying(countDown: state.countDown));
     }
     try {
-      final status = await _repository.submit(
+      await _repository.submit(
+        email: event.email,
         code: event.otp,
         phoneNumber: event.phoneNumber,
       );
-      if (status) {
-        _timer?.cancel();
+      // if (status) {
+      //   _timer?.cancel();
         emit(const OtpVerificationSuccess(countDown: totalDuration));
-      } else {
-        emit(const OtpVerificationFailure(
-            errorMessage: 'Echec', countDown: totalDuration));
-      }
-    } catch (e) {
+      // } else {
+      //   emit(const OtpVerificationFailure(
+      //       errorMessage: 'Echec', countDown: totalDuration));
+      // }
+    } on DioException catch (e) {
+      emit(OtpSendFailure(
+          errorMessage: Utils.extractErrorMessageFromMap(
+              e, {"0": "Confirmation introuvable", "-1" : "Probleme d'enregistrement"}),
+          countDown: totalDuration));
+    }
+  }
+
+  Future<void> _onVerification(
+      OtpVerification event, Emitter<OtpState> emit) async {
+    try {
+      // await _repository.
+    } on DioException catch (e) {
       emit(OtpVerificationFailure(
-          errorMessage: Utils.extractErrorMessage(e),
+          errorMessage: Utils.extractErrorMessageFromMap(e, {
+            "0": "Transaction introuvable",
+            "-1": "Transaction echouee",
+            "3": "Delai passe",
+            "1": "Transaction en cours",
+            "-2": "compte client introuvable",
+            "-3": "Infos etudiant introuvable"
+          }),
           countDown: totalDuration));
     }
   }
@@ -51,15 +73,15 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
       OtpInitialized event, Emitter<OtpState> emit) async {
     _timer?.cancel();
     emit(const OtpLoadingState(countDown: totalDuration));
-    try {
-      await _repository.sendOtp(event.phoneNumber);
-      _startTimer(emit);
-      // emit(OtpSentInProgress(countDown: _currentDuration));
-    } catch (e) {
-      emit(OtpSendFailure(
-          errorMessage: Utils.extractErrorMessage(e),
-          countDown: totalDuration));
-    }
+
+    // await _repository.sendOtp(phoneNumber:  event.phoneNumber, email: event.email);
+    _startTimer(emit);
+    // emit(OtpSentInProgress(countDown: _currentDuration));
+
+    //   emit(OtpSendFailure(
+    //       errorMessage: Utils.extractErrorMessage(e),
+    //       countDown: totalDuration));
+    // }
   }
 
   void _startTimer(Emitter<OtpState> emit) {
@@ -86,12 +108,18 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
     if (state is OtpExpired || state is OtpVerificationFailure) {
       emit(const OtpVerifying(countDown: 0));
       try {
-        await _repository.sendOtp(event.phoneNumber);
+        await _repository.submit(
+            phoneNumber: event.phoneNumber,
+            email: event.email,
+            code: event.code);
         _startTimer(emit);
         emit(OtpSentInProgress(countDown: _currentDuration));
       } catch (e) {
         emit(OtpSendFailure(
-            errorMessage: Utils.extractErrorMessage(e),
+            errorMessage: Utils.extractErrorMessageFromMap(e, {
+              "0": "enregistrement introuvable ou code expiré",
+              "-1": "	Un problème d'enregistrement est survenu"
+            }),
             countDown: totalDuration));
       }
     }

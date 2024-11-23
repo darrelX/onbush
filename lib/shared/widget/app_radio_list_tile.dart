@@ -20,7 +20,7 @@ class AppRadioListTile extends StatefulWidget {
       this.unSelectedColor,
       required this.onChanged,
       required this.value,
-      required this.activeColor,
+      this.activeColor = Colors.blue,
       required this.title});
 
   @override
@@ -37,7 +37,8 @@ class _AppRadioListTileState extends State<AppRadioListTile> {
               ? Border.all(
                   color: widget.unSelectedColor ?? Colors.black, width: 1.3.r)
               : Border.all(
-                  color: widget.selectedColor ?? Colors.orange, width: 1.3.r)),
+                  color: widget.selectedColor ?? AppColors.primary,
+                  width: 1.3.r)),
       child: RadioListTile<String>(
         value: widget.value,
         groupValue: widget.groupeValue,
@@ -52,7 +53,7 @@ class _AppRadioListTileState extends State<AppRadioListTile> {
                 fontWeight: FontWeight.w600,
                 color: widget.groupeValue != widget.value
                     ? widget.unSelectedColor ?? AppColors.black
-                    : widget.selectedColor ?? Colors.orange,
+                    : widget.selectedColor ?? AppColors.primary,
               ),
             ),
             widget.suffixIcon ?? const SizedBox()

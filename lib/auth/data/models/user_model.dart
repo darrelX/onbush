@@ -1,5 +1,5 @@
 class UserModel {
-  final int? id;
+  final String? id;
   final String? name;
   final String? email;
   final String? phoneNumber;
@@ -11,8 +11,10 @@ class UserModel {
   final String? sponsorCode;
   final int? academiclevel;
   final String? birthday;
+  final String? gender;
 
-  UserModel({
+  const UserModel({
+    required this.gender,
     required this.studentId,
     required this.avatar,
     required this.role,
@@ -51,8 +53,9 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: int.parse(json['id'].toString()) as int?,
-      name: json['name'] as String?,
+      id: json['token'].toString() as String?,
+      name: json['nom'] as String?,
+      gender: json['sexe'] as String?,
       email: json['email'] as String?,
       phoneNumber: json['phone_number'] as String?,
       studentId: json['matricule'] as String?,

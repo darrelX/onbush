@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
 import 'package:onbush/auth/logic/otp_cubit/otp_bloc.dart';
 import 'package:onbush/l10n/l10n.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import 'package:onbush/shared/application/cubit/application_cubit.dart';
 import 'package:onbush/shared/connectivity/bloc/network_cubit.dart';
 
 import 'service_locator.dart';
@@ -26,9 +28,13 @@ class _ApplicationState extends State<Application> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => getIt.get<OtpBloc>(),
+          create: (context) => getIt.get<AuthCubit>(),
         ),
-        BlocProvider(create: (context) => getIt.get<NetworkCubit>())
+                BlocProvider(
+          create: (context) => getIt.get<ApplicationCubit>(),
+        ),
+        BlocProvider(create: (context) => getIt.get<NetworkCubit>()),
+        BlocProvider(create: (context) => getIt.get<OtpBloc>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 812),

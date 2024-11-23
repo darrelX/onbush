@@ -7,6 +7,7 @@ import 'package:onbush/download/download_screen.dart';
 import 'package:onbush/notification/notification_scren.dart';
 import 'package:onbush/onboarding/pages/onboarding_screen.dart';
 import 'package:onbush/profil/pages/ambassador_space_screen.dart';
+import 'package:onbush/profil/pages/language_screen.dart';
 import 'package:onbush/profil/pages/profil_screen.dart';
 import '../../app_init_screen.dart';
 import '../../auth/presentation/pages/auth_screen.dart';
@@ -54,7 +55,7 @@ class AppRouter extends _$AppRouter {
             var tween = Tween(begin: Offset(1.0, 0.0), end: Offset.zero);
             var curvedAnimation = CurvedAnimation(
               parent: animation,
-              curve: Curves.elasticOut,
+              curve: Curves.easeInOut,
             );
 
             return SlideTransition(
@@ -62,14 +63,16 @@ class AppRouter extends _$AppRouter {
               child: child,
             );
           },
-          durationInMilliseconds: 700,
+          durationInMilliseconds: 600,
         ),
         AutoRoute(page: OTPInputRoute.page),
         AutoRoute(page: DownloadRoute.page),
         AutoRoute(page: AmbassadorSpaceRoute.page),
-        AutoRoute(page: ForgetPasswordRoute.page),
-        AutoRoute(page: NewPasswordRoute.page),
+        // AutoRoute(page: ForgetPasswordRoute.page),
+        // AutoRoute(page: NewPasswordRoute.page),
         AutoRoute(page: OnboardingRoute.page),
         AutoRoute(page: PriceRoute.page),
+        AutoRoute(page: NotificationRoute.page),
+        AutoRoute(page: LanguageRoute.page),
       ];
 }

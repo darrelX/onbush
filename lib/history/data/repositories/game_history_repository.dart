@@ -4,10 +4,10 @@ import 'package:onbush/service_locator.dart';
 
 class GameHistoryRepository {
   final Dio _dio;
-  GameHistoryRepository() : _dio = getIt.get<Dio>();
+  GameHistoryRepository() : _dio = getIt.get<Dio>(instanceName: 'dataApi');
 
   Future<GameHistoryModels> fetchGameHistory(
-      {required int userId, int page = 1}) async {
+      {required String userId, int page = 1}) async {
     try {
       final Response response = await _dio.get('/game-rounds',
           queryParameters: {"user_id": userId, "page": page});

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:onbush/auth/data/models/college_model.dart';
 import 'package:onbush/auth/data/models/specialtie_model.dart';
@@ -8,103 +9,133 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:onbush/auth/data/repositories/auth_repository.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/shared/utils/utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  final AuthRepository repository = getIt.get<AuthRepository>();
-  // final prefs = getIt.get<Future<SharedPreferences>>();
+  final AuthRepository _repository;
+  final Future<SharedPreferences> _prefs;
+  final List<CollegeModel> _listAllColleges = [];
+  final List<SpecialtieModel> _listAllSpecialities = [];
 
-  AuthCubit() : super(const AuthInitial());
+  List<CollegeModel> get listAllColleges => _listAllColleges;
+  List<SpecialtieModel> get listAllSpecialities => _listAllSpecialities;
 
-  login({
-    required String phone,
-    required String password,
+  AuthCubit()
+      : _repository = AuthRepository(),
+        _prefs = getIt.get<Future<SharedPreferences>>(),
+        super(const AuthInitial());
+
+  Future<void> login({
+    required String appareil,
+    required String email,
   }) async {
+    emit(LoginLoading());
     try {
-      emit(LoginLoading());
-      var user = await repository.login(
-        phone: phone,
-        password: password,
+      var user = await _repository.login(
+        appareil: appareil,
+        email: email,
       );
       emit(LoginSuccess(user: user!));
-    } catch (e) {
-      emit(LoginFailure(message: Utils.extractErrorMessage(e)));
-      rethrow;
+    } on DioException catch (e) {
+      emit(LoginFailure(
+          message: Utils.extractErrorMessageFromMap(
+              e, {"0": "telephone ou pass incorrest", "-1": "compte bloque"})));
+      // rethrow;
     }
   }
 
   register({
     required String name,
+    required String device,
+    required String phone,
+    required String academiclevel,
+    required String role,
+    required int academicLevel,
+    required int majorStudy,
+    required int schoolId,
+    required String studentId,
     required String email,
-    required DateTime birthDate,
-    required int gender,
-    required String phoneNumber,
-    required String password,
+    required String birthDate,
+    required String gender,
   }) async {
     try {
       emit(RegisterLoading());
-      var user = await repository.register(
+      await _repository.register(
         username: name,
         email: email,
         birthDate: birthDate,
         gender: gender,
-        phone: phoneNumber,
-        password: password,
+        phone: phone,
+        device: device,
+        studentId: studentId,
+        academicLevel: academicLevel,
+        schoolId: schoolId,
+        majorStudy: majorStudy,
+        role: role,
       );
-      emit(RegisterSuccess(user: user!));
-    } catch (e) {
-      print(e);
-      emit(RegisterFailure(message: Utils.extractErrorMessage(e)));
+      emit(const RegisterSuccess());
+    } on DioException catch (e) {
+      // print(e);
+      emit(RegisterFailure(
+          message: Utils.extractErrorMessageFromMap(e, {
+        "0": "Un probleme est survenu",
+        "-1": "Email deja utilise",
+        "-2": "Telephone deja utilise",
+        "-3": "Utilisateur non reconnu"
+      })));
     }
   }
 
   Future<void> checkAuthState() async {
-    final storage = await repository.prefs!;
+    final storage = await _repository.prefs!;
     final String? token = storage.getString('token');
 
     try {
       emit(CheckAuthStateLoading());
 
       if (token != null) {
-        var user = await repository.getUser();
-        emit(CheckAuthStateSuccess(user: user!));
+        // var user = await _repository.getUser();
+        emit(const CheckAuthStateSuccess());
       } else if (token == null) {
         emit(const AuthOnboardingState());
       } else {
         emit(CheckAuthStateFailure(
             message: Utils.extractErrorMessage('User is not authenticated')));
       }
-    } catch (e) {
+    } on DioException catch (e) {
       emit(CheckAuthStateFailure(message: Utils.extractErrorMessage(e)));
     }
   }
 
-  Future<List<CollegeModel>> allCollege() async {
-    return [
-      const CollegeModel(
-          id: 1,
-          name: "Poslytechique de Douala",
-          sigle: "ENPD",
-          city: "Douala",
-          country: "Cameroun",
-          totalStudyLevels: 5),
-      const CollegeModel(
-          id: 1,
-          name: "Institut Universitaire de la Cote",
-          sigle: "ENPD",
-          city: "Douala",
-          country: "Cameroun",
-          totalStudyLevels: 5),
-    ];
+  Future<void> allColleges() async {
+    _listAllColleges.clear();
+    emit(const SearchStateLoading());
+    try {
+      _listAllColleges.addAll(List.from(await _repository.allColleges()));
+      emit(SearchStateSuccess(
+          listCollegeModel: _listAllColleges,
+          listSpecialtieModel: _listAllSpecialities));
+    } catch (e) {
+      emit(SearchStateFailure(message: e.toString()));
+    }
   }
 
-  Future<List<SpecialtieModel>> allSpecialities() async {
-    return [
-      const SpecialtieModel(
-          id: 1, name: "name", sigle: "sigle", level: "level"),
-      const SpecialtieModel(
-          id: 1, name: "name", sigle: "sigle", level: "level"),
-    ];
+  Future<void> allSpecialities({required int schoolId}) async {
+    _listAllSpecialities.clear();
+    emit(const SearchStateLoading());
+    try {
+      _listAllSpecialities
+          .addAll(List.from(await _repository.allSpecialities(schoolId)));
+
+      print(_listAllSpecialities);
+
+      emit(SearchStateSuccess(
+          listCollegeModel: _listAllColleges,
+          listSpecialtieModel: _listAllSpecialities));
+    } catch (e) {
+      emit(SearchStateFailure(message: e.toString()));
+    }
   }
 }

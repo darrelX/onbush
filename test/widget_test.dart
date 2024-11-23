@@ -1,19 +1,41 @@
-import 'package:equatable/equatable.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class Person extends Equatable {
-  final List<int> list;
+void registerUser() async {
+  final url = Uri.parse('https://api.accounts.onbush237.com/v1/auth/register/user');
+  final headers = {
+    'accept': 'application/json',
+    'Content-Type': 'application/json',
+  };
+  final body = jsonEncode({
+    "appareil": "samsung/b0qxxx/b0q:9/TP1A.220624.014/S908EXXS2BWA2:user/release-keys",
+    "matricule": "20G00140",
+    "nom": "d",
+    "sexe": "male",
+    "naissance": "03/11/2024",
+    "email": "darre@gmail.com",
+    "telephone": "657590803",
+    "niveau": 1,
+    "filiere_id": 1,
+    "etablissement_id": 1,
+    "code_parrain": 0,
+    "role": "etudiant"
+  });
 
-  const Person({required this.list});
+  try {
+    final response = await http.post(url, headers: headers, body: body);
 
-  @override
-  List<Object?> get props => [list];
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('User registered successfully: ${response.body}');
+    } else {
+      print('Failed to register user: ${response.statusCode}');
+      print('Response: ${response.body}');
+    }
+  } catch (e) {
+    print('Error occurred: $e');
+  }
 }
 
 void main() {
-  const person1 = Person(list: [3, 4]);
-  const person2 = Person(list: [3, 4]);
-  const person3 = Person(list: [6, 5]);
-
-  print(person1 == person2); // true, car les propriétés sont identiques
-  print(person1 == person3); // false, car les propriétés sont différentes
+  registerUser();
 }

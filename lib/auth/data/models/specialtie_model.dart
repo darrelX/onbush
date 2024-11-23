@@ -13,9 +13,10 @@ class SpecialtieModel {
       this.collegeId});
 
   factory SpecialtieModel.fromJson(Map<String, dynamic> json) {
+    print(json);
     return SpecialtieModel(
         id: json['id'] as int?,
-        name: json['nome'] as String?,
+        name: json['nom'] as String?,
         collegeId: json['etablissement_id'] as int?,
         sigle: json['sigle'] as String?,
         level: json['niveau'] as String?);

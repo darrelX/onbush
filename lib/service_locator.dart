@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:onbush/auth/data/repositories/auth_repository.dart';
+import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
 import 'package:onbush/auth/logic/otp_cubit/otp_bloc.dart';
-import 'package:onbush/history/data/repositories/ticket_repository.dart';
 import 'package:onbush/shared/application/cubit/application_cubit.dart';
 import 'package:onbush/shared/connectivity/bloc/network_cubit.dart';
 import 'package:logger/logger.dart';
@@ -14,50 +15,62 @@ import 'shared/routing/app_router.dart';
 
 final getIt = GetIt.instance;
 
-void setupLocator() {
-  //route
-  getIt.registerSingleton<AppRouter>(AppRouter());
+Future<void> setupLocator() async {
+  getIt
 
-  //logger
-  getIt.registerSingleton<Logger>(
-    Logger(
-      printer: PrettyPrinter(colors: true),
-    ),
-  );
+    // SharedPreferences
+    ..registerSingleton<Future<SharedPreferences>>(
+        SharedPreferences.getInstance())
 
-  // SharedPreferences
-  getIt.registerLazySingleton<Future<SharedPreferences>>(
-      () async => SharedPreferences.getInstance());
+    // Dio
+    ..registerSingleton<Dio>(
+        Dio(BaseOptions(
+          baseUrl: '${dotenv.env['API_ACCOUNT']}',
+          connectTimeout: const Duration(seconds: 12),
+          receiveTimeout: const Duration(seconds: 12),
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+        ))
+          ..interceptors.addAll(
+            [
+              TokenInterceptor(),
+              HttpLoggerInterceptor(),
+            ],
+          ),
+        instanceName: 'accountApi')
+    ..registerSingleton<Dio>(
+        Dio(BaseOptions(
+          baseUrl: '${dotenv.env['API_DATA']}',
+          connectTimeout: const Duration(seconds: 12),
+          receiveTimeout: const Duration(seconds: 12),
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+        ))
+          ..interceptors.addAll(
+            [
+              TokenInterceptor(),
+              HttpLoggerInterceptor(),
+            ],
+          ),
+        instanceName: 'dataApi')
 
-  // Dio
-  getIt.registerSingleton<Dio>(
-    Dio(BaseOptions(
-      baseUrl: 'https://api.data.onbush237.com/v1',
-      connectTimeout: const Duration(seconds: 12),
-      receiveTimeout: const Duration(seconds: 12),
-      headers: {
-        'Accept': 'application/json',
-      },
-    ))
-      ..interceptors.addAll(
-        [
-          TokenInterceptor(),
-          HttpLoggerInterceptor(),
-        ],
+    //route
+    ..registerSingleton<AppRouter>(AppRouter())
+
+    //logger
+    ..registerSingleton<Logger>(
+      Logger(
+        printer: PrettyPrinter(colors: true),
       ),
-  );
-
-  getIt.registerSingleton<ApplicationCubit>(ApplicationCubit());
-
-  getIt.registerSingleton<AuthRepository>(
-    AuthRepository(
-        dio: getIt.get<Dio>(), prefs: getIt.get<Future<SharedPreferences>>()),
-  );
-
-
-
-
-  getIt.registerSingleton<OtpBloc>(OtpBloc());
-
-  getIt.registerSingleton<NetworkCubit>(NetworkCubit());
+    )
+    ..registerSingleton<ApplicationCubit>(ApplicationCubit())
+    ..registerSingleton<AuthCubit>(
+      AuthCubit(),
+    )
+    ..registerSingleton<OtpBloc>(OtpBloc())
+    ..registerSingleton<NetworkCubit>(NetworkCubit());
 }

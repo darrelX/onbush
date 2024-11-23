@@ -9,18 +9,24 @@ class DeviceInfo {
   DeviceInfo.init();
 
   /// Récupère les informations de l'appareil et les affecte à [deviceInfo].
-  void fetchDeviceInfo(Map<String, dynamic> deviceInfo) => _initializeDeviceInfo(deviceInfo);
+  // void fetchDeviceInfo(Map<String, dynamic> deviceInfo) =>
+  //     return await _initializeDeviceInfo(deviceInfo);
+
+  Future<String> getInfoDevice(String info) async{
+    return await  _initializeDeviceInfo(info);
+  }
 
   /// Récupère les informations pour les appareils Android.
-  Map<String, dynamic> _parseAndroidDeviceInfo(AndroidDeviceInfo androidInfo) {
+  static Map<String, String> _parseAndroidDeviceInfo(
+      AndroidDeviceInfo androidInfo) {
     return {
-      'version.securityPatch': androidInfo.version.securityPatch,
-      'version.sdkInt': androidInfo.version.sdkInt,
+      'version.securityPatch': androidInfo.version.securityPatch.toString(),
+      'version.sdkInt': androidInfo.version.sdkInt.toString(),
       'version.release': androidInfo.version.release,
-      'version.previewSdkInt': androidInfo.version.previewSdkInt,
+      'version.previewSdkInt': androidInfo.version.previewSdkInt.toString(),
       'version.incremental': androidInfo.version.incremental,
       'version.codename': androidInfo.version.codename,
-      'version.baseOS': androidInfo.version.baseOS,
+      'version.baseOS': androidInfo.version.baseOS.toString(),
       'board': androidInfo.board,
       'bootloader': androidInfo.bootloader,
       'brand': androidInfo.brand,
@@ -33,28 +39,28 @@ class DeviceInfo {
       'manufacturer': androidInfo.manufacturer,
       'model': androidInfo.model,
       'product': androidInfo.product,
-      'supported32BitAbis': androidInfo.supported32BitAbis,
-      'supported64BitAbis': androidInfo.supported64BitAbis,
-      'supportedAbis': androidInfo.supportedAbis,
+      'supported32BitAbis': androidInfo.supported32BitAbis.toString(),
+      'supported64BitAbis': androidInfo.supported64BitAbis.toString(),
+      'supportedAbis': androidInfo.supportedAbis.toString(),
       'tags': androidInfo.tags,
       'type': androidInfo.type,
-      'isPhysicalDevice': androidInfo.isPhysicalDevice,
-      'systemFeatures': androidInfo.systemFeatures,
+      'isPhysicalDevice': androidInfo.isPhysicalDevice.toString(),
+      'systemFeatures': androidInfo.systemFeatures.toString(),
       'serialNumber': androidInfo.serialNumber,
-      'isLowRamDevice': androidInfo.isLowRamDevice,
+      'isLowRamDevice': androidInfo.isLowRamDevice.toString(),
     };
   }
 
   /// Récupère les informations pour les appareils iOS.
-  Map<String, dynamic> _parseIosDeviceInfo(IosDeviceInfo iosInfo) {
+  Map<String, String> _parseIosDeviceInfo(IosDeviceInfo iosInfo) {
     return {
       'name': iosInfo.name,
       'systemName': iosInfo.systemName,
       'systemVersion': iosInfo.systemVersion,
       'model': iosInfo.model,
       'localizedModel': iosInfo.localizedModel,
-      'identifierForVendor': iosInfo.identifierForVendor,
-      'isPhysicalDevice': iosInfo.isPhysicalDevice,
+      'identifierForVendor': iosInfo.identifierForVendor.toString(),
+      'isPhysicalDevice': iosInfo.isPhysicalDevice.toString(),
       'utsname.sysname': iosInfo.utsname.sysname,
       'utsname.nodename': iosInfo.utsname.nodename,
       'utsname.release': iosInfo.utsname.release,
@@ -84,12 +90,13 @@ class DeviceInfo {
   }
 
   /// Initialise les informations de la plateforme et met à jour [deviceInfo].
-  Future<void> _initializeDeviceInfo(Map<String, dynamic> deviceInfo) async {
-    Map<String, dynamic> deviceData;
+  Future<String> _initializeDeviceInfo(String info) async {
+    Map<String, String> deviceData;
     try {
       switch (defaultTargetPlatform) {
         case TargetPlatform.android:
-          deviceData = _parseAndroidDeviceInfo(await _deviceInfoPlugin.androidInfo);
+          deviceData =
+              _parseAndroidDeviceInfo(await _deviceInfoPlugin.androidInfo);
           break;
         case TargetPlatform.iOS:
           deviceData = _parseIosDeviceInfo(await _deviceInfoPlugin.iosInfo);
@@ -103,7 +110,6 @@ class DeviceInfo {
     } on PlatformException catch (e) {
       deviceData = {'Error': 'Failed to retrieve platform data: ${e.message}'};
     }
-
-    deviceInfo.addAll(deviceData);
+    return deviceData[info]!;
   }
 }

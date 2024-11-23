@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +11,7 @@ import 'package:onbush/shared/widget/app_input.dart';
 import '../theme/app_colors.dart';
 
 class AppBottomSheet {
-  static showModelBottomSheet({
+  static Future<T> showBottomSheet<T>({
     required BuildContext context,
     required Widget child,
     void Function()? setter,
@@ -17,6 +19,7 @@ class AppBottomSheet {
     Color? backgroundColor,
     double? height,
   }) async {
+    Completer<T> completer = Completer<T>();
     await showModalBottomSheet(
         context: context,
         transitionAnimationController: transitionController,
@@ -74,22 +77,28 @@ class AppBottomSheet {
             ),
           );
         });
+    return completer.future;
   }
 
-  static void showSearchBottomSheet({
+  static int showSearchBottomSheet({
     required List<String> allItems,
     required BuildContext context,
     required TextEditingController resultController,
+    // dynamic Function(dynamic)? filter,
+    bool isLoading = false,
+    bool error = false,
     String? title,
     String? hint,
     Widget? child,
   }) {
+    // Completer<T> completer = Completer<T>();
+
     // Controller pour la recherche
     final TextEditingController searchController = TextEditingController();
     int? selectedCheckboxIndex;
     List<String> filteredItems = List.from(allItems);
 
-    AppBottomSheet.showModelBottomSheet(
+    AppBottomSheet.showBottomSheet(
       context: context,
       child: StatefulBuilder(
         builder: (BuildContext context, StateSetter setModalState) {
@@ -143,7 +152,6 @@ class AppBottomSheet {
                       ),
                     ),
                     Gap(20.h),
-
                     // Champ de recherche
                     AppInput(
                       controller: searchController,
@@ -151,61 +159,61 @@ class AppBottomSheet {
                       hint: hint ?? "Chercher ...",
                     ),
                     Gap(20.h),
-
-                    // Liste des éléments filtrés
                     Expanded(
-                      child: ListView.separated(
-                        itemCount: filteredItems.length,
-                        separatorBuilder: (_, __) => Gap(10.h),
-                        itemBuilder: (context, index) {
-                          final item = filteredItems[index];
-                          return CheckboxListTile(
-                            // shape:
-                            //     const CircleBorder(), // Applique une forme circulaire
-                            checkboxShape: const CircleBorder(),
-                            value: selectedCheckboxIndex == index,
-                            side: const BorderSide(
-                                color: AppColors.primary, width: 2),
-                            onChanged: (bool? isSelected) {
-                              if (isSelected == true) {
-                                setModalState(() {
-                                  selectedCheckboxIndex = index;
-                                  resultController.text = item;
-                                });
+                        child: !isLoading
+                            ? ListView.separated(
+                                itemCount: filteredItems.length,
+                                separatorBuilder: (_, __) => Gap(10.h),
+                                itemBuilder: (context, index) {
+                                  final item = filteredItems[index];
+                                  return CheckboxListTile(
+                                    checkboxShape: const CircleBorder(),
+                                    value: selectedCheckboxIndex == index,
+                                    side: const BorderSide(
+                                        color: AppColors.primary, width: 2),
+                                    onChanged: (bool? isSelected) {
+                                      if (isSelected == true) {
+                                        setModalState(() {
+                                          selectedCheckboxIndex = index;
+                                          resultController.text =
+                                              allItems[index];
+                                        });
 
-                                // Vérification du montage avant d'entrer dans Future.delayed
-                                if (context.mounted) {
-                                  Future.delayed(
-                                    const Duration(milliseconds: 300),
-                                    () {
-                                      if (context.mounted) {
-                                        context.router.popForced();
+                                        // Vérification du montage avant d'entrer dans Future.delayed
+                                        if (context.mounted) {
+                                          Future.delayed(
+                                            const Duration(milliseconds: 300),
+                                            () {
+                                              if (context.mounted) {
+                                                context.router.popForced();
+                                              }
+                                            },
+                                          );
+                                        }
+                                      } else {
+                                        setModalState(() {
+                                          selectedCheckboxIndex = null;
+                                          resultController.clear();
+                                        });
                                       }
                                     },
+                                    title: Text(
+                                      item,
+                                      style: context.textTheme.bodyMedium
+                                          ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   );
-                                }
-                              } else {
-                                setModalState(() {
-                                  selectedCheckboxIndex = null;
-                                  resultController.clear();
-                                });
-                              }
-                            },
-                            title: Text(
-                              item,
-                              style: context.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                                },
+                              )
+                            : const Center(child: CircularProgressIndicator()))
                   ],
                 ),
           );
         },
       ),
     );
+    return 3;
   }
 }

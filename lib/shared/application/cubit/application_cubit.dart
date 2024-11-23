@@ -16,9 +16,10 @@ class ApplicationCubit extends Cubit<ApplicationState> {
     final prefs = await pref;
     if (userModel != null) {
       emit(ApplicationStateInitial(user: userModel));
+      prefs.setString('token', userModel.id!);
     }
-    final user = await _repository.getUser(prefs.getString('token')!);
-    emit(ApplicationStateInitial(user: user));
+
+    // emit(ApplicationStateInitial(user: user!));
   }
 
   dynamic deposit(

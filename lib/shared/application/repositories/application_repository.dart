@@ -10,7 +10,7 @@ class ApplicationRepository {
   final Future<SharedPreferences> prefs;
 
   ApplicationRepository()
-      : dio = getIt.get<Dio>(),
+      : dio = getIt.get<Dio>(instanceName: 'accountApi'),
         prefs = getIt.get<Future<SharedPreferences>>();
 
   deposit(

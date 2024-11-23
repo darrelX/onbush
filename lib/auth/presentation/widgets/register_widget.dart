@@ -1,14 +1,17 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
+import 'package:onbush/auth/presentation/pages/auth_screen.dart';
+import 'package:onbush/service_locator.dart';
 import 'package:onbush/shared/extensions/context_extensions.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 import 'package:onbush/shared/widget/app_bottom_sheet.dart';
-import 'package:onbush/shared/widget/app_button.dart';
 import 'package:onbush/shared/widget/app_input.dart';
 
 class RegisterWidget extends StatefulWidget {
@@ -20,7 +23,7 @@ class RegisterWidget extends StatefulWidget {
   final TextEditingController majorStudyController;
   final TextEditingController emailController;
   final TextEditingController userNameController;
-
+  final List<int> listId;
   final TextEditingController studentIdController;
 
   const RegisterWidget(
@@ -33,29 +36,22 @@ class RegisterWidget extends StatefulWidget {
       required this.majorStudyController,
       required this.studentIdController,
       required this.emailController,
-      required this.userNameController});
+      required this.userNameController,
+      required this.listId});
 
   @override
-  State<RegisterWidget> createState() => _RegisterWidgetState();
+  State<RegisterWidget> createState() => RegisterWidgetState();
 }
 
-class _RegisterWidgetState extends State<RegisterWidget> {
+class RegisterWidgetState extends State<RegisterWidget> {
   DateTime? _selectedDate;
   int gender = 1;
   PhoneNumber? _number = PhoneNumber(isoCode: "CM");
-  String _isoCode = "";
-
   final List<String> levels = ["1", "2", "3", "4", "5"];
-  final List<String> specialities = [
-    "Genie Electrique",
-    "Genie Mecanique",
-    " Genie Energetique"
-  ];
+  bool _isok = false;
 
-  final List<String> school = [
-    "Ecole Nationale Superieure de Polytechnique de Douala",
-    "Institut Universitaire de la Cote"
-  ];
+  // final _cubit = getIt.get<AuthCubit>();
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -73,12 +69,12 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     }
   }
 
-  Future<void> _bottomSheetSelect(
+  _bottomSheetSelect(
     BuildContext context, {
     String? title,
     required List<String> allItems,
     required TextEditingController controller,
-  }) async {
+  }) {
     AppBottomSheet.showSearchBottomSheet(
         allItems: allItems,
         context: context,
@@ -98,236 +94,250 @@ class _RegisterWidgetState extends State<RegisterWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Text(
-            "Crée ton compte en un instant et commence à apprendre dès maintenant.",
-            style: context.textTheme.bodyLarge!
-                .copyWith(fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-          Gap(15.h),
-          AppInput(
-            controller: widget.userNameController,
-            hint: 'Noms et prenoms',
-            labelColors: AppColors.black.withOpacity(0.7),
-            keyboardType: TextInputType.name,
-            validators: [
-              FormBuilderValidators.required(
-                errorText: 'Entrer votre noms et prenoms',
-              ),
-              // FormBuilderValidators.()
-            ],
-          ),
-          Gap(15.h),
-          AppInput(
-            controller: widget.emailController,
-            // label: 'Tel',
-            hint: 'Adresse email',
-            labelColors: AppColors.black.withOpacity(0.7),
-            keyboardType: TextInputType.emailAddress,
-            autofillHints: const [AutofillHints.email],
-
-            validators: [
-              FormBuilderValidators.required(
-                errorText: 'Entrer votre adresse email',
-              ),
-              FormBuilderValidators.email(errorText: "E-mail est requis")
-              // FormBuilderValidators.()
-            ],
-          ),
-          Gap(15.h),
-          InternationalPhoneNumberInput(
-              onInputChanged: (PhoneNumber value) {
-                setState(() {
-                  _number = value;
-                });
-              },
-              initialValue: _number,
-              selectorConfig: const SelectorConfig(
-                selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
-                useBottomSheetSafeArea: true,
-                setSelectorButtonAsPrefixIcon: true,
-                leadingPadding: 10,
-              ),
-              ignoreBlank: false,
-              autofillHints: const [AutofillHints.telephoneNumber],
-              inputDecoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.grey.shade500,
-                          style: BorderStyle.solid),
-                      borderRadius: BorderRadius.circular(10.r)),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.grey.shade500,
-                          style: BorderStyle.solid),
-                      borderRadius: BorderRadius.circular(10.r)),
-                  disabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.grey.shade500,
-                          style: BorderStyle.solid),
-                      borderRadius: BorderRadius.circular(10.r)),
-                  // enabledBorder: InputBorder.none,
-                  hintStyle: TextStyle(color: Colors.grey.shade500),
-                  hintText: "Numero de telephone"),
-              autoValidateMode: AutovalidateMode.onUserInteraction,
-              // selectorTextStyle: TextStyle(color: Colors.grey.shade500),
-              // textStyle: TextStyle(color: Colors.grey.shade500),
-
-              textFieldController: widget.phoneController,
-              // formatInput: true,
-              keyboardType: const TextInputType.numberWithOptions(
-                  signed: true, decimal: true),
-              inputBorder: InputBorder.none),
-          Gap(15.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return BlocConsumer<AuthCubit, AuthState>(
+      // bloc: _cubit,
+      listener: (context, state) {},
+      builder: (context, state) {
+        return SingleChildScrollView(
+          child: Column(
             children: [
-              AppInput(
-                  width: 150.w,
-                  controller: widget.birthdayController,
-                  hint: "DD/MM/AA",
-                  readOnly: true,
-                  onTap: () => _selectDate(context),
-                  validators: [
-                    (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez sélectionner votre date de naissance';
-                      }
-                      return null;
-                    },
-                  ]),
-              AppInput(
-                controller: widget.genderController,
-                hint: 'Gender',
-                width: 150.w,
-                keyboardType: TextInputType.none,
-                readOnly: true,
-                onTap: () {
-                  AppBottomSheet.showModelBottomSheet(
-                    context: context,
-                    child: Column(
-                      children: [
-                        ListTile(
-                          title: const Text("male"),
-                          selected: gender == 1,
-                          onTap: () {
-                            setState(() {
-                              gender = 1;
-                              widget.genderController.text = "male";
-                              context.router.maybePop();
-                            });
-                          },
-                        ),
-                        ListTile(
-                          title: const Text("female"),
-                          selected: gender == 0,
-                          onTap: () {
-                            setState(() {
-                              gender = 0;
-                              widget.genderController.text = "female";
-                              context.router.maybePop();
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                validators: [
-                  FormBuilderValidators.required(
-                    errorText: 'Gender is required',
-                  ),
-                ],
-                suffixIcon: const Icon(Icons.keyboard_arrow_down_outlined),
+              Text(
+                "Crée ton compte en un instant et commence à apprendre dès maintenant.",
+                style: context.textTheme.bodyLarge!
+                    .copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
-            ],
-          ),
-          Gap(15.h),
-          AppInput(
-            controller: widget.schoolController,
-            hint: 'Choisir votre ecole/universite',
-            labelColors: AppColors.black.withOpacity(0.7),
-            readOnly: true,
-            onTap: () => _bottomSheetSelect(context,
-                title: "Selectionner l'ecole",
-                allItems: school,
-                controller: widget.schoolController),
-            // keyboardType: TextInputType.phone,
-
-            validators: [
-              FormBuilderValidators.required(
-                errorText: "Entrer l'ecole",
-              ),
-              // FormBuilderValidators.()
-            ],
-          ),
-          Gap(15.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+              Gap(15.h),
               AppInput(
-                controller: widget.academicLevelController,
-                width: 150.w,
-                hint: 'Choisir votre niveau',
-                labelColors: AppColors.black.withOpacity(0.7),
-                readOnly: true,
-                onTap: () => _bottomSheetSelect(context,
-                    allItems: levels,
-                    controller: widget.academicLevelController,
-                    title: "Selectionner le niveau"),
-                validators: [
-                  FormBuilderValidators.required(
-                    errorText: "Entrer votre niveau",
-                  ),
-                  // FormBuilderValidators.()
-                ],
-              ),
-              AppInput(
-                width: 150.w,
-
-                controller: widget.studentIdController,
-                // label: 'Tel',
-                hint: 'Matricule',
+                controller: widget.userNameController,
+                hint: 'Noms et prenoms',
                 labelColors: AppColors.black.withOpacity(0.7),
                 keyboardType: TextInputType.name,
                 validators: [
                   FormBuilderValidators.required(
-                    errorText: 'Entrer votre matricule',
+                    errorText: 'Entrer votre noms et prenoms',
                   ),
                   // FormBuilderValidators.()
                 ],
               ),
-            ],
-          ),
-          Gap(15.h),
-          AppInput(
-            controller: widget.majorStudyController,
-            hint: 'Choisir votre specialite',
-            labelColors: AppColors.black.withOpacity(0.7),
-            readOnly: true,
-            onTap: () => _bottomSheetSelect(context,
-                allItems: specialities,
-                title: "Selectionner la filiere",
-                controller: widget.majorStudyController),
-            // keyboardType: TextInputType.phone,
-
-            validators: [
-              FormBuilderValidators.required(
-                errorText: "Entrer votre specialite",
+              Gap(15.h),
+              AppInput(
+                controller: widget.emailController,
+                // label: 'Tel',
+                hint: 'Adresse email',
+                labelColors: AppColors.black.withOpacity(0.7),
+                keyboardType: TextInputType.emailAddress,
+                autofillHints: const [AutofillHints.email],
+                validators: [
+                  FormBuilderValidators.required(
+                    errorText: 'Entrer votre adresse email',
+                  ),
+                  FormBuilderValidators.email(errorText: "E-mail est requis")
+                  // FormBuilderValidators.()
+                ],
               ),
-              // FormBuilderValidators.()
+              Gap(15.h),
+              InternationalPhoneNumberInput(
+                  onInputChanged: (PhoneNumber value) {
+                    _number = value;
+                    // });
+                  },
+                  initialValue: _number,
+                  selectorConfig: const SelectorConfig(
+                    selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+                    useBottomSheetSafeArea: true,
+                    setSelectorButtonAsPrefixIcon: true,
+                    leadingPadding: 10,
+                  ),
+                  ignoreBlank: false,
+                  autofillHints: const [AutofillHints.telephoneNumber],
+                  inputDecoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Colors.grey.shade500,
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.circular(10.r)),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Colors.grey.shade500,
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.circular(10.r)),
+                      disabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Colors.grey.shade500,
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.circular(10.r)),
+                      // enabledBorder: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey.shade500),
+                      hintText: "Numero de telephone"),
+                  autoValidateMode: AutovalidateMode.onUserInteraction,
+                  // selectorTextStyle: TextStyle(color: Colors.grey.shade500),
+                  // textStyle: TextStyle(color: Colors.grey.shade500),
+
+                  textFieldController: widget.phoneController,
+                  // formatInput: true,
+                  keyboardType: const TextInputType.numberWithOptions(
+                      signed: true, decimal: true),
+                  inputBorder: InputBorder.none),
+              Gap(15.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AppInput(
+                      width: 150.w,
+                      controller: widget.birthdayController,
+                      hint: "DD/MM/AA",
+                      readOnly: true,
+                      onTap: () => _selectDate(context),
+                      validators: [
+                        (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez sélectionner votre date de naissance';
+                          }
+                          return null;
+                        },
+                      ]),
+                  AppInput(
+                    controller: widget.genderController,
+                    hint: 'Gender',
+                    width: 150.w,
+                    keyboardType: TextInputType.none,
+                    readOnly: true,
+                    onTap: () {
+                      AppBottomSheet.showBottomSheet(
+                        context: context,
+                        child: Column(
+                          children: [
+                            ListTile(
+                              title: const Text("male"),
+                              selected: gender == 1,
+                              onTap: () {
+                                setState(() {
+                                  gender = 1;
+                                  widget.genderController.text = "male";
+                                  context.router.maybePop();
+                                });
+                              },
+                            ),
+                            ListTile(
+                              title: const Text("female"),
+                              selected: gender == 0,
+                              onTap: () {
+                                setState(() {
+                                  gender = 0;
+                                  widget.genderController.text = "female";
+                                  context.router.maybePop();
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    validators: [
+                      FormBuilderValidators.required(
+                        errorText: 'Gender is required',
+                      ),
+                    ],
+                    suffixIcon: const Icon(Icons.keyboard_arrow_down_outlined),
+                  ),
+                ],
+              ),
+              Gap(15.h),
+              AppInput(
+                controller: widget.schoolController,
+                hint: 'Choisir votre ecole/universite',
+                labelColors: AppColors.black.withOpacity(0.7),
+                readOnly: true,
+                onTap: () async {
+                  await context.read<AuthCubit>().allColleges();
+                  if (!context.mounted) return;
+                  _bottomSheetSelect(context,
+                      title: "Selectionner l'ecole",
+                      allItems: context
+                          .read<AuthCubit>()
+                          .listAllColleges
+                          .map((e) => e.name!)
+                          .toList(),
+                      controller: widget.schoolController);
+                },
+                validators: [
+                  FormBuilderValidators.required(
+                    errorText: "Entrer l'ecole",
+                  ),
+                  // FormBuilderValidators.()
+                ],
+              ),
+              Gap(15.h),
+              AppInput(
+                controller: widget.majorStudyController,
+                hint: 'Choisir votre specialite',
+                labelColors: AppColors.black.withOpacity(0.7),
+                readOnly: true,
+                onTap: () async {
+                  await context.read<AuthCubit>().allSpecialities(schoolId: 1);
+
+                  _bottomSheetSelect(context,
+                      allItems: context
+                          .read<AuthCubit>()
+                          .listAllSpecialities
+                          .map((e) => e.name!)
+                          .toList(),
+                      title: "Selectionner la filiere",
+                      controller: widget.majorStudyController);
+                },
+                validators: [
+                  FormBuilderValidators.required(
+                    errorText: "Entrer votre specialite",
+                  ),
+                  // FormBuilderValidators.()
+                ],
+              ),
+              Gap(15.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppInput(
+                    controller: widget.academicLevelController,
+                    width: 150.w,
+                    hint: 'Choisir votre niveau',
+                    labelColors: AppColors.black.withOpacity(0.7),
+                    readOnly: true,
+                    onTap: () {
+                      _bottomSheetSelect(context,
+                          allItems: levels,
+                          controller: widget.academicLevelController,
+                          title: "Selectionner le niveau");
+                    },
+                    validators: [
+                      FormBuilderValidators.required(
+                        errorText: "Entrer votre niveau",
+                      ),
+                    ],
+                  ),
+                  AppInput(
+                    width: 150.w,
+                    controller: widget.studentIdController,
+                    hint: 'Matricule',
+                    labelColors: AppColors.black.withOpacity(0.7),
+                    keyboardType: TextInputType.name,
+                    validators: [
+                      FormBuilderValidators.required(
+                        errorText: 'Entrer votre matricule',
+                      ),
+                      // FormBuilderValidators.()
+                    ],
+                  ),
+                ],
+              ),
+              Gap(15.h),
             ],
           ),
-          Gap(15.h),
-          Gap(15.h),
-        ],
-      ),
+        );
+      },
     );
   }
 }

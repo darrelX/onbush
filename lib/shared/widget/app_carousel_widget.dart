@@ -32,7 +32,7 @@ class AppCarouselWidget extends StatelessWidget {
             aspectRatio: aspectRatio,
             enableInfiniteScroll: enableInfiniteScroll,
             height: height ?? 160.h,
-            enlargeFactor: 0.01,
+            // enlargeFactor: 0.3,
             viewportFraction: viewportFraction,
             padEnds: false));
   }

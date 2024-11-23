@@ -44,7 +44,7 @@ class _AppInitScreenState extends State<AppInitScreen> {
       body: BlocListener<AuthCubit, AuthState>(
         bloc: _cubit,
         listener: (context, state) {
-          if (state is CheckAuthStateFailure) {
+          if (state is CheckAuthStateFailure || state is AuthInitial) {
             context.router.pushAndPopUntil(
               const AuthRoute(),
               predicate: (route) => false,
@@ -52,9 +52,13 @@ class _AppInitScreenState extends State<AppInitScreen> {
           }
 
           if (state is CheckAuthStateSuccess) {
-            getIt.get<ApplicationCubit>().setUser(state.user);
-            context.router.pushAndPopUntil(
-              const ApplicationRoute(),
+            // getIt.get<ApplicationCubit>().setUser(state.user);
+            // context.router.pushAndPopUntil(
+            //   const ApplicationRoute(),
+            //   predicate: (route) => false,
+            // );
+              context.router.pushAndPopUntil(
+              const AuthRoute(),
               predicate: (route) => false,
             );
           }

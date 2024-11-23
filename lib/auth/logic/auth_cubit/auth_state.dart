@@ -9,6 +9,9 @@ sealed class AuthState extends Equatable {
 
 final class AuthInitial extends AuthState {
   const AuthInitial();
+
+  @override
+  List<Object> get props => [];
 }
 
 final class LoginLoading extends AuthState {}
@@ -37,10 +40,9 @@ final class RegisterFailure extends AuthState {
 }
 
 final class RegisterSuccess extends AuthState {
-  final UserModel user;
-  const RegisterSuccess({required this.user});
+  const RegisterSuccess();
   @override
-  List<Object> get props => [user];
+  List<Object> get props => [];
 }
 
 final class CheckAuthStateLoading extends AuthState {}
@@ -48,15 +50,16 @@ final class CheckAuthStateLoading extends AuthState {}
 final class CheckAuthStateFailure extends AuthState {
   final String message;
   const CheckAuthStateFailure({required this.message});
+
   @override
   List<Object> get props => [message];
 }
 
 final class CheckAuthStateSuccess extends AuthState {
-  final UserModel user;
-  const CheckAuthStateSuccess({required this.user});
+  // final UserModel user;
+  const CheckAuthStateSuccess();
   @override
-  List<Object> get props => [user];
+  List<Object> get props => [];
 }
 
 final class AuthOnboardingState extends AuthState {
@@ -64,4 +67,30 @@ final class AuthOnboardingState extends AuthState {
 
   @override
   List<Object> get props => [];
+}
+
+final class SearchStateLoading extends AuthState {
+  const SearchStateLoading();
+
+  @override
+  List<Object> get props => [];
+}
+
+final class SearchStateFailure extends AuthState {
+  final String message;
+  const SearchStateFailure({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+final class SearchStateSuccess extends AuthState {
+  final List<CollegeModel> listCollegeModel;
+  final List<SpecialtieModel> listSpecialtieModel;
+
+  const SearchStateSuccess(
+      {required this.listCollegeModel, required this.listSpecialtieModel});
+
+  @override
+  List<Object> get props => [listCollegeModel, listSpecialtieModel];
 }
