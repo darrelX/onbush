@@ -10,15 +10,20 @@ class OtpRepository {
       : _dio = getIt.get<Dio>(instanceName: 'accountApi'),
         _prefs = getIt<Future<SharedPreferences>>();
 
-  Future<void> submit(
-      {required String code,
-      required String email,
-      required String phoneNumber,
-      role}) async {
+  Future<void> submit({
+    required int code,
+    required String email,
+    required String device,
+    required String? role,
+  }) async {
     try {
       final Response response = await _dio.post('/auth/register/confirm/user',
-          data: {"phone_number": phoneNumber, "code": code, "email": email});
-
+          data: {
+            "appareil": device,
+            "code": code,
+            "email": email,
+            "role": role ?? "etudiant"
+          });
     } catch (e) {
       rethrow;
     }

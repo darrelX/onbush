@@ -19,7 +19,7 @@ final class PaymentLoading extends PaymentState {
 
   @override
   List<Object> get props => [];
-}
+} 
 
 final class PaymentSuccess extends PaymentState {
   final String transactionId;

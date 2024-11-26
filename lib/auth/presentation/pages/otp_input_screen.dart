@@ -19,13 +19,14 @@ import 'package:onbush/shared/widget/app_snackbar.dart';
 class OTPInputScreen extends StatefulWidget {
   final String? number;
   final String email;
-  final bool hasForgottenPassword;
+  final String device;
 
-  const OTPInputScreen(
-      {super.key,
-      required this.email,
-      required this.number,
-      this.hasForgottenPassword = true});
+  const OTPInputScreen({
+    super.key,
+    required this.email,
+    required this.device,
+    required this.number,
+  });
 
   @override
   State createState() => _OtpInputScreenState();
@@ -99,11 +100,10 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
             });
           }
           if (state is OtpVerificationSuccess) {
-            context.router.pushAll([PriceRoute(email: widget.email)]);
+            context.router.push(PriceRoute(email: widget.email));
           }
         },
         builder: (context, state) {
-          print(state);
           if (state is OtpLoadingState) {
             return Container(
               decoration: const BoxDecoration(
@@ -213,16 +213,12 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                               onPressed: () {
                                 if (_formField.currentState!.validate()) {
                                   context.read<OtpBloc>().add(OtpSubmitted(
-                                      otp: _codeController.text
-                                          .replaceAll(' ', ''),
-                                      phoneNumber: widget.number!,
+                                      otp: int.parse(_codeController.text
+                                          .replaceAll(' ', '')),
+                                      device: widget.device,
                                       email: widget.email));
                                   setState(() {
-                                    _isExpired = !_isExpired;
-                                    _error = null;
                                     _codeController.clear();
-                                    // context.read<OtpBloc>().add(
-                                    //     OtpReset(phoneNumber: widget.number!));
                                   });
                                 }
                               }),

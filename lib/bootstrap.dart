@@ -7,6 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
 import 'package:onbush/service_locator.dart';
+import 'package:onbush/shared/device_info/device_info.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:path_provider/path_provider.dart';
 
 _setupApplication() async {
@@ -19,7 +22,9 @@ _setupApplication() async {
       yield LicenseEntryWithLineBreaks(['google_fonts'], license);
     },
   );
-  //  final directory = await getApplicationDocumentsDirectory();
+  final directory = await getApplicationDocumentsDirectory();
+  final prefs = await getIt.get<Future<SharedPreferences>>();
+  prefs.setString('deviceId', "hey");
 }
 
 bootstrap({
@@ -29,9 +34,8 @@ bootstrap({
     () async {
       WidgetsFlutterBinding.ensureInitialized();
       await dotenv.load(fileName: ".env");
-      await _setupApplication();
       await setupLocator();
-
+      await _setupApplication();
       runApp(await builder.call());
     },
     (error, stack) {

@@ -6,6 +6,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:onbush/auth/data/models/college_model.dart';
 import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
 import 'package:onbush/auth/presentation/pages/auth_screen.dart';
 import 'package:onbush/service_locator.dart';
@@ -13,6 +14,7 @@ import 'package:onbush/shared/extensions/context_extensions.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 import 'package:onbush/shared/widget/app_bottom_sheet.dart';
 import 'package:onbush/shared/widget/app_input.dart';
+import 'package:onbush/shared/widget/app_snackbar.dart';
 
 class RegisterWidget extends StatefulWidget {
   final TextEditingController phoneController;
@@ -23,7 +25,7 @@ class RegisterWidget extends StatefulWidget {
   final TextEditingController majorStudyController;
   final TextEditingController emailController;
   final TextEditingController userNameController;
-  final List<int> listId;
+  final Map<String, int> listId;
   final TextEditingController studentIdController;
 
   const RegisterWidget(
@@ -47,10 +49,6 @@ class RegisterWidgetState extends State<RegisterWidget> {
   DateTime? _selectedDate;
   int gender = 1;
   PhoneNumber? _number = PhoneNumber(isoCode: "CM");
-  final List<String> levels = ["1", "2", "3", "4", "5"];
-  bool _isok = false;
-
-  // final _cubit = getIt.get<AuthCubit>();
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -69,13 +67,13 @@ class RegisterWidgetState extends State<RegisterWidget> {
     }
   }
 
-  _bottomSheetSelect(
+  Future<int> _bottomSheetSelect(
     BuildContext context, {
     String? title,
-    required List<String> allItems,
+    required Map<int, String> allItems,
     required TextEditingController controller,
-  }) {
-    AppBottomSheet.showSearchBottomSheet(
+  }) async {
+    return await AppBottomSheet.showSearchBottomSheet(
         allItems: allItems,
         context: context,
         title: title,
@@ -94,9 +92,38 @@ class RegisterWidgetState extends State<RegisterWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final _authCubit = context.read<AuthCubit>();
+
     return BlocConsumer<AuthCubit, AuthState>(
       // bloc: _cubit,
-      listener: (context, state) {},
+      listener: (context, state) async {
+        if (state is SearchStateSuccess) {
+          if (_authCubit.currentRequest == "colleges") {
+            widget.listId['college'] = await _bottomSheetSelect(
+              context,
+              title: "Sélectionner l'école",
+              allItems: state.listCollegeModel.asMap().map(
+                    (key, value) => MapEntry(value.id!, value.name!),
+                  ),
+              controller: widget.schoolController,
+            );
+          } else if (_authCubit.currentRequest == "specialities") {
+            widget.listId['specialitie'] = await _bottomSheetSelect(
+              context,
+              title: "Sélectionner l'école",
+              allItems: state.listSpecialtieModel.asMap().map(
+                    (key, value) => MapEntry(value.id!, value.name!),
+                  ),
+              controller: widget.majorStudyController,
+            );
+          }
+        }
+        if (state is SearchStateFailure) {
+          if (!context.mounted) return;
+          AppSnackBar.showError(
+              message: "Probleme de connexion", context: context);
+        }
+      },
       builder: (context, state) {
         return SingleChildScrollView(
           child: Column(
@@ -184,6 +211,7 @@ class RegisterWidgetState extends State<RegisterWidget> {
               Gap(15.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppInput(
                       width: 150.w,
@@ -207,34 +235,33 @@ class RegisterWidgetState extends State<RegisterWidget> {
                     readOnly: true,
                     onTap: () {
                       AppBottomSheet.showBottomSheet(
-                        context: context,
-                        child: Column(
-                          children: [
-                            ListTile(
-                              title: const Text("male"),
-                              selected: gender == 1,
-                              onTap: () {
-                                setState(() {
-                                  gender = 1;
-                                  widget.genderController.text = "male";
-                                  context.router.maybePop();
-                                });
-                              },
-                            ),
-                            ListTile(
-                              title: const Text("female"),
-                              selected: gender == 0,
-                              onTap: () {
-                                setState(() {
-                                  gender = 0;
-                                  widget.genderController.text = "female";
-                                  context.router.maybePop();
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      );
+                          context: context,
+                          builder: Column(
+                            children: [
+                              ListTile(
+                                title: const Text("male"),
+                                selected: gender == 1,
+                                onTap: () {
+                                  setState(() {
+                                    gender = 1;
+                                    widget.genderController.text = "male";
+                                    context.router.maybePop();
+                                  });
+                                },
+                              ),
+                              ListTile(
+                                title: const Text("female"),
+                                selected: gender == 0,
+                                onTap: () {
+                                  setState(() {
+                                    gender = 0;
+                                    widget.genderController.text = "female";
+                                    context.router.maybePop();
+                                  });
+                                },
+                              ),
+                            ],
+                          ));
                     },
                     validators: [
                       FormBuilderValidators.required(
@@ -254,14 +281,6 @@ class RegisterWidgetState extends State<RegisterWidget> {
                 onTap: () async {
                   await context.read<AuthCubit>().allColleges();
                   if (!context.mounted) return;
-                  _bottomSheetSelect(context,
-                      title: "Selectionner l'ecole",
-                      allItems: context
-                          .read<AuthCubit>()
-                          .listAllColleges
-                          .map((e) => e.name!)
-                          .toList(),
-                      controller: widget.schoolController);
                 },
                 validators: [
                   FormBuilderValidators.required(
@@ -277,16 +296,9 @@ class RegisterWidgetState extends State<RegisterWidget> {
                 labelColors: AppColors.black.withOpacity(0.7),
                 readOnly: true,
                 onTap: () async {
-                  await context.read<AuthCubit>().allSpecialities(schoolId: 1);
-
-                  _bottomSheetSelect(context,
-                      allItems: context
-                          .read<AuthCubit>()
-                          .listAllSpecialities
-                          .map((e) => e.name!)
-                          .toList(),
-                      title: "Selectionner la filiere",
-                      controller: widget.majorStudyController);
+                  await context
+                      .read<AuthCubit>()
+                      .allSpecialities(schoolId: widget.listId['college']!);
                 },
                 validators: [
                   FormBuilderValidators.required(
@@ -306,9 +318,9 @@ class RegisterWidgetState extends State<RegisterWidget> {
                     hint: 'Choisir votre niveau',
                     labelColors: AppColors.black.withOpacity(0.7),
                     readOnly: true,
-                    onTap: () {
-                      _bottomSheetSelect(context,
-                          allItems: levels,
+                    onTap: () async {
+                      widget.listId['level'] = await _bottomSheetSelect(context,
+                          allItems: {1: "1", 2: "2", 3: "3", 4: "4", 5: "5"},
                           controller: widget.academicLevelController,
                           title: "Selectionner le niveau");
                     },

@@ -82,8 +82,8 @@ abstract class _$AppRouter extends RootStackRouter {
         child: OTPInputScreen(
           key: args.key,
           email: args.email,
+          device: args.device,
           number: args.number,
-          hasForgottenPassword: args.hasForgottenPassword,
         ),
       );
     },
@@ -258,16 +258,16 @@ class OTPInputRoute extends PageRouteInfo<OTPInputRouteArgs> {
   OTPInputRoute({
     Key? key,
     required String email,
+    required String device,
     required String? number,
-    bool hasForgottenPassword = true,
     List<PageRouteInfo>? children,
   }) : super(
           OTPInputRoute.name,
           args: OTPInputRouteArgs(
             key: key,
             email: email,
+            device: device,
             number: number,
-            hasForgottenPassword: hasForgottenPassword,
           ),
           initialChildren: children,
         );
@@ -282,21 +282,21 @@ class OTPInputRouteArgs {
   const OTPInputRouteArgs({
     this.key,
     required this.email,
+    required this.device,
     required this.number,
-    this.hasForgottenPassword = true,
   });
 
   final Key? key;
 
   final String email;
 
-  final String? number;
+  final String device;
 
-  final bool hasForgottenPassword;
+  final String? number;
 
   @override
   String toString() {
-    return 'OTPInputRouteArgs{key: $key, email: $email, number: $number, hasForgottenPassword: $hasForgottenPassword}';
+    return 'OTPInputRouteArgs{key: $key, email: $email, device: $device, number: $number}';
   }
 }
 

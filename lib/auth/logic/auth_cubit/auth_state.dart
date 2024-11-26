@@ -14,7 +14,11 @@ final class AuthInitial extends AuthState {
   List<Object> get props => [];
 }
 
-final class LoginLoading extends AuthState {}
+final class LoginLoading extends AuthState {
+  const LoginLoading();
+    @override
+  List<Object> get props => [];
+}
 
 final class LoginFailure extends AuthState {
   final String message;
@@ -45,7 +49,12 @@ final class RegisterSuccess extends AuthState {
   List<Object> get props => [];
 }
 
-final class CheckAuthStateLoading extends AuthState {}
+final class CheckAuthStateLoading extends AuthState {
+  const CheckAuthStateLoading();
+
+  @override
+  List<Object> get props => [];
+}
 
 final class CheckAuthStateFailure extends AuthState {
   final String message;

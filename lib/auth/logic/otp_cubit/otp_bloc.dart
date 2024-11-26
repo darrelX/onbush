@@ -34,7 +34,8 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
       await _repository.submit(
         email: event.email,
         code: event.otp,
-        phoneNumber: event.phoneNumber,
+        device: event.device,
+        role: event.role
       );
       // if (status) {
       //   _timer?.cancel();
@@ -108,10 +109,10 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
     if (state is OtpExpired || state is OtpVerificationFailure) {
       emit(const OtpVerifying(countDown: 0));
       try {
-        await _repository.submit(
-            phoneNumber: event.phoneNumber,
-            email: event.email,
-            code: event.code);
+        // await _repository.submit(
+        //     phoneNumber: event.phoneNumber,
+        //     email: event.email,
+        //     code: event.code);
         _startTimer(emit);
         emit(OtpSentInProgress(countDown: _currentDuration));
       } catch (e) {

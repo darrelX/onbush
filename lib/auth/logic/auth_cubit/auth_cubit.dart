@@ -18,6 +18,7 @@ class AuthCubit extends Cubit<AuthState> {
   final Future<SharedPreferences> _prefs;
   final List<CollegeModel> _listAllColleges = [];
   final List<SpecialtieModel> _listAllSpecialities = [];
+  String? currentRequest;
 
   List<CollegeModel> get listAllColleges => _listAllColleges;
   List<SpecialtieModel> get listAllSpecialities => _listAllSpecialities;
@@ -31,7 +32,7 @@ class AuthCubit extends Cubit<AuthState> {
     required String appareil,
     required String email,
   }) async {
-    emit(LoginLoading());
+    emit(const LoginLoading());
     try {
       var user = await _repository.login(
         appareil: appareil,
@@ -46,7 +47,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  register({
+  Future<void> register({
     required String name,
     required String device,
     required String phone,
@@ -93,7 +94,7 @@ class AuthCubit extends Cubit<AuthState> {
     final String? token = storage.getString('token');
 
     try {
-      emit(CheckAuthStateLoading());
+      emit(const CheckAuthStateLoading());
 
       if (token != null) {
         // var user = await _repository.getUser();
@@ -111,6 +112,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> allColleges() async {
     _listAllColleges.clear();
+    currentRequest = "colleges";
     emit(const SearchStateLoading());
     try {
       _listAllColleges.addAll(List.from(await _repository.allColleges()));
@@ -124,6 +126,8 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> allSpecialities({required int schoolId}) async {
     _listAllSpecialities.clear();
+    currentRequest = "specialities";
+
     emit(const SearchStateLoading());
     try {
       _listAllSpecialities

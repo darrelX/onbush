@@ -31,6 +31,7 @@ class PaymentCubit extends Cubit<PaymentState> {
           amount: amount,
           sponsorCode: sponsorCode,
           discountCode: discountCode))!;
+      print("darrel $transactionId");
 
       emit(PaymentSuccess(transactionId: transactionId));
     } catch (e) {

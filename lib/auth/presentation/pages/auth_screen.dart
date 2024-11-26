@@ -8,13 +8,16 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
 import 'package:onbush/auth/presentation/widgets/auh_switcher_widget.dart';
 import 'package:onbush/auth/presentation/widgets/register_widget.dart';
+import 'package:onbush/onboarding/pages/price_screen.dart';
 import 'package:onbush/shared/device_info/device_info.dart';
 import 'package:onbush/shared/extensions/context_extensions.dart';
+import 'package:onbush/shared/hash/hash.dart';
 import 'package:onbush/shared/routing/app_router.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 import 'package:onbush/shared/widget/app_button.dart';
 import 'package:onbush/shared/widget/app_input.dart';
 import 'package:onbush/shared/widget/app_snackbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../service_locator.dart';
 import '../../../shared/application/cubit/application_cubit.dart';
@@ -49,12 +52,12 @@ class _AuthScreenState extends State<AuthScreen> {
   final Map<String, dynamic> info = {};
   int _currentIndex = 0;
   bool _isLoading = false;
-  List<int> _listId = [];
+  Map<String, int> _listId = {};
 
   String device = "";
 
   Future<void> deviceInfo() async {
-    device = await _deviceInfo.getInfoDevice("fingerprint");
+    device = encryptToHex(await _deviceInfo.getInfoDevice("fingerprint"));
   }
 
   @override
@@ -72,6 +75,7 @@ class _AuthScreenState extends State<AuthScreen> {
     _genderController.dispose();
     _schoolController.dispose();
     _majorStudyController.dispose();
+    _emailLoginController.dispose();
     _birthdayController.dispose();
     super.dispose();
   }
@@ -83,11 +87,12 @@ class _AuthScreenState extends State<AuthScreen> {
       body: BlocConsumer<AuthCubit, AuthState>(
         // bloc: _cubit,
         listener: (context, state) {
+          // print(getIt.get<Future<SharedPreferences>>().);
           if (state is LoginFailure) {
-            AppSnackBar.showError(
-              message: state.message,
-              context: context,
-            );
+            if (state.message == "compte bloque") {
+              context.router.push(PriceRoute(
+                  email: _emailLoginController.text.replaceAll(' ', '')));
+            }
           }
 
           if (state is RegisterFailure) {
@@ -108,6 +113,7 @@ class _AuthScreenState extends State<AuthScreen> {
           if (state is RegisterSuccess) {
             context.router.push(
               OTPInputRoute(
+                  device: device,
                   number: _phoneController.text.replaceAll(' ', ''),
                   email: _emailSignUpController.text.replaceAll(' ', '')),
               // predicate: (route) => false
@@ -251,9 +257,9 @@ class _AuthScreenState extends State<AuthScreen> {
                                                     .split('')
                                                     .join(),
                                             role: 'etudiant',
-                                            academicLevel: 1,
-                                            majorStudy: 1,
-                                            schoolId: 1,
+                                            academicLevel: _listId["level"]!,
+                                            majorStudy: _listId["specialitie"]!,
+                                            schoolId: _listId["college"]!,
                                             studentId: _studentIdController.text
                                                 .replaceAll(' ', ''),
                                           );

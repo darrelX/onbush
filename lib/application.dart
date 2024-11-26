@@ -30,7 +30,7 @@ class _ApplicationState extends State<Application> {
         BlocProvider(
           create: (context) => getIt.get<AuthCubit>(),
         ),
-                BlocProvider(
+        BlocProvider(
           create: (context) => getIt.get<ApplicationCubit>(),
         ),
         BlocProvider(create: (context) => getIt.get<NetworkCubit>()),

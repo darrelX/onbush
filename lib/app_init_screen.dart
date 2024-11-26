@@ -57,7 +57,7 @@ class _AppInitScreenState extends State<AppInitScreen> {
             //   const ApplicationRoute(),
             //   predicate: (route) => false,
             // );
-              context.router.pushAndPopUntil(
+            context.router.pushAndPopUntil(
               const AuthRoute(),
               predicate: (route) => false,
             );
