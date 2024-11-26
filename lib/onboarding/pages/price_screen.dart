@@ -105,16 +105,6 @@ class _PaymentWidgetState extends State<PaymentWidget> {
             }
           });
         }
-
-        // if (state is PaymentFailure) {
-        //   // _timer!.cancel();
-
-        //   AppSnackBar.showError(
-        //     message: state.message,
-        //     context: context,
-        //   );
-        // }
-
         if (state is VerifyingPaymentFailure) {
           // _timer!.cancel();
 
