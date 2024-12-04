@@ -6,8 +6,10 @@ import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
 import 'package:onbush/auth/logic/otp_cubit/otp_bloc.dart';
 import 'package:onbush/l10n/l10n.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import 'package:onbush/my_bloc_observer.dart';
 import 'package:onbush/shared/application/cubit/application_cubit.dart';
 import 'package:onbush/shared/connectivity/bloc/network_cubit.dart';
+import 'package:onbush/shared/routing/my_observer.dart';
 
 import 'service_locator.dart';
 import 'shared/routing/app_router.dart';
@@ -40,6 +42,7 @@ class _ApplicationState extends State<Application> {
         designSize: const Size(375, 812),
         child: MaterialApp.router(
           title: 'onbush',
+          
           localizationsDelegates: const [
             AppLocalizations.delegate, // Add this line
             GlobalMaterialLocalizations.delegate,
@@ -51,7 +54,9 @@ class _ApplicationState extends State<Application> {
           theme: buildLightTheme(),
           locale: const Locale('en'),
           darkTheme: buildLightTheme(),
-          routerConfig: _appRouter.config(),
+          routerConfig: _appRouter.config(
+            navigatorObservers: () => [MyObserver()],
+          ),
           themeMode: ThemeMode.dark,
           builder: (context, child) => _UnFocusWrapper(
             child: child,

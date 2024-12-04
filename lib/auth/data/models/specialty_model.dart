@@ -1,20 +1,20 @@
-class SpecialtieModel {
+class Speciality {
   final int? id;
   final String? name;
   final String? sigle;
   final String? level;
   final int? collegeId;
 
-  const SpecialtieModel(
+  const Speciality(
       {required this.id,
       required this.name,
       required this.sigle,
       required this.level,
       this.collegeId});
 
-  factory SpecialtieModel.fromJson(Map<String, dynamic> json) {
+  factory Speciality.fromJson(Map<String, dynamic> json) {
     print(json);
-    return SpecialtieModel(
+    return Speciality(
         id: json['id'] as int?,
         name: json['nom'] as String?,
         collegeId: json['etablissement_id'] as int?,

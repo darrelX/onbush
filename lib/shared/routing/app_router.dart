@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:onbush/auth/presentation/pages/new_password_screen.dart';
 import 'package:onbush/onboarding/pages/price_screen.dart';
 import 'package:onbush/course/course_screen.dart';
-import 'package:onbush/download/download_screen.dart';
-import 'package:onbush/notification/notification_scren.dart';
+import 'package:onbush/download/pages/download_screen.dart';
+import 'package:onbush/notification/pages/notification_scren.dart';
 import 'package:onbush/onboarding/pages/onboarding_screen.dart';
 import 'package:onbush/profil/pages/ambassador_space_screen.dart';
 import 'package:onbush/profil/pages/language_screen.dart';
@@ -34,6 +34,7 @@ class AppRouter extends _$AppRouter {
             AutoRoute(
               path: '',
               page: HomeRoute.page,
+              
             ),
             AutoRoute(
               path: 'courses',
@@ -75,4 +76,5 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: NotificationRoute.page),
         AutoRoute(page: LanguageRoute.page),
       ];
+  
 }

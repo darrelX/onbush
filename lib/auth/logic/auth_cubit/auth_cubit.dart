@@ -3,11 +3,12 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:onbush/auth/data/models/college_model.dart';
-import 'package:onbush/auth/data/models/specialtie_model.dart';
+import 'package:onbush/auth/data/models/specialty_model.dart';
 import 'package:onbush/auth/data/models/user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:onbush/auth/data/repositories/auth_repository.dart';
 import 'package:onbush/service_locator.dart';
+import 'package:onbush/shared/local/local_storage.dart';
 import 'package:onbush/shared/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,17 +16,17 @@ part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _repository;
-  final Future<SharedPreferences> _prefs;
+  final LocalStorage _prefs;
   final List<CollegeModel> _listAllColleges = [];
-  final List<SpecialtieModel> _listAllSpecialities = [];
+  final List<Speciality> _listAllSpecialities = [];
   String? currentRequest;
 
   List<CollegeModel> get listAllColleges => _listAllColleges;
-  List<SpecialtieModel> get listAllSpecialities => _listAllSpecialities;
+  List<Speciality> get listAllSpecialities => _listAllSpecialities;
 
   AuthCubit()
       : _repository = AuthRepository(),
-        _prefs = getIt.get<Future<SharedPreferences>>(),
+        _prefs = getIt.get<LocalStorage>(),
         super(const AuthInitial());
 
   Future<void> login({
@@ -90,15 +91,13 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> checkAuthState() async {
-    final storage = await _repository.prefs!;
-    final String? token = storage.getString('token');
+    // final storage = await _repository.prefs!;
+    final String? token = _prefs.getString('token');
 
     try {
       emit(const CheckAuthStateLoading());
 
       if (token != null) {
-        // var user = await _repository.getUser();
-        emit(const CheckAuthStateSuccess());
       } else if (token == null) {
         emit(const AuthOnboardingState());
       } else {
@@ -110,6 +109,22 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  Future<void> connexion() async {
+    final String? token = _prefs.getString('device');
+    emit(const CheckAuthStateLoading());
+    try {
+      if (token == null) {
+        emit(const AuthOnboardingState());
+      } else {
+        UserModel user = (await _repository.connexion(appareil: token))!;
+        emit(CheckAuthStateSuccess(user: user));
+      }
+    } on DioException catch (e) {
+      emit(CheckAuthStateFailure(message: Utils.extractErrorMessage(e)));
+    }
+    // emit(const ConnexionSuccess());
+  }
+
   Future<void> allColleges() async {
     _listAllColleges.clear();
     currentRequest = "colleges";
@@ -118,7 +133,7 @@ class AuthCubit extends Cubit<AuthState> {
       _listAllColleges.addAll(List.from(await _repository.allColleges()));
       emit(SearchStateSuccess(
           listCollegeModel: _listAllColleges,
-          listSpecialtieModel: _listAllSpecialities));
+          listSpeciality: _listAllSpecialities));
     } catch (e) {
       emit(SearchStateFailure(message: e.toString()));
     }
@@ -133,11 +148,9 @@ class AuthCubit extends Cubit<AuthState> {
       _listAllSpecialities
           .addAll(List.from(await _repository.allSpecialities(schoolId)));
 
-      print(_listAllSpecialities);
-
       emit(SearchStateSuccess(
           listCollegeModel: _listAllColleges,
-          listSpecialtieModel: _listAllSpecialities));
+          listSpeciality: _listAllSpecialities));
     } catch (e) {
       emit(SearchStateFailure(message: e.toString()));
     }

@@ -11,7 +11,7 @@ class NetworkCubit extends Cubit<NetworkState> {
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   late Status status;
 
-  NetworkCubit() : super(const NetworkInitial(status: Status.connected)) {
+  NetworkCubit() : super(const NetworkState(status: Status.connected)) {
     // Écouter les changements de connectivité
     _initialize();
   }
@@ -27,9 +27,9 @@ class NetworkCubit extends Cubit<NetworkState> {
   // Mise à jour de l'état de connexion
   void _updateConnectionStatus(List<ConnectivityResult> result) {
     if (result.contains(ConnectivityResult.none)) {
-      emit(const NetworkInitial(status: Status.disconnected));
+      emit(const NetworkState(status: Status.disconnected));
     } else {
-      emit(const NetworkInitial(status: Status.connected));
+      emit(const NetworkState(status: Status.connected));
     }
   }
 

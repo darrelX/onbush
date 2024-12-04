@@ -6,8 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
+import 'package:onbush/my_bloc_observer.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/shared/device_info/device_info.dart';
+import 'package:onbush/shared/local/local_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:path_provider/path_provider.dart';
@@ -23,8 +25,6 @@ _setupApplication() async {
     },
   );
   final directory = await getApplicationDocumentsDirectory();
-  final prefs = await getIt.get<Future<SharedPreferences>>();
-  prefs.setString('deviceId', "hey");
 }
 
 bootstrap({
@@ -35,7 +35,9 @@ bootstrap({
       WidgetsFlutterBinding.ensureInitialized();
       await dotenv.load(fileName: ".env");
       await setupLocator();
+      await getIt.get<LocalStorage>().init();
       await _setupApplication();
+      // Bloc.observer = MyBlocObserver();
       runApp(await builder.call());
     },
     (error, stack) {

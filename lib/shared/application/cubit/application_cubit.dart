@@ -1,49 +1,104 @@
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:onbush/auth/data/models/college_model.dart';
+import 'package:onbush/auth/data/models/specialty_model.dart';
 import 'package:onbush/auth/data/models/user_model.dart';
 import 'package:onbush/service_locator.dart';
+import 'package:onbush/shared/application/cubit/data_state.dart';
 import 'package:onbush/shared/application/repositories/application_repository.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:onbush/shared/local/local_storage.dart';
+import 'package:onbush/shared/utils/utils.dart';
 
 part 'application_state.dart';
 
 class ApplicationCubit extends Cubit<ApplicationState> {
   final _repository = ApplicationRepository();
-  final pref = getIt.get<Future<SharedPreferences>>();
-  ApplicationCubit() : super(const ApplicationStateInitial());
+  final pref = getIt.get<LocalStorage>();
 
-  setUser([UserModel? userModel]) async {
-    final prefs = await pref;
-    if (userModel != null) {
-      emit(ApplicationStateInitial(user: userModel));
-      prefs.setString('token', userModel.id!);
+  final List<CollegeModel> _listAllColleges = [];
+  final List<Speciality> _listAllSpecialities = [];
+  String? currentRequest;
+  List<CollegeModel> get listAllColleges => _listAllColleges;
+  List<Speciality> get listAllSpecialities => _listAllSpecialities;
+  late UserModel _userModel;
+  UserModel get userModel => _userModel;
+
+  ApplicationCubit()
+      : super(const ApplicationState(user: null, speciality: DataInitial()));
+
+  setUser([UserModel? user]) async {
+    if (user != null) {
+      _userModel = user;
+      emit(state.copyWith(user: user, speciality: const DataInitial()));
+      pref.setString('token', user.id!);
     }
 
     // emit(ApplicationStateInitial(user: user!));
   }
 
-  dynamic deposit(
-      String method, int amount, int userId, String phoneNumber) async {
-    try {
-      final Map<String, dynamic> response = await _repository.deposit(
-          method: method,
-          amount: amount,
-          userId: userId,
-          phoneNumber: phoneNumber);
-      setUser();
-      if (response['status'] == 0) {
-        emit(const ApplicationStatePending());
-      }
+  //   Future<void> allColleges() async {
+  //   _listAllColleges.clear();
+  //   currentRequest = "colleges";
+  //   emit(const SearchStateLoading());
+  //   try {
+  //     _listAllColleges.addAll(List.from(await _repository.allColleges()));
+  //     emit(SearchStateSuccess(
+  //         listCollegeModel: _listAllColleges,
+  //         listSpeciality: _listAllSpecialities));
+  //   } catch (e) {
+  //     emit(SearchStateFailure(message: e.toString()));
+  //   }
+  // }
 
-      // return status['status'];
-    } catch (e) {
-      emit(const ApplicationStateFailure());
+  // Future<void> allSpecialities({required int schoolId}) async {
+  //   _listAllSpecialities.clear();
+  //   currentRequest = "specialities";
+
+  //   emit(const SearchStateLoading());
+  //   try {
+  //     _listAllSpecialities
+  //         .addAll(List.from(await _repository.allSpecialities(schoolId)));
+
+  //     emit(SearchStateSuccess(
+  //         listCollegeModel: _listAllColleges,
+  //         listSpeciality: _listAllSpecialities));
+  //   } catch (e) {
+  //     emit(SearchStateFailure(message: e.toString()));
+  //   }
+  // }
+
+  Future<void> addSpecialty() async {
+    // emit(const SpecialityLoading());
+    emit(state.copyWith(user: _userModel, speciality: const DataLoading()));
+    try {
+      Speciality speciality =
+          (await _repository.fetchSpecialitie(id: _userModel.majorSchoolId!))!;
+      emit(state.copyWith(
+          user: _userModel, speciality: DataSuccess<Speciality>(data: speciality)));
+    } on DioException catch (e) {
+      emit(state.copyWith(
+          user: _userModel,
+          speciality: DataFailure(message: Utils.extractErrorMessage(e))));
+
+      // emit(SpecialityFailure(message: Utils.extractErrorMessage(e)));
     }
   }
 
-  logout() async {
-    final SharedPreferences prefs =
-        await getIt.get<Future<SharedPreferences>>();
-    prefs.remove('token');
+  Future<void> logout() async {
+    // emit(const LogoutLoading());
+    try {
+      print(pref.getString("token"));
+
+      await _repository.logout(
+          appareil: getIt.get<LocalStorage>().getString('device')!,
+          email: _userModel.email!);
+
+      print(pref.getString("token"));
+      // pref.remove('token');
+      // emit(const LogoutSuccess());
+    } on DioException catch (e) {
+      // emit(LogoutFailure(message: Utils.extractErrorMessage(e)));
+    }
   }
 }

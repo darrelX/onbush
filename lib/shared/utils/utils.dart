@@ -33,11 +33,17 @@ class Utils {
 
       // Vérifie si l'erreur est une exception Dio
       if (error is DioException) {
-        Response response = error.response!;
-        final Map<String, dynamic> data = response.data as Map<String, dynamic>;
+        if (error.type == DioExceptionType.connectionTimeout ||
+            error.type == DioExceptionType.receiveTimeout ||
+            error.type == DioExceptionType.sendTimeout) {
+          return 'La requête a expiré. Veuillez vérifier votre connexion ou réessayer plus tard.';
+        }
+
+        Response? response = error.response;
+        final Map<String, dynamic> data =
+            response!.data as Map<String, dynamic>;
         if (data.containsKey('data')) {
           code = data['data'].toString(); // Récupère le code d'erreur
-         
         }
       } else if (error is Map<String, dynamic> && error.containsKey('data')) {
         code = error['data'].toString(); // Si erreur est un Map directement

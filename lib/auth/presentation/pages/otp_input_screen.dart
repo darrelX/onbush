@@ -33,12 +33,11 @@ class OTPInputScreen extends StatefulWidget {
 }
 
 class _OtpInputScreenState extends State<OTPInputScreen> {
-  String? _currentText;
   final GlobalKey<FormState> _formField = GlobalKey<FormState>();
-  String? _error;
   final TextEditingController _codeController = TextEditingController();
   bool _isExpired = false;
-
+  String? _error;
+  String? _currentText;
   late final OtpBloc _bloc = context.read<OtpBloc>();
 
   String _formatSeconds(int totalSeconds) {
@@ -116,33 +115,33 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
               ),
             );
           }
-          if (state is OtpSendFailure) {
-            return Container(
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(30),
-                  ),
-                  color: Colors.white),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Échec du chargement. Veuillez réessayer."),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: _reFresh,
-                      child: Text(
-                        "Réessayer",
-                        style: context.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.black,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
+          // if (state is OtpSendFailure && _isExpired) {
+          //   return Container(
+          //     decoration: const BoxDecoration(
+          //         borderRadius: BorderRadius.vertical(
+          //           top: Radius.circular(30),
+          //         ),
+          //         color: Colors.white),
+          //     child: Center(
+          //       child: Column(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: [
+          //           const Text("Échec du chargement. Veuillez réessayer."),
+          //           const SizedBox(height: 16),
+          //           ElevatedButton(
+          //             onPressed: _reFresh,
+          //             child: Text(
+          //               "Réessayer",
+          //               style: context.textTheme.bodyMedium?.copyWith(
+          //                 color: AppColors.black,
+          //               ),
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   );
+          // }
 
           return SafeArea(
             child: Form(
@@ -172,7 +171,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                         keyboardType: TextInputType.number,
                         validators: [
                           FormBuilderValidators.numeric(),
-                          FormBuilderValidators.equalLength(6, errorText: ""),
+                          // FormBuilderValidators.equalLength(6, errorText: ""),
                           FormBuilderValidators.required(
                               errorText: "Veillez entrer le code"),
                         ],
@@ -217,9 +216,6 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                                           .replaceAll(' ', '')),
                                       device: widget.device,
                                       email: widget.email));
-                                  setState(() {
-                                    _codeController.clear();
-                                  });
                                 }
                               }),
                         ),

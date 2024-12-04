@@ -9,6 +9,8 @@ import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/shared/application/cubit/application_cubit.dart';
 import 'package:onbush/shared/extensions/context_extensions.dart';
+import 'package:onbush/shared/local/local_storage.dart';
+import 'package:onbush/shared/widget/app_button.dart';
 
 import 'shared/routing/app_router.dart';
 import 'shared/theme/app_colors.dart';
@@ -22,19 +24,25 @@ class AppInitScreen extends StatefulWidget {
 }
 
 class _AppInitScreenState extends State<AppInitScreen> {
-  final AuthCubit _cubit = AuthCubit();
-
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 5000), () {
-      _cubit.checkAuthState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+    context
+        .read<AuthCubit>()
+        .connexion();
     });
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+
+  }
+
+  @override
   void dispose() {
-    _cubit.close();
     super.dispose();
   }
 
@@ -42,8 +50,8 @@ class _AppInitScreenState extends State<AppInitScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<AuthCubit, AuthState>(
-        bloc: _cubit,
         listener: (context, state) {
+          print("state $state");
           if (state is CheckAuthStateFailure || state is AuthInitial) {
             context.router.pushAndPopUntil(
               const AuthRoute(),
@@ -52,13 +60,10 @@ class _AppInitScreenState extends State<AppInitScreen> {
           }
 
           if (state is CheckAuthStateSuccess) {
-            // getIt.get<ApplicationCubit>().setUser(state.user);
-            // context.router.pushAndPopUntil(
-            //   const ApplicationRoute(),
-            //   predicate: (route) => false,
-            // );
+            // await context.getIt<>();
+            getIt.get<ApplicationCubit>().setUser(state.user);
             context.router.pushAndPopUntil(
-              const AuthRoute(),
+              const ApplicationRoute(),
               predicate: (route) => false,
             );
           }
@@ -83,6 +88,14 @@ class _AppInitScreenState extends State<AppInitScreen> {
                 ),
               ),
             ),
+            //     AppButton(
+            //       onPressed: (){
+            //             context
+            // .read<AuthCubit>()
+            // .connexion(appareil: getIt<LocalStorage>().getString('device')!);
+            //       },
+            //       text: "papa",
+            //     )
           ],
         ),
       ),

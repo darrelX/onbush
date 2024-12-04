@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:onbush/auth/data/models/specialty_model.dart';
+import 'package:onbush/service_locator.dart';
 import 'package:onbush/shared/application/cubit/application_cubit.dart';
+import 'package:onbush/shared/application/cubit/data_state.dart';
 import 'package:onbush/shared/extensions/context_extensions.dart';
+import 'package:onbush/shared/local/local_storage.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 import 'package:onbush/shared/widget/app_button.dart';
 
@@ -19,9 +23,23 @@ class ProfilScreen extends StatefulWidget {
 }
 
 class _ProfilScreenState extends State<ProfilScreen> {
+  late final ApplicationCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = context.read<ApplicationCubit>()..addSpecialty();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ApplicationCubit, ApplicationState>(
+    return BlocConsumer<ApplicationCubit, ApplicationState>(
+      // bloc: getIt.get<ApplicationCubit>(),
+      listener: (context, state) {
+        // if (state is LogoutFailure) {
+        //   print("Probleme");
+        // }
+      },
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.quaternaire,
@@ -43,62 +61,76 @@ class _ProfilScreenState extends State<ProfilScreen> {
                           fit: BoxFit.fitHeight,
                         ),
                         Gap(8.w),
-                        SizedBox(
-                          height: 109.h,
-                          width: 239.w,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(state.user!.name!,
-                                  style: context.textTheme.bodyLarge!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18.r,
-                                      shadows: [
-                                        const Shadow(
-                                          offset: Offset(0.5, 0.5),
-                                          blurRadius: 3.0,
-                                          color: Color(0xFF969DAC),
-                                        ),
-                                      ]),
-                                  overflow: TextOverflow.ellipsis),
-                              const Spacer(),
-                              Text(
-                                "Niveau: ${state.user!.academiclevel}",
-                                style: context.textTheme.bodyLarge!.copyWith(
-                                  fontSize: 14.r,
-                                  color: const Color(0xFF969DAC),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 200.w,
-                                child: Text(
-                                  "Filiere: ${state.user!.majorSchoolId}",
-                                  style: context.textTheme.bodyLarge!.copyWith(
-                                    fontSize: 14.r,
-                                    height: 1.3.h,
-                                    color: const Color(0xFF969DAC),
+                        Builder(builder: (context) {
+                          if (state.speciality is DataLoading) {
+                            return CircularProgressIndicator();
+                          } else if (state.speciality is DataFailure) {
+                            return Text(
+                                (state.speciality as DataFailure).message);
+                          } else if (state.speciality is DataSuccess) {
+                            return SizedBox(
+                              height: 109.h,
+                              width: 239.w,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(_cubit.userModel.name!,
+                                      style: context.textTheme.bodyLarge!
+                                          .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18.r,
+                                              shadows: [
+                                            const Shadow(
+                                              offset: Offset(0.5, 0.5),
+                                              blurRadius: 3.0,
+                                              color: Color(0xFF969DAC),
+                                            ),
+                                          ]),
+                                      overflow: TextOverflow.ellipsis),
+                                  const Spacer(),
+                                  Text(
+                                    "Niveau: ${_cubit.userModel.academiclevel}",
+                                    style:
+                                        context.textTheme.bodyLarge!.copyWith(
+                                      fontSize: 14.r,
+                                      color: const Color(0xFF969DAC),
+                                    ),
                                   ),
-                                  maxLines: 2,
-                                ),
-                              ),
-                              Text(
-                                "ENSPD",
-                                style: context.textTheme.bodyLarge!.copyWith(
-                                    fontSize: 14.r,
-                                    color: const Color(0xFF969DAC),
-                                    shadows: [
-                                      const Shadow(
-                                        offset: Offset(0.5, 0.5),
-                                        blurRadius: 2.0,
-                                        color: Color(0xFF969DAC),
+                                  SizedBox(
+                                    width: 200.w,
+                                    child: Text(
+                                      "Filiere: ${(state.speciality as DataSuccess<Speciality>).data.name}",
+                                      style:
+                                          context.textTheme.bodyLarge!.copyWith(
+                                        fontSize: 14.r,
+                                        height: 1.3.h,
+                                        color: const Color(0xFF969DAC),
                                       ),
-                                    ],
-                                    fontWeight: FontWeight.bold),
+                                      maxLines: 2,
+                                    ),
+                                  ),
+                                  Text(
+                                    "ENSPD",
+                                    style:
+                                        context.textTheme.bodyLarge!.copyWith(
+                                            fontSize: 14.r,
+                                            color: const Color(0xFF969DAC),
+                                            shadows: [
+                                              const Shadow(
+                                                offset: Offset(0.5, 0.5),
+                                                blurRadius: 2.0,
+                                                color: Color(0xFF969DAC),
+                                              ),
+                                            ],
+                                            fontWeight: FontWeight.bold),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
+                            );
+                          }
+                          return Text("Error");
+                        }),
                         const Spacer(),
                       ],
                     ),
@@ -106,7 +138,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   Gap(10.h),
                   AppButton(
                     width: double.infinity,
-
                     text: "Modifier mon profil",
                     textColor: AppColors.secondary,
                     height: 45.h,
@@ -210,9 +241,16 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     ),
                   ),
                   Gap(20.h),
-                  const AppButton(
+                  AppButton(
                     width: double.infinity,
+                    // loading: state is LogoutLoading,
                     text: "Deconnexion",
+                    onPressed: () async {
+                      // getIt.get<LocalStorage>().remove('device');
+                      await getIt.get<ApplicationCubit>().logout();
+
+                      context.router.popAndPush(const AuthRoute());
+                    },
                     textColor: Colors.redAccent,
                     borderColor: Colors.redAccent,
                   )

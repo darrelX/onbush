@@ -11,8 +11,20 @@ import 'package:onbush/shared/widget/app_button.dart';
 import 'package:onbush/shared/widget/app_carousel_widget.dart';
 
 @RoutePage()
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late ApplicationCubit _cubit;
+  @override
+  void initState() {
+    super.initState();
+    _cubit = context.read<ApplicationCubit>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +68,7 @@ class HomeScreen extends StatelessWidget {
                                       context.textTheme.titleSmall!.copyWith(),
                                 ),
                                 Text(
-                                  state.user!.name!,
+                                  _cubit.userModel.name!,
                                   style: context.textTheme.titleMedium!
                                       .copyWith(
                                           fontWeight: FontWeight.bold,
@@ -79,7 +91,7 @@ class HomeScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  "Niveau : ${state.user!.academiclevel}",
+                                  "Niveau : ${_cubit.userModel.academiclevel}",
                                   style:
                                       context.textTheme.titleSmall!.copyWith(),
                                 ),

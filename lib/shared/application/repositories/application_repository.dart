@@ -1,55 +1,67 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:onbush/auth/data/models/college_model.dart';
+import 'package:onbush/auth/data/models/specialty_model.dart';
 import 'package:onbush/auth/data/models/user_model.dart';
 import 'package:onbush/service_locator.dart';
+import 'package:onbush/shared/local/local_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApplicationRepository {
-  final Dio dio;
-  final Future<SharedPreferences> prefs;
+  final Dio _dioDataApi;
+  final Dio _dioAccountApi;
+  final LocalStorage prefs;
 
   ApplicationRepository()
-      : dio = getIt.get<Dio>(instanceName: 'accountApi'),
-        prefs = getIt.get<Future<SharedPreferences>>();
+      : _dioDataApi = getIt.get<Dio>(instanceName: 'dataApi'),
+        _dioAccountApi = getIt.get<Dio>(instanceName: 'accountApi'),
+        prefs = getIt.get<LocalStorage>();
 
-  deposit(
-      {required String method,
-      required int amount,
-      required int userId,
-      required String phoneNumber}) async {
+  Future<List<CollegeModel>> allColleges() async {
     try {
-      final response = await dio.post('/deposits', data: {
-        "method": method,
-        "amount": amount,
-        "user_id": userId,
-        "phone_number": phoneNumber
-      });
-      return response.data as Map<String, dynamic>;
+      Response response = await _dioAccountApi.get("/etablissements");
+      List<dynamic> data = response.data['data'] as List<dynamic>;
+      return data
+          .map((item) => CollegeModel.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      log("Failed to get user: ${e.toString()}");
+      rethrow;
+    }
+  }
+
+  Future<Speciality?> fetchSpecialitie({required int id}) async {
+    try {
+      Response response = await _dioDataApi.get("/filiere/$id");
+      return Speciality.fromJson(response.data["data"] as Map<String, dynamic>);
     } catch (e) {
       rethrow;
     }
   }
 
-  getStatusTransaction({required int userId}) async {
-    final Response response = await dio.get('/deposits',
-        options: Options(headers: {"user_id": userId}));
-    //  DepositModel.fromJson(response.data["data"], response.data["total"]);
+  Future<List<Speciality>> allSpecialities(int schoolId) async {
+    try {
+      Response response = await _dioAccountApi.get("/filieres");
+      List<dynamic> data = response.data['data'] as List<dynamic>;
+      final a = data
+          .map((item) => Speciality.fromJson(item as Map<String, dynamic>))
+          .where((e) => e.collegeId == schoolId)
+          .toList();
+      return a;
+    } catch (e) {
+      log("Failed to get user: ${e.toString()}");
+      rethrow;
+    }
   }
 
-  Future<UserModel?> getUser(String token) async {
-    SharedPreferences storage = await prefs;
-    String? token = storage.getString('token');
-
+  Future<void> logout({required String appareil, required String email}) async {
     try {
-      Response response = await dio.get(
-        '/auth/user',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-      log(response.data.toString());
-      return UserModel.fromJson(response.data);
+      Response response = await _dioAccountApi.post("/auth/logout", data: {
+        "appareil": appareil,
+        "email": email,
+      });
     } catch (e) {
-      log(e.toString());
       rethrow;
     }
   }

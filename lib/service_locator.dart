@@ -7,6 +7,7 @@ import 'package:onbush/auth/logic/otp_cubit/otp_bloc.dart';
 import 'package:onbush/shared/application/cubit/application_cubit.dart';
 import 'package:onbush/shared/connectivity/bloc/network_cubit.dart';
 import 'package:logger/logger.dart';
+import 'package:onbush/shared/local/local_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'shared/networking/http_logger_interceptor.dart';
@@ -19,8 +20,7 @@ Future<void> setupLocator() async {
   getIt
 
     // SharedPreferences
-    ..registerSingleton<Future<SharedPreferences>>(
-        SharedPreferences.getInstance())
+    ..registerSingleton<LocalStorage>(LocalStorage())
 
     // Dio
     ..registerSingleton<Dio>(
@@ -67,10 +67,11 @@ Future<void> setupLocator() async {
         printer: PrettyPrinter(colors: true),
       ),
     )
+    //cubit
     ..registerSingleton<ApplicationCubit>(ApplicationCubit())
     ..registerSingleton<AuthCubit>(
       AuthCubit(),
     )
-    ..registerSingleton<OtpBloc>(OtpBloc())
-    ..registerSingleton<NetworkCubit>(NetworkCubit());
+    ..registerSingleton<OtpBloc>(OtpBloc());
+  // ..registerSingleton<NetworkCubit>(NetworkCubit());
 }

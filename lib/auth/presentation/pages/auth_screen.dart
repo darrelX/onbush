@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,6 +15,7 @@ import 'package:onbush/onboarding/pages/price_screen.dart';
 import 'package:onbush/shared/device_info/device_info.dart';
 import 'package:onbush/shared/extensions/context_extensions.dart';
 import 'package:onbush/shared/hash/hash.dart';
+import 'package:onbush/shared/local/local_storage.dart';
 import 'package:onbush/shared/routing/app_router.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 import 'package:onbush/shared/widget/app_button.dart';
@@ -47,23 +51,12 @@ class _AuthScreenState extends State<AuthScreen> {
   final PageController _pageController = PageController();
   final GlobalKey<RegisterWidgetState> _registerWidgetState =
       GlobalKey<RegisterWidgetState>();
-
-  final DeviceInfo _deviceInfo = DeviceInfo.init();
-  final Map<String, dynamic> info = {};
   int _currentIndex = 0;
-  bool _isLoading = false;
   Map<String, int> _listId = {};
-
-  String device = "";
-
-  Future<void> deviceInfo() async {
-    device = encryptToHex(await _deviceInfo.getInfoDevice("fingerprint"));
-  }
 
   @override
   void initState() {
     super.initState();
-    deviceInfo();
   }
 
   @override
@@ -87,12 +80,15 @@ class _AuthScreenState extends State<AuthScreen> {
       body: BlocConsumer<AuthCubit, AuthState>(
         // bloc: _cubit,
         listener: (context, state) {
-          // print(getIt.get<Future<SharedPreferences>>().);
           if (state is LoginFailure) {
             if (state.message == "compte bloque") {
               context.router.push(PriceRoute(
                   email: _emailLoginController.text.replaceAll(' ', '')));
             }
+            AppSnackBar.showError(
+              message: state.message,
+              context: context,
+            );
           }
 
           if (state is RegisterFailure) {
@@ -113,7 +109,7 @@ class _AuthScreenState extends State<AuthScreen> {
           if (state is RegisterSuccess) {
             context.router.push(
               OTPInputRoute(
-                  device: device,
+                  device: getIt.get<LocalStorage>().getString('device')!,
                   number: _phoneController.text.replaceAll(' ', ''),
                   email: _emailSignUpController.text.replaceAll(' ', '')),
               // predicate: (route) => false
@@ -123,7 +119,7 @@ class _AuthScreenState extends State<AuthScreen> {
         builder: (context, state) {
           return SingleChildScrollView(
             child: IgnorePointer(
-              ignoring: state is SearchStateLoading,
+              ignoring: state is SearchStateLoading ,
               child: Stack(
                 children: [
                   Form(
@@ -225,7 +221,9 @@ class _AuthScreenState extends State<AuthScreen> {
                                   onPressed: () {
                                     if (_formKey.currentState!.validate()) {
                                       context.read<AuthCubit>().login(
-                                            appareil: device,
+                                            appareil: getIt
+                                                .get<LocalStorage>()
+                                                .getString('device')!,
                                             email: _emailLoginController.text
                                                 .replaceAll(' ', ''),
                                           );
@@ -251,7 +249,9 @@ class _AuthScreenState extends State<AuthScreen> {
                                                 .replaceAll(' ', ''),
                                             phone: _phoneController.text
                                                 .replaceAll(' ', ''),
-                                            device: device,
+                                            device: getIt
+                                                .get<LocalStorage>()
+                                                .getString('device')!,
                                             academiclevel:
                                                 _academicLevelController.text
                                                     .split('')

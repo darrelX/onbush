@@ -65,7 +65,7 @@ class UserModel {
       schoolId: json['etablissement_id'] as int?,
       sponsorCode: json['code_parrrain'] as String?,
       academiclevel: json['niveau'] as int?,
-      birthday: json['birthday'] as String?,
+      birthday: json['naissance'] as String?,
     );
   }
 

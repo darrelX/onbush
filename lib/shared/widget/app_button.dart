@@ -5,7 +5,7 @@ import 'package:onbush/shared/extensions/context_extensions.dart';
 
 import '../theme/app_colors.dart';
 
-class AppButton extends StatelessWidget {
+class AppButton extends StatefulWidget {
   final Widget? child;
   final VoidCallback? onPressed;
   final Color? bgColor;
@@ -46,56 +46,85 @@ class AppButton extends StatelessWidget {
   });
 
   @override
+  State<AppButton> createState() => _AppButtonState();
+}
+
+class _AppButtonState extends State<AppButton> {
+  bool _isPressed = false;
+
+  void _onTap() {
+    if (!widget.loading && widget.onPressed != null && widget.enable) {
+      widget.onPressed!.call();
+      setState(() {
+        _isPressed = true;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // print("button $_isPressed");
     return InkWell(
-      onTap: (!loading && enable && onPressed != null) ? onPressed : null,
+      onTap: _onTap,
       borderRadius: BorderRadius.circular(15.r),
-      highlightColor: Colors.transparent,
+      // onHighlightChanged: (isHighlighted) {
+      //   // Changer l'état lorsque l'utilisateur sélectionne ou désélectionne le bouton
+      //   setState(() {
+      //     _isPressed = isHighlighted;
+      //   });
+      // },
+      // highlightColor: Colors.transparent,
       child: Container(
-          height: height,
-          width: width,
-          constraints: constraints,
-          padding:
-              child == null ? EdgeInsets.symmetric(horizontal: 10.w) : null,
+          height: widget.height,
+          width: widget.width,
+          constraints: widget.constraints,
+          padding: widget.child == null
+              ? EdgeInsets.symmetric(horizontal: 10.w)
+              : null,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(radius ?? 16.r),
-            color: enable ? bgColor : bgColor?.withOpacity(.6),
-            border: borderColor != null
+            borderRadius: BorderRadius.circular(widget.radius ?? 16.r),
+            color: widget.enable
+                // ? widget.bgColor
+                ? (_isPressed && widget.activeBgColor != null
+                    ? widget.activeBgColor
+                    : widget.bgColor)
+                : widget.bgColor?.withOpacity(.6),
+            border: widget.borderColor != null
                 ? Border.all(
-                    color: borderColor!,
+                    color: widget.borderColor!,
                     width: 1.5.w,
                   )
                 : null,
           ),
-          child: loading
+          child: widget.loading
               ? CupertinoTheme(
                   data: CupertinoTheme.of(context).copyWith(
-                    brightness: bgColor == AppColors.primary
+                    brightness: widget.bgColor == AppColors.primary
                         ? Brightness.dark
                         : Brightness.light,
                   ),
                   child: CupertinoActivityIndicator(
                     radius: 16.r,
-                    color: loadingColor,
+                    color: widget.loadingColor,
                   ),
                 )
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    text != null
+                    widget.text != null
                         ? Text(
-                            text!,
-                            style: style ??
+                            widget.text!,
+                            style: widget.style ??
                                 context.textTheme.titleMedium?.copyWith(
-                                  color: textColor != null
-                                      ? textColor!
-                                      : bgColor == AppColors.primary
+                                  color: widget.textColor != null
+                                      ? widget.textColor!
+                                      : widget.bgColor == AppColors.primary
                                           ? AppColors.white
                                           : null,
                                   fontWeight: FontWeight.w600,
                                 ),
                           )
-                        : child ?? const SizedBox()
+                        : widget.child ?? const SizedBox()
                   ],
                 )),
     );

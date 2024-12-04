@@ -49,10 +49,14 @@ class AppInput extends StatefulWidget {
   final double? width;
   final Color? colorBorder;
   final int? errorMaxLines;
+  final ValueChanged<bool>? onInputValidated;
+  final GlobalKey<FormFieldState>? formFieldKey;
 
   const AppInput({
     super.key,
+    this.formFieldKey,
     this.controller,
+    this.onInputValidated,
     this.fillColor = Colors.white,
     this.maxValue,
     this.hint,
@@ -108,15 +112,21 @@ class AppInput extends StatefulWidget {
 
 class _AppInputState extends State<AppInput> {
   bool _isObscure = true;
+  bool isValid = false;
 
   @override
   void initState() {
+    super.initState();
+
     setState(() {
       widget.hideText != null
           ? _isObscure = widget.hideText!
           : _isObscure = true;
+      // if (FormBuilderValidators.compose(widget.validators) == null) {
+      //   print("ok");
+      //   widget.onInputValidated!(true);
+      // }
     });
-    super.initState();
   }
 
   @override
@@ -126,6 +136,7 @@ class _AppInputState extends State<AppInput> {
     }
 
     return Column(
+      
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -161,8 +172,10 @@ class _AppInputState extends State<AppInput> {
           ),
           child: Center(
             child: TextFormField(
+              key: widget.formFieldKey,
               controller: widget.controller,
               style: context.textTheme.titleSmall,
+              autocorrect: true,
               buildCounter: !widget.showHelper
                   ? (
                       context, {
@@ -179,7 +192,29 @@ class _AppInputState extends State<AppInput> {
               inputFormatters: widget.inputFormatters,
               readOnly: widget.readOnly,
               maxLength: widget.maxLength,
-              onChanged: widget.onChange,
+              onChanged: (value) {
+                // Si un onChanged personnalisé est passé, on l'appelle
+                if (widget.onChange != null) {
+                  widget.onChange!(value);
+                }
+
+                // Vérifie la validité avec le validateur fourni
+                final isCurrentlyValid =
+                    FormBuilderValidators.compose(widget.validators)
+                            .call(value) ==
+                        null;
+
+                if (isCurrentlyValid != isValid) {
+                  setState(() {
+                    isValid = isCurrentlyValid;
+                  });
+
+                  // Déclenche le callback lorsque la validité change
+                  if (widget.onInputValidated != null) {
+                    widget.onInputValidated!(isValid);
+                  }
+                }
+              },
               minLines: widget.minLines,
               maxLines: widget.maxLines,
               focusNode: widget.focusNode,

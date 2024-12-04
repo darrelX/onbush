@@ -12,8 +12,8 @@ class PaymentRepository {
     required String phoneNumber,
     required String paymentService,
     required int amount,
-    required int sponsorCode,
-    required int discountCode,
+    required String sponsorCode,
+    required String discountCode,
   }) async {
     try {
       final Response response = await _dio.post('/auth/payment/init', data: {

@@ -1,8 +1,9 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:onbush/auth/data/models/college_model.dart';
-import 'package:onbush/auth/data/models/specialtie_model.dart';
+import 'package:onbush/auth/data/models/specialty_model.dart';
 import 'package:onbush/service_locator.dart';
+import 'package:onbush/shared/local/local_storage.dart';
 // Assurez-vous que cet import est nécessaire
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
@@ -10,11 +11,11 @@ import '../models/user_model.dart';
 class AuthRepository {
   final Dio _dioAccountApi;
   final Dio _dioDataApi;
-  final Future<SharedPreferences>? prefs;
+  final LocalStorage _prefs;
 
   AuthRepository()
       : _dioAccountApi = getIt.get<Dio>(instanceName: 'accountApi'),
-        prefs = SharedPreferences.getInstance(),
+        _prefs = getIt.get<LocalStorage>(),
         _dioDataApi = getIt.get<Dio>(instanceName: 'dataApi');
 
   // Future<UserModel?> _saveTokenAndFetchUser(String token) async {
@@ -23,23 +24,36 @@ class AuthRepository {
   //   return getUser();
   // }
 
-  Future<UserModel?> getUser() async {
-    SharedPreferences storage = await prefs!;
-    String? token = storage.getString('token');
+  // Future<UserModel?> getUser() async {
+  //   // SharedPreferences storage = await prefs!;
+  //   String? token = _prefs.getString('token');
 
-    if (token == null) {
-      log("No token found in storage.");
-      return null;
-    }
+  //   if (token == null) {
+  //     log("No token found in storage.");
+  //     return null;
+  //   }
 
+  //   try {
+  //     Response response = await _dioAccountApi.get(
+  //       '/auth/user',
+  //       options: Options(headers: {'Authorization': 'Bearer $token'}),
+  //     );
+  //     return UserModel.fromJson(response.data);
+  //   } catch (e) {
+  //     log("Failed to get user: ${e.toString()}");
+  //     rethrow;
+  //   }
+  // }
+
+  Future<UserModel>? connexion({
+    required String appareil,
+  }) async {
     try {
       Response response = await _dioAccountApi.get(
-        '/auth/user',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        '/connexions/$appareil',
       );
-      return UserModel.fromJson(response.data);
+      return UserModel.fromJson(response.data["data"][0]);
     } catch (e) {
-      log("Failed to get user: ${e.toString()}");
       rethrow;
     }
   }
@@ -56,7 +70,6 @@ class AuthRepository {
           "email": email,
         },
       );
-      // print("darrel ${UserModel.fromJson(response.data["data"]).avatar}");
       return UserModel.fromJson(response.data["data"]);
     } catch (e) {
       log("Login error: ${e.toString()}");
@@ -121,16 +134,14 @@ class AuthRepository {
     }
   }
 
-  Future<List<SpecialtieModel>> allSpecialities(int schoolId) async {
+  Future<List<Speciality>> allSpecialities(int schoolId) async {
     try {
       Response response = await _dioDataApi.get("/filieres");
       List<dynamic> data = response.data['data'] as List<dynamic>;
       final a = data
-          .map((item) => SpecialtieModel.fromJson(item as Map<String, dynamic>))
+          .map((item) => Speciality.fromJson(item as Map<String, dynamic>))
           .where((e) => e.collegeId == schoolId)
           .toList();
-      print(a);
-      print(a[0].name);
       return a;
     } catch (e) {
       log("Failed to get user: ${e.toString()}");

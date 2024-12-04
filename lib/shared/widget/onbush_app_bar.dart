@@ -27,7 +27,7 @@ class _OnbushAppBarState extends State<OnbushAppBar> {
   @override
   void initState() {
     super.initState();
-    getIt.get<ApplicationCubit>().setUser();
+
   }
 
   @override

@@ -1,25 +1,24 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:onbush/shared/local/local_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:onbush/service_locator.dart';
 
 class TokenInterceptor extends QueuedInterceptor {
-  final prefs = getIt.get<Future<SharedPreferences>>();
+  final prefs = getIt.get<LocalStorage>();
 
   @override
   void onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final storage = await prefs;
-
-    var token = storage.getString('token');
+    var token = prefs.getString('token');
 
     log("Current token $token", name: "TokenInterceptor+onRequest");
 
     if (token != null) {
-      options.headers["Authorization"] = "Bearer $token";
+      options.headers["userKey"] = token;
     }
 
     // try {

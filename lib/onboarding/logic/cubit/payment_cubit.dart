@@ -18,8 +18,8 @@ class PaymentCubit extends Cubit<PaymentState> {
     required String phoneNumber,
     required String paymentService,
     required int amount,
-    required int sponsorCode,
-    required int discountCode,
+    required String sponsorCode,
+    required String discountCode,
   }) async {
     emit(const PaymentLoading());
     try {

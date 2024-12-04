@@ -111,7 +111,7 @@ class RegisterWidgetState extends State<RegisterWidget> {
             widget.listId['specialitie'] = await _bottomSheetSelect(
               context,
               title: "Sélectionner l'école",
-              allItems: state.listSpecialtieModel.asMap().map(
+              allItems: state.listSpeciality.asMap().map(
                     (key, value) => MapEntry(value.id!, value.name!),
                   ),
               controller: widget.majorStudyController,
@@ -229,7 +229,7 @@ class RegisterWidgetState extends State<RegisterWidget> {
                       ]),
                   AppInput(
                     controller: widget.genderController,
-                    hint: 'Gender',
+                    hint: 'Sexe',
                     width: 150.w,
                     keyboardType: TextInputType.none,
                     readOnly: true,
@@ -239,23 +239,23 @@ class RegisterWidgetState extends State<RegisterWidget> {
                           builder: Column(
                             children: [
                               ListTile(
-                                title: const Text("male"),
+                                title: const Text("masculin"),
                                 selected: gender == 1,
                                 onTap: () {
                                   setState(() {
                                     gender = 1;
-                                    widget.genderController.text = "male";
+                                    widget.genderController.text = "masculin";
                                     context.router.maybePop();
                                   });
                                 },
                               ),
                               ListTile(
-                                title: const Text("female"),
+                                title: const Text("feminin"),
                                 selected: gender == 0,
                                 onTap: () {
                                   setState(() {
                                     gender = 0;
-                                    widget.genderController.text = "female";
+                                    widget.genderController.text = "feminin";
                                     context.router.maybePop();
                                   });
                                 },
@@ -285,24 +285,6 @@ class RegisterWidgetState extends State<RegisterWidget> {
                 validators: [
                   FormBuilderValidators.required(
                     errorText: "Entrer l'ecole",
-                  ),
-                  // FormBuilderValidators.()
-                ],
-              ),
-              Gap(15.h),
-              AppInput(
-                controller: widget.majorStudyController,
-                hint: 'Choisir votre specialite',
-                labelColors: AppColors.black.withOpacity(0.7),
-                readOnly: true,
-                onTap: () async {
-                  await context
-                      .read<AuthCubit>()
-                      .allSpecialities(schoolId: widget.listId['college']!);
-                },
-                validators: [
-                  FormBuilderValidators.required(
-                    errorText: "Entrer votre specialite",
                   ),
                   // FormBuilderValidators.()
                 ],
@@ -343,6 +325,24 @@ class RegisterWidgetState extends State<RegisterWidget> {
                       // FormBuilderValidators.()
                     ],
                   ),
+                ],
+              ),
+              Gap(15.h),
+              AppInput(
+                controller: widget.majorStudyController,
+                hint: 'Choisir votre specialite',
+                labelColors: AppColors.black.withOpacity(0.7),
+                readOnly: true,
+                onTap: () async {
+                  await context
+                      .read<AuthCubit>()
+                      .allSpecialities(schoolId: widget.listId['college']!);
+                },
+                validators: [
+                  FormBuilderValidators.required(
+                    errorText: "Entrer votre specialite",
+                  ),
+                  // FormBuilderValidators.()
                 ],
               ),
               Gap(15.h),

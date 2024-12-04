@@ -1,14 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:onbush/service_locator.dart';
+import 'package:onbush/shared/local/local_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpRepository {
   final Dio _dio;
-  final Future<SharedPreferences>? _prefs;
+  final LocalStorage _prefs;
 
   OtpRepository()
       : _dio = getIt.get<Dio>(instanceName: 'accountApi'),
-        _prefs = getIt<Future<SharedPreferences>>();
+        _prefs = getIt<LocalStorage>();
 
   Future<void> submit({
     required int code,
