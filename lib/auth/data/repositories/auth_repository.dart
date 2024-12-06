@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:onbush/auth/data/models/college_model.dart';
 import 'package:onbush/auth/data/models/specialty_model.dart';
@@ -50,15 +51,32 @@ class AuthRepository {
   }) async {
     try {
       Response response = await _dioAccountApi.get(
-        '/connexions/$appareil',
+        '/connexion/$appareil/active',
       );
-      return UserModel.fromJson(response.data["data"][0]);
+      return UserModel.fromJson(response.data["data"]);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<UserModel?> login({
+  // Future<Either<bool, UserModel>> connexion({
+  //   required String appareil,
+  // }) async {
+  //   try {
+  //     Response response = await _dioAccountApi.get(
+  //       '/connexion/$appareil/active',
+  //     );
+  //     if (response.data['data'] is String) {
+  //       return const Left(false);
+  //     } else {
+  //       return Right(UserModel.fromJson(response.data["data"]));
+  //     }
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
+
+  Future<Either<bool, UserModel>> login({
     required String appareil,
     required String email,
   }) async {
@@ -70,7 +88,12 @@ class AuthRepository {
           "email": email,
         },
       );
-      return UserModel.fromJson(response.data["data"]);
+      if (response.data['data'] is String) {
+        return const Left(false);
+      } else {
+        return Right(UserModel.fromJson(response.data["data"]));
+      }
+      // return UserModel.fromJson(response.data["data"]);
     } catch (e) {
       log("Login error: ${e.toString()}");
       rethrow;

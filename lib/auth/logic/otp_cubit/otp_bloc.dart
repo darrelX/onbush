@@ -19,6 +19,7 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
   OtpBloc()
       : _repository = OtpRepository(),
         super(const OtpInitial(countDown: totalDuration)) {
+    _startTimer();
     on<OtpSubmitted>(_onSubmit);
     on<OtpReset>(_onReset);
     on<OtpInitialized>(_onInitialized);
@@ -32,22 +33,24 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
     }
     try {
       await _repository.submit(
-        email: event.email,
-        code: event.otp,
-        device: event.device,
-        role: event.role
-      );
+        type: event.type,
+          email: event.email,
+          code: event.otp,
+          device: event.device,
+          role: event.role);
       // if (status) {
       //   _timer?.cancel();
-        emit(const OtpVerificationSuccess(countDown: totalDuration));
+      emit(const OtpVerificationSuccess(countDown: totalDuration));
       // } else {
       //   emit(const OtpVerificationFailure(
       //       errorMessage: 'Echec', countDown: totalDuration));
       // }
-    } on DioException catch (e) {
+    } catch (e) {
       emit(OtpSendFailure(
-          errorMessage: Utils.extractErrorMessageFromMap(
-              e, {"0": "Confirmation introuvable", "-1" : "Probleme d'enregistrement"}),
+          errorMessage: Utils.extractErrorMessageFromMap(e, {
+            "0": "Confirmation introuvable",
+            "-1": "Probleme d'enregistrement"
+          }),
           countDown: totalDuration));
     }
   }
@@ -56,7 +59,7 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
       OtpVerification event, Emitter<OtpState> emit) async {
     try {
       // await _repository.
-    } on DioException catch (e) {
+    } catch (e) {
       emit(OtpVerificationFailure(
           errorMessage: Utils.extractErrorMessageFromMap(e, {
             "0": "Transaction introuvable",
@@ -74,18 +77,10 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
       OtpInitialized event, Emitter<OtpState> emit) async {
     _timer?.cancel();
     emit(const OtpLoadingState(countDown: totalDuration));
-
-    // await _repository.sendOtp(phoneNumber:  event.phoneNumber, email: event.email);
-    _startTimer(emit);
-    // emit(OtpSentInProgress(countDown: _currentDuration));
-
-    //   emit(OtpSendFailure(
-    //       errorMessage: Utils.extractErrorMessage(e),
-    //       countDown: totalDuration));
-    // }
+    _startTimer();
   }
 
-  void _startTimer(Emitter<OtpState> emit) {
+  void _startTimer() {
     _currentDuration = totalDuration;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _currentDuration--;
@@ -109,11 +104,12 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
     if (state is OtpExpired || state is OtpVerificationFailure) {
       emit(const OtpVerifying(countDown: 0));
       try {
-        // await _repository.submit(
-        //     phoneNumber: event.phoneNumber,
-        //     email: event.email,
-        //     code: event.code);
-        _startTimer(emit);
+        await _repository.reSendOtp(
+            type: event.type,
+            device: event.device,
+            email: event.email,
+            code: event.code);
+        _startTimer();
         emit(OtpSentInProgress(countDown: _currentDuration));
       } catch (e) {
         emit(OtpSendFailure(

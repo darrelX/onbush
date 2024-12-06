@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:onbush/auth/data/models/college_model.dart';
 import 'package:onbush/auth/data/models/specialty_model.dart';
+import 'package:onbush/shared/application/data/models/course_model.dart';
+import 'package:onbush/shared/application/data/models/subject_model.dart';
 import 'package:onbush/auth/data/models/user_model.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/shared/local/local_storage.dart';
@@ -35,6 +37,28 @@ class ApplicationRepository {
     try {
       Response response = await _dioDataApi.get("/filiere/$id");
       return Speciality.fromJson(response.data["data"] as Map<String, dynamic>);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<SubjectModel>> fetchListSubjectModel({required int specialityId}) async {
+    try {
+      Response response = await _dioDataApi.get("/filiere/$specialityId/matieres");
+      List<dynamic> data = response.data['data'] as List<dynamic>;
+      return data
+          .map((item) => SubjectModel.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+    Future<List<CourseModel>> fetchListCourseModel({required int subjectId, required String instruction }) async {
+    try {
+      Response response = await _dioDataApi.get("/matiere/$subjectId/$instruction");
+      List<dynamic> data = response.data['data'] as List<dynamic>;
+      return data
+          .map((item) => CourseModel.fromJson(item as Map<String, dynamic>)).toList();
     } catch (e) {
       rethrow;
     }

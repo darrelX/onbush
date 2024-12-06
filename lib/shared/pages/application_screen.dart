@@ -63,7 +63,12 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
             return AppBar();
         }
       },
-      routes: const [HomeRoute(), CourseRoute(), HistoryRoute(), ProfilRoute()],
+      routes: const [
+        HomeRoute(),
+        SubjectRoute(),
+        HistoryRoute(),
+        ProfilRoute()
+      ],
       bottomNavigationBuilder: (_, tabsRouter) {
         return FlashyTabBar(
           selectedIndex: tabsRouter.activeIndex,

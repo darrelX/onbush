@@ -21,7 +21,7 @@ class LocalStorage {
   // Méthode pour initialiser SharedPreferences
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
-    _deviceInfo();
+    await  _deviceInfo();
   }
 
   // Méthodes pour différents types de données

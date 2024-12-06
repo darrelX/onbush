@@ -103,3 +103,12 @@ final class SearchStateSuccess extends AuthState {
   @override
   List<Object> get props => [listCollegeModel, listSpeciality];
 }
+
+final class OTpStateSuccess extends AuthState {
+  final String type;
+  final String email;
+  const OTpStateSuccess({required this.type, required this.email});
+
+  @override
+  List<Object> get props => [type, email];
+}

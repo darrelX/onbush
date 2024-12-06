@@ -11,6 +11,7 @@ import 'package:onbush/shared/extensions/context_extensions.dart';
 import 'package:onbush/shared/local/local_storage.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 import 'package:onbush/shared/widget/app_button.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../shared/routing/app_router.dart';
 
@@ -51,24 +52,60 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 children: [
                   Gap(10.h),
                   SizedBox(
-                    height: 140.h,
+                    height: 109.h,
                     // decoration: BoxDecoration(color: Colors.red),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          "assets/images/account_image.png",
-                          height: 105.h,
-                          fit: BoxFit.fitHeight,
-                        ),
-                        Gap(8.w),
-                        Builder(builder: (context) {
-                          if (state.speciality is DataLoading) {
-                            return CircularProgressIndicator();
-                          } else if (state.speciality is DataFailure) {
-                            return Text(
-                                (state.speciality as DataFailure).message);
-                          } else if (state.speciality is DataSuccess) {
-                            return SizedBox(
+                    child: Builder(builder: (context) {
+                      if (state.speciality.status == Status.loading) {
+                        return Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 105.w,
+                                height: 109.h,
+                                color: Colors.white,
+                              ),
+                              const Spacer(),
+                              Container(
+                                width: 239.w,
+                                height: 109.h,
+
+                                color: Colors.white,
+
+                                // height: 109.h,
+                                padding: const EdgeInsets.all(16.0),
+                              ),
+                            ],
+                          ),
+                        );
+                      } else if (state.speciality.status == Status.failure) {
+                        return Opacity(
+                          opacity: 0.3,
+                          child: Center(
+                              child: AppButton(
+                            child: Icon(
+                              Icons.refresh,
+                              size: 45.r,
+                            ),
+                            borderColor: AppColors.black,
+                            onPressed: () async {
+                              await context
+                                  .read<ApplicationCubit>()
+                                  .addSpecialty();
+                            },
+                          )),
+                        );
+                      } else if (state.speciality.status == Status.success) {
+                        return Row(
+                          children: [
+                            Image.asset(
+                              "assets/images/account_image.png",
+                              height: 105.h,
+                              fit: BoxFit.fitHeight,
+                            ),
+                            Gap(8.w),
+                            SizedBox(
                               height: 109.h,
                               width: 239.w,
                               child: Column(
@@ -100,7 +137,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                                   SizedBox(
                                     width: 200.w,
                                     child: Text(
-                                      "Filiere: ${(state.speciality as DataSuccess<Speciality>).data.name}",
+                                      "Filiere: ${state.speciality.data!.name}",
                                       style:
                                           context.textTheme.bodyLarge!.copyWith(
                                         fontSize: 14.r,
@@ -127,13 +164,24 @@ class _ProfilScreenState extends State<ProfilScreen> {
                                   ),
                                 ],
                               ),
-                            );
-                          }
-                          return Text("Error");
-                        }),
-                        const Spacer(),
-                      ],
-                    ),
+                            ),
+                            const Spacer(),
+                          ],
+                        );
+                      }
+                      return Opacity(
+                        opacity: 0.3,
+                        child: Center(
+                            child: AppButton(
+                          text: "Text",
+                          onPressed: () async {
+                            await context
+                                .read<ApplicationCubit>()
+                                .addSpecialty();
+                          },
+                        )),
+                      );
+                    }),
                   ),
                   Gap(10.h),
                   AppButton(

@@ -8,7 +8,9 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/auth/logic/otp_cubit/otp_bloc.dart';
 import 'package:onbush/auth/presentation/widgets/pin_code_widget.dart';
+import 'package:onbush/service_locator.dart';
 import 'package:onbush/shared/extensions/context_extensions.dart';
+import 'package:onbush/shared/local/local_storage.dart';
 import 'package:onbush/shared/routing/app_router.dart';
 import 'package:onbush/shared/theme/app_colors.dart';
 import 'package:onbush/shared/widget/app_button.dart';
@@ -17,15 +19,13 @@ import 'package:onbush/shared/widget/app_snackbar.dart';
 
 @RoutePage()
 class OTPInputScreen extends StatefulWidget {
-  final String? number;
   final String email;
-  final String device;
+  final String type;
 
   const OTPInputScreen({
     super.key,
+    this.type = 'register',
     required this.email,
-    required this.device,
-    required this.number,
   });
 
   @override
@@ -49,10 +49,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
   @override
   void initState() {
     super.initState();
-    _bloc.add(OtpInitialized(
-        phoneNumber: widget.number!,
-        duration: _bloc.state.countDown,
-        email: widget.email));
+    _bloc.add(const OtpInitialized());
   }
 
   @override
@@ -62,10 +59,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
   }
 
   Future<void> _reFresh() async {
-    _bloc.add(OtpInitialized(
-        phoneNumber: widget.number!.replaceAll(' ', ''),
-        email: widget.email,
-        duration: _bloc.state.countDown));
+    _bloc.add(const OtpInitialized());
   }
 
   @override
@@ -212,9 +206,12 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                               onPressed: () {
                                 if (_formField.currentState!.validate()) {
                                   context.read<OtpBloc>().add(OtpSubmitted(
+                                      type: widget.type,
                                       otp: int.parse(_codeController.text
                                           .replaceAll(' ', '')),
-                                      device: widget.device,
+                                      device: getIt
+                                          .get<LocalStorage>()
+                                          .getString('device')!,
                                       email: widget.email));
                                 }
                               }),
@@ -237,8 +234,12 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                                     _error = null;
                                     _codeController.clear();
                                     context.read<OtpBloc>().add(OtpReset(
-                                        phoneNumber: widget.number!,
-                                        code: "0000",
+                                        type: widget.type,
+                                        device: getIt
+                                            .get<LocalStorage>()
+                                            .getString('device')!,
+                                        code: int.parse(_codeController.text
+                                            .replaceAll(' ', '')),
                                         email: widget.email));
                                     if (state is OtpVerificationSuccess) {
                                       print("Success");

@@ -16,9 +16,10 @@ class OtpRepository {
     required String email,
     required String device,
     required String? role,
+    String type = 'register',
   }) async {
     try {
-      final Response response = await _dio.post('/auth/register/confirm/user',
+      final Response response = await _dio.post('/auth/$type/confirm/user',
           data: {
             "appareil": device,
             "code": code,
@@ -30,16 +31,22 @@ class OtpRepository {
     }
   }
 
-  // Future<void> sendOtp({required String phoneNumber, required String email, String role = "email"}) async {
-  //   try {
-  //     final Response response = await _dio.post('/auth/register/confirm/user',
-  //         data: {
-  //           "phone_number": phoneNumber,
-  //           "email": email,
-  //           "role": role
-  //         });
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
+  Future<void> reSendOtp(
+      {required String email,
+      required int code,
+      required String device,
+      String role = "email",
+      String type = 'register'}) async {
+    try {
+      final Response response = await _dio.post('/auth/$type/confirm/user',
+          data: {
+            "code": code,
+            "email": email,
+            "role": role,
+            "appareil": device
+          });
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -2,15 +2,38 @@ part of 'application_cubit.dart';
 
 class ApplicationState extends Equatable {
   final UserModel? user;
-  final DataState? speciality;
+  final DataState<Speciality> speciality;
+  final DataState<List<SubjectModel>>? listSubjectModel;
+  final DataState<List<CourseModel>>? listCourseModel;
   // final DataState? speciality;
-  const ApplicationState({this.user, required this.speciality});
+  const ApplicationState(
+      {this.user,
+      required this.speciality,
+      required this.listSubjectModel,
+      required this.listCourseModel});
 
   @override
-  List<Object?> get props => [user, speciality];
+  List<Object?> get props =>
+      [user, speciality, listSubjectModel, listCourseModel];
 
-  ApplicationState copyWith({UserModel? user, DataState? speciality}) {
-    return ApplicationState(user: user ?? this.user, speciality: speciality ?? this.speciality);
+  ApplicationState copyWith(
+      {UserModel? user,
+      DataState<Speciality>? speciality,
+      DataState<List<CourseModel>>? listCourseModel,
+      DataState<List<SubjectModel>>? listSubjectModel}) {
+    return ApplicationState(
+        listSubjectModel: listSubjectModel ?? this.listSubjectModel,
+        user: user ?? this.user,
+        listCourseModel: listCourseModel ?? this.listCourseModel,
+        speciality: speciality ?? this.speciality);
+  }
+
+  static ApplicationState initial() {
+    return ApplicationState(
+        listCourseModel: DataState<List<CourseModel>>(),
+        user: null,
+        speciality: DataState<Speciality>(),
+        listSubjectModel: DataState<List<SubjectModel>>());
   }
 }
 

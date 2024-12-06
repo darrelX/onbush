@@ -40,9 +40,24 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     CourseRoute.name: (routeData) {
+      final args = routeData.argsAs<CourseRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const CourseScreen(),
+        child: CourseScreen(
+          key: args.key,
+          subjectModel: args.subjectModel,
+          instruction: args.instruction,
+        ),
+      );
+    },
+    CourseSelectionMenuRoute.name: (routeData) {
+      final args = routeData.argsAs<CourseSelectionMenuRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CourseSelectionMenuScreen(
+          key: args.key,
+          subjectModel: args.subjectModel,
+        ),
       );
     },
     DownloadRoute.name: (routeData) {
@@ -81,9 +96,8 @@ abstract class _$AppRouter extends RootStackRouter {
         routeData: routeData,
         child: OTPInputScreen(
           key: args.key,
+          type: args.type,
           email: args.email,
-          device: args.device,
-          number: args.number,
         ),
       );
     },
@@ -91,6 +105,16 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const OnboardingScreen(),
+      );
+    },
+    PdfViewRoute.name: (routeData) {
+      final args = routeData.argsAs<PdfViewRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: PdfViewScreen(
+          key: args.key,
+          pdfUrl: args.pdfUrl,
+        ),
       );
     },
     PriceRoute.name: (routeData) {
@@ -107,6 +131,12 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const ProfilScreen(),
+      );
+    },
+    SubjectRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const SubjectScreen(),
       );
     },
   };
@@ -170,16 +200,83 @@ class AuthRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [CourseScreen]
-class CourseRoute extends PageRouteInfo<void> {
-  const CourseRoute({List<PageRouteInfo>? children})
-      : super(
+class CourseRoute extends PageRouteInfo<CourseRouteArgs> {
+  CourseRoute({
+    Key? key,
+    required SubjectModel subjectModel,
+    required String instruction,
+    List<PageRouteInfo>? children,
+  }) : super(
           CourseRoute.name,
+          args: CourseRouteArgs(
+            key: key,
+            subjectModel: subjectModel,
+            instruction: instruction,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'CourseRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<CourseRouteArgs> page = PageInfo<CourseRouteArgs>(name);
+}
+
+class CourseRouteArgs {
+  const CourseRouteArgs({
+    this.key,
+    required this.subjectModel,
+    required this.instruction,
+  });
+
+  final Key? key;
+
+  final SubjectModel subjectModel;
+
+  final String instruction;
+
+  @override
+  String toString() {
+    return 'CourseRouteArgs{key: $key, subjectModel: $subjectModel, instruction: $instruction}';
+  }
+}
+
+/// generated route for
+/// [CourseSelectionMenuScreen]
+class CourseSelectionMenuRoute
+    extends PageRouteInfo<CourseSelectionMenuRouteArgs> {
+  CourseSelectionMenuRoute({
+    Key? key,
+    required SubjectModel subjectModel,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CourseSelectionMenuRoute.name,
+          args: CourseSelectionMenuRouteArgs(
+            key: key,
+            subjectModel: subjectModel,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CourseSelectionMenuRoute';
+
+  static const PageInfo<CourseSelectionMenuRouteArgs> page =
+      PageInfo<CourseSelectionMenuRouteArgs>(name);
+}
+
+class CourseSelectionMenuRouteArgs {
+  const CourseSelectionMenuRouteArgs({
+    this.key,
+    required this.subjectModel,
+  });
+
+  final Key? key;
+
+  final SubjectModel subjectModel;
+
+  @override
+  String toString() {
+    return 'CourseSelectionMenuRouteArgs{key: $key, subjectModel: $subjectModel}';
+  }
 }
 
 /// generated route for
@@ -257,17 +354,15 @@ class NotificationRoute extends PageRouteInfo<void> {
 class OTPInputRoute extends PageRouteInfo<OTPInputRouteArgs> {
   OTPInputRoute({
     Key? key,
+    String type = 'register',
     required String email,
-    required String device,
-    required String? number,
     List<PageRouteInfo>? children,
   }) : super(
           OTPInputRoute.name,
           args: OTPInputRouteArgs(
             key: key,
+            type: type,
             email: email,
-            device: device,
-            number: number,
           ),
           initialChildren: children,
         );
@@ -281,22 +376,19 @@ class OTPInputRoute extends PageRouteInfo<OTPInputRouteArgs> {
 class OTPInputRouteArgs {
   const OTPInputRouteArgs({
     this.key,
+    this.type = 'register',
     required this.email,
-    required this.device,
-    required this.number,
   });
 
   final Key? key;
 
+  final String type;
+
   final String email;
-
-  final String device;
-
-  final String? number;
 
   @override
   String toString() {
-    return 'OTPInputRouteArgs{key: $key, email: $email, device: $device, number: $number}';
+    return 'OTPInputRouteArgs{key: $key, type: $type, email: $email}';
   }
 }
 
@@ -312,6 +404,44 @@ class OnboardingRoute extends PageRouteInfo<void> {
   static const String name = 'OnboardingRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [PdfViewScreen]
+class PdfViewRoute extends PageRouteInfo<PdfViewRouteArgs> {
+  PdfViewRoute({
+    Key? key,
+    required String pdfUrl,
+    List<PageRouteInfo>? children,
+  }) : super(
+          PdfViewRoute.name,
+          args: PdfViewRouteArgs(
+            key: key,
+            pdfUrl: pdfUrl,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'PdfViewRoute';
+
+  static const PageInfo<PdfViewRouteArgs> page =
+      PageInfo<PdfViewRouteArgs>(name);
+}
+
+class PdfViewRouteArgs {
+  const PdfViewRouteArgs({
+    this.key,
+    required this.pdfUrl,
+  });
+
+  final Key? key;
+
+  final String pdfUrl;
+
+  @override
+  String toString() {
+    return 'PdfViewRouteArgs{key: $key, pdfUrl: $pdfUrl}';
+  }
 }
 
 /// generated route for
@@ -361,6 +491,20 @@ class ProfilRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'ProfilRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [SubjectScreen]
+class SubjectRoute extends PageRouteInfo<void> {
+  const SubjectRoute({List<PageRouteInfo>? children})
+      : super(
+          SubjectRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SubjectRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

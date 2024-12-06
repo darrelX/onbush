@@ -3,10 +3,12 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:onbush/auth/data/models/college_model.dart';
 import 'package:onbush/auth/data/models/specialty_model.dart';
+import 'package:onbush/shared/application/data/models/course_model.dart';
+import 'package:onbush/shared/application/data/models/subject_model.dart';
 import 'package:onbush/auth/data/models/user_model.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/shared/application/cubit/data_state.dart';
-import 'package:onbush/shared/application/repositories/application_repository.dart';
+import 'package:onbush/shared/application/data/repositories/application_repository.dart';
 import 'package:onbush/shared/local/local_storage.dart';
 import 'package:onbush/shared/utils/utils.dart';
 
@@ -15,7 +17,6 @@ part 'application_state.dart';
 class ApplicationCubit extends Cubit<ApplicationState> {
   final _repository = ApplicationRepository();
   final pref = getIt.get<LocalStorage>();
-
   final List<CollegeModel> _listAllColleges = [];
   final List<Speciality> _listAllSpecialities = [];
   String? currentRequest;
@@ -24,13 +25,12 @@ class ApplicationCubit extends Cubit<ApplicationState> {
   late UserModel _userModel;
   UserModel get userModel => _userModel;
 
-  ApplicationCubit()
-      : super(const ApplicationState(user: null, speciality: DataInitial()));
+  ApplicationCubit() : super(ApplicationState.initial());
 
   setUser([UserModel? user]) async {
     if (user != null) {
       _userModel = user;
-      emit(state.copyWith(user: user, speciality: const DataInitial()));
+      emit(ApplicationState.initial().copyWith(user: user));
       pref.setString('token', user.id!);
     }
 
@@ -67,19 +67,65 @@ class ApplicationCubit extends Cubit<ApplicationState> {
   //     emit(SearchStateFailure(message: e.toString()));
   //   }
   // }
+  Future<void> fetchSubjectModel() async {
+    emit(state.copyWith(
+        user: _userModel,
+        listSubjectModel:
+            state.listSubjectModel!.copyWith(status: Status.loading)));
+    try {
+      final data = await _repository.fetchListSubjectModel(
+          specialityId: _userModel.majorSchoolId!);
+      emit(state.copyWith(
+          user: _userModel,
+          listSubjectModel: state.listSubjectModel!
+              .copyWith(status: Status.success, data: data)));
+    } catch (e) {
+      emit(state.copyWith(
+          user: _userModel,
+          listSubjectModel: state.listSubjectModel!.copyWith(
+              status: Status.failure, error: Utils.extractErrorMessage(e))));
+    }
+  }
+
+  Future<void> fetchCourseModel(
+      {required int subjectId, required String instruction}) async {
+    emit(state.copyWith(
+        user: _userModel,
+        listCourseModel:
+            state.listCourseModel!.copyWith(status: Status.loading)));
+    try {
+      final data = await _repository.fetchListCourseModel(
+          subjectId: subjectId, instruction: instruction);
+      print(data);
+      emit(state.copyWith(
+          user: _userModel,
+          listCourseModel: state.listCourseModel!
+              .copyWith(status: Status.success, data: data)));
+    } catch (e) {
+      emit(state.copyWith(
+          user: _userModel,
+          listCourseModel: state.listCourseModel!.copyWith(
+              status: Status.failure, error: Utils.extractErrorMessage(e))));
+    }
+  }
 
   Future<void> addSpecialty() async {
     // emit(const SpecialityLoading());
-    emit(state.copyWith(user: _userModel, speciality: const DataLoading()));
+    emit(state.copyWith(
+        user: _userModel,
+        speciality: state.speciality.copyWith(status: Status.loading)));
     try {
       Speciality speciality =
           (await _repository.fetchSpecialitie(id: _userModel.majorSchoolId!))!;
       emit(state.copyWith(
-          user: _userModel, speciality: DataSuccess<Speciality>(data: speciality)));
-    } on DioException catch (e) {
+          user: _userModel,
+          speciality: state.speciality
+              .copyWith(status: Status.success, data: speciality)));
+    } catch (e) {
       emit(state.copyWith(
           user: _userModel,
-          speciality: DataFailure(message: Utils.extractErrorMessage(e))));
+          speciality: state.speciality.copyWith(
+              status: Status.failure, error: Utils.extractErrorMessage(e))));
 
       // emit(SpecialityFailure(message: Utils.extractErrorMessage(e)));
     }
@@ -95,9 +141,9 @@ class ApplicationCubit extends Cubit<ApplicationState> {
           email: _userModel.email!);
 
       print(pref.getString("token"));
-      // pref.remove('token');
+      pref.remove('token');
       // emit(const LogoutSuccess());
-    } on DioException catch (e) {
+    } catch (e) {
       // emit(LogoutFailure(message: Utils.extractErrorMessage(e)));
     }
   }

@@ -75,7 +75,7 @@ class _AppButtonState extends State<AppButton> {
       // },
       // highlightColor: Colors.transparent,
       child: Container(
-          height: widget.height,
+          height: widget.child == null ? widget.height : null,
           width: widget.width,
           constraints: widget.constraints,
           padding: widget.child == null
@@ -89,7 +89,7 @@ class _AppButtonState extends State<AppButton> {
                     ? widget.activeBgColor
                     : widget.bgColor)
                 : widget.bgColor?.withOpacity(.6),
-            border: widget.borderColor != null
+            border: widget.borderColor != null && widget.child == null
                 ? Border.all(
                     color: widget.borderColor!,
                     width: 1.5.w,

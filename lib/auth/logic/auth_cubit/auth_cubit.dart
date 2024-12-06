@@ -35,15 +35,27 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(const LoginLoading());
     try {
-      var user = await _repository.login(
+      //  final result = (await _repository.connexion(
+      //       appareil: getIt.get<LocalStorage>().getString('device')!));
+      final result = await _repository.login(
         appareil: appareil,
         email: email,
       );
-      emit(LoginSuccess(user: user!));
-    } on DioException catch (e) {
+      result.fold((ifLeft) {
+        emit(OTpStateSuccess(email: email, type: 'login'));
+      }, (ifRight) {
+        if (ifRight == null) {
+          emit(const LoginFailure(message: "Erreur inconnue"));
+        } else {
+          emit(LoginSuccess(user: ifRight));
+        }
+      });
+    } catch (e) {
+      print("object");
+
       emit(LoginFailure(
           message: Utils.extractErrorMessageFromMap(
-              e, {"0": "telephone ou pass incorrest", "-1": "compte bloque"})));
+              e, {"0": "telephone ou pass incorrect", "-1": "compte bloque"})));
       // rethrow;
     }
   }
@@ -78,7 +90,7 @@ class AuthCubit extends Cubit<AuthState> {
         role: role,
       );
       emit(const RegisterSuccess());
-    } on DioException catch (e) {
+    } catch (e) {
       // print(e);
       emit(RegisterFailure(
           message: Utils.extractErrorMessageFromMap(e, {
@@ -104,26 +116,50 @@ class AuthCubit extends Cubit<AuthState> {
         emit(CheckAuthStateFailure(
             message: Utils.extractErrorMessage('User is not authenticated')));
       }
-    } on DioException catch (e) {
+    } catch (e) {
       emit(CheckAuthStateFailure(message: Utils.extractErrorMessage(e)));
     }
   }
 
   Future<void> connexion() async {
-    final String? token = _prefs.getString('device');
+    final String? token = _prefs.getString('token');
     emit(const CheckAuthStateLoading());
     try {
-      if (token == null) {
+      if (token == null || token.isEmpty) {
         emit(const AuthOnboardingState());
       } else {
-        UserModel user = (await _repository.connexion(appareil: token))!;
+        UserModel user = (await _repository.connexion(
+            appareil: getIt.get<LocalStorage>().getString('device')!))!;
         emit(CheckAuthStateSuccess(user: user));
       }
-    } on DioException catch (e) {
+    } catch (e) {
       emit(CheckAuthStateFailure(message: Utils.extractErrorMessage(e)));
     }
     // emit(const ConnexionSuccess());
   }
+
+  // Future<void> connexion() async {
+  //   final String? token = _prefs.getString('token');
+  //   emit(const CheckAuthStateLoading());
+  //   try {
+  //     if (token == null || token.isEmpty) {
+  //       emit(const AuthOnboardingState());
+  //     } else {
+  //       final result = (await _repository.connexion(
+  //           appareil: getIt.get<LocalStorage>().getString('device')!));
+
+  //       result.fold((ifLeft){
+
+  //       }, (ifRight){
+  //       emit(CheckAuthStateSuccess(user: ifRight));
+
+  //       });
+  //     }
+  //   } catch (e) {
+  //     emit(CheckAuthStateFailure(message: Utils.extractErrorMessage(e)));
+  //   }
+  //   // emit(const ConnexionSuccess());
+  // }
 
   Future<void> allColleges() async {
     _listAllColleges.clear();

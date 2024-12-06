@@ -622,7 +622,7 @@ class _PaymentWidgetState extends State<PaymentWidget> {
                                                                 .replaceAll(
                                                                     ' ', ''),
                                                         paymentService: _pm!,
-                                                        amount: 20,
+                                                        amount: 5000,
                                                         sponsorCode:
                                                             _sponsorCodeController
                                                                 .text
@@ -660,7 +660,7 @@ class _PaymentWidgetState extends State<PaymentWidget> {
                                                                 .replaceAll(
                                                                     ' ', ''),
                                                         paymentService: _pm!,
-                                                        amount: 20,
+                                                        amount: 5000,
                                                         sponsorCode: "0",
                                                         discountCode: "0");
                                               },

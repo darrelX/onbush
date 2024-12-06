@@ -80,6 +80,7 @@ class _AuthScreenState extends State<AuthScreen> {
       body: BlocConsumer<AuthCubit, AuthState>(
         // bloc: _cubit,
         listener: (context, state) {
+          print(state);
           if (state is LoginFailure) {
             if (state.message == "compte bloque") {
               context.router.push(PriceRoute(
@@ -98,6 +99,12 @@ class _AuthScreenState extends State<AuthScreen> {
             );
           }
 
+          if (state is OTpStateSuccess) {
+            OTPInputRoute(
+                type: 'register',
+                email: state.email);
+          }
+
           if (state is LoginSuccess) {
             // print(state.user.avatar);
             context.read<ApplicationCubit>().setUser(state.user);
@@ -109,8 +116,7 @@ class _AuthScreenState extends State<AuthScreen> {
           if (state is RegisterSuccess) {
             context.router.push(
               OTPInputRoute(
-                  device: getIt.get<LocalStorage>().getString('device')!,
-                  number: _phoneController.text.replaceAll(' ', ''),
+                  type: 'register',
                   email: _emailSignUpController.text.replaceAll(' ', '')),
               // predicate: (route) => false
             );
@@ -119,7 +125,7 @@ class _AuthScreenState extends State<AuthScreen> {
         builder: (context, state) {
           return SingleChildScrollView(
             child: IgnorePointer(
-              ignoring: state is SearchStateLoading ,
+              ignoring: state is SearchStateLoading,
               child: Stack(
                 children: [
                   Form(

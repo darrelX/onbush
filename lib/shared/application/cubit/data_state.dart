@@ -1,38 +1,18 @@
-import 'package:equatable/equatable.dart';
+enum Status { initial, loading, success, failure }
 
-sealed class DataState extends Equatable {
-  const DataState();
 
-  @override
-  List<Object?> get props => [];
-}
+class DataState<T> {
+  final T? data;
+  final Status status;
+  final String? error;
 
-class DataInitial extends DataState {
-  const DataInitial();
+  DataState({this.data, this.status = Status.initial, this.error});
 
-  @override
-  List<Object?> get props => [];
-}
-
-class DataLoading extends DataState {
-  const DataLoading();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class DataFailure extends DataState {
-  final String message;
-  const DataFailure({required this.message});
-
-  @override
-  List<Object?> get props => [message];
-}
-
-class DataSuccess<T> extends DataState {
-  final T data;
-  const DataSuccess({required this.data});
-
-  @override
-  List<Object?> get props => [data];
+  DataState<T> copyWith({T? data, Status? status, String? error}) {
+    return DataState(
+      data: data ?? this.data,
+      status: status ?? this.status,
+      error: error ?? this.error,
+    );
+  }
 }

@@ -9,26 +9,28 @@ sealed class OtpEvent extends Equatable {
 
 class OtpSubmitted extends OtpEvent {
   final int otp;
+  final String type;
   final String device;
   final String email;
   final String? role;
 
   const OtpSubmitted(
-      {required this.otp, required this.device, required this.email, this.role = "etudiant"});
+      {required this.otp, required this.type, required this.device, required this.email, this.role = "etudiant"});
 
   @override
   List<Object> get props => [otp, device, email];
 }
 
 class OtpReset extends OtpEvent {
-  final String phoneNumber;
+  final String type;
+  final String device;
   final String email;
-  final String code;
+  final int code;
 
   const OtpReset(
-      {required this.phoneNumber, required this.email, required this.code});
+      {required this.type, required this.device, required this.email, required this.code});
   @override
-  List<Object> get props => [phoneNumber, email];
+  List<Object> get props => [type, email, device, code];
 }
 
 class _OtpTick extends OtpEvent {
@@ -40,14 +42,12 @@ class _OtpTick extends OtpEvent {
 }
 
 class OtpInitialized extends OtpEvent {
-  final String phoneNumber;
-  final int duration;
-  final String email;
+
   const OtpInitialized(
-      {required this.phoneNumber, required this.duration, required this.email});
+      );
 
   @override
-  List<Object> get props => [phoneNumber, duration, email];
+  List<Object> get props => [];
 }
 
 class OtpVerification extends OtpEvent {
