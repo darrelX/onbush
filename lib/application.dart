@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
 import 'package:onbush/auth/logic/otp_cubit/otp_bloc.dart';
+import 'package:onbush/download/logic/cubit/download_cubit.dart';
 import 'package:onbush/l10n/l10n.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:onbush/my_bloc_observer.dart';
@@ -37,12 +38,12 @@ class _ApplicationState extends State<Application> {
         ),
         BlocProvider(create: (context) => getIt.get<NetworkCubit>()),
         BlocProvider(create: (context) => getIt.get<OtpBloc>()),
+        BlocProvider(create: (context) => getIt.get<DownloadCubit>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 812),
         child: MaterialApp.router(
           title: 'onbush',
-          
           localizationsDelegates: const [
             AppLocalizations.delegate, // Add this line
             GlobalMaterialLocalizations.delegate,
@@ -55,8 +56,8 @@ class _ApplicationState extends State<Application> {
           locale: const Locale('en'),
           darkTheme: buildLightTheme(),
           routerConfig: _appRouter.config(
-            navigatorObservers: () => [MyObserver()],
-          ),
+              // navigatorObservers: () => [MyObserver()],
+              ),
           themeMode: ThemeMode.dark,
           builder: (context, child) => _UnFocusWrapper(
             child: child,

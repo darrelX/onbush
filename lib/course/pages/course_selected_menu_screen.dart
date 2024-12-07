@@ -42,7 +42,7 @@ class _CourseSelectionMenuScreenState extends State<CourseSelectionMenuScreen> {
               child: ListTile(
                 onTap: () {
                   context.router.push(CourseRoute(
-                      subjectModel: widget.subjectModel, instruction: "cours"));
+                      subjectModel: widget.subjectModel, category: "cours"));
                 },
                 leading: Image.asset(
                   "assets/icons/leading-icon.png",
@@ -71,7 +71,7 @@ class _CourseSelectionMenuScreenState extends State<CourseSelectionMenuScreen> {
                 onTap: () {
                   context.router.push(CourseRoute(
                       subjectModel: widget.subjectModel,
-                      instruction: "travauxdiriges"));
+                      category: "travauxdiriges"));
                 },
                 leading: Image.asset(
                   "assets/icons/pencil.png",
@@ -100,7 +100,7 @@ class _CourseSelectionMenuScreenState extends State<CourseSelectionMenuScreen> {
                 onTap: () {
                   context.router.push(CourseRoute(
                       subjectModel: widget.subjectModel,
-                      instruction: "controlcontinus"));
+                      category: "controlcontinus"));
                 },
                 leading: Image.asset(
                   "assets/icons/leading-icon.png",

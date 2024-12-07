@@ -8,6 +8,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:onbush/onboarding/logic/cubit/payment_cubit.dart';
+import 'package:onbush/onboarding/widgets/payment_bottom_navigation.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/shared/application/cubit/application_cubit.dart';
 import 'package:onbush/shared/device_info/device_info.dart';
@@ -51,8 +52,6 @@ class _PaymentWidgetState extends State<PaymentWidget> {
   final TextEditingController _discountCodeController = TextEditingController();
   final TextEditingController _sponsorCodeController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final GlobalKey<FormFieldState> _discountCodeKey =
-      GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> _phoneKey = GlobalKey<FormFieldState>();
   bool _isValid1 = false;
   bool _isValid2 = false;
@@ -64,6 +63,7 @@ class _PaymentWidgetState extends State<PaymentWidget> {
   late PaymentCubit paymentCubit;
   bool _isLoading = false;
   bool hasShownError = false;
+  int _amount = 5000;
 
   // bool _isValidate = false;
 
@@ -93,34 +93,56 @@ class _PaymentWidgetState extends State<PaymentWidget> {
         int verificationAttempts = 0; // Compteur pour les tentatives
 
         if (state is PaymentSuccess) {
-          setState(() {
-            _isLoading = true;
-            hasShownError = false;
-          });
+          if (state.transactionId == null) {
+            AppSnackBar.showSuccess(
+              message: "Transaction réussie",
+              context: context,
+            );
+            Future.delayed(const Duration(milliseconds: 1300));
+            context.router.popAndPush(const ApplicationRoute());
+          } else {
+            setState(() {
+              _isLoading = true;
+              hasShownError = false;
+            });
+            await paymentCubit.verifying(transactionId: state.transactionId!);
 
-          await paymentCubit.verifying(transactionId: state.transactionId);
+            _timer = Timer.periodic(const Duration(seconds: 25), (timer) async {
+              verificationAttempts++;
 
-          _timer = Timer.periodic(const Duration(seconds: 25), (timer) async {
-            verificationAttempts++;
+              // Vérification de l'état
+              await paymentCubit.verifying(transactionId: state.transactionId!);
 
-            // Vérification de l'état
-            await paymentCubit.verifying(transactionId: state.transactionId);
-
-            if (verificationAttempts == 2) {
-              // Dernière tentative, annule le timer
-              setState(() {
-                _isLoading = false;
-              });
-              timer.cancel();
-            }
-          });
+              if (verificationAttempts == 2) {
+                // Dernière tentative, annule le timer
+                setState(() {
+                  _isLoading = false;
+                });
+                timer.cancel();
+              }
+            });
+          }
         }
 
+        if (state is PercentStateFailure) {
+          AppSnackBar.showError(
+              message: "Code de reduction incorrect", context: context);
+        }
         if (state is PaymentFailure) {
           AppSnackBar.showError(
             message: state.message,
             context: context,
           );
+        }
+
+        if (state is PercentStateSucess) {
+          setState(() {
+            _pageController.nextPage(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.linear);
+
+            _amount = state.percent;
+          });
         }
 
         if (state is VerifyingPaymentFailure) {
@@ -170,6 +192,7 @@ class _PaymentWidgetState extends State<PaymentWidget> {
         }
       },
       builder: (context, state) {
+        print(state);
         return Scaffold(
           body: Form(
             key: _formKey,
@@ -214,9 +237,7 @@ class _PaymentWidgetState extends State<PaymentWidget> {
                           child: PageView(
                             allowImplicitScrolling: true,
                             controller: _pageController,
-                            physics: _currentIndex == 1 && _pm == null
-                                ? const NeverScrollableScrollPhysics()
-                                : null,
+                            physics: const NeverScrollableScrollPhysics(),
                             onPageChanged: (page) {
                               setState(() {
                                 _currentIndex = page;
@@ -276,25 +297,149 @@ class _PaymentWidgetState extends State<PaymentWidget> {
                                 ),
                               ),
                               Container(
-                                width: 350.w,
+                                width: context.width,
+                                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      Gap(290.h),
+                                      Row(
+                                        children: [
+                                          AppButton(
+                                            child: const Icon(Icons.arrow_back),
+                                            onPressed: () {
+                                              _pageController.previousPage(
+                                                  duration: const Duration(
+                                                      milliseconds: 300),
+                                                  curve: Curves.linear);
+                                            },
+                                          ),
+                                          const Spacer(),
+                                          Text(
+                                            "Code de reduction ou de\nparrainage",
+                                            maxLines: 2,
+                                            style: context
+                                                .textTheme.headlineSmall!
+                                                .copyWith(
+                                                    color: AppColors.black,
+                                                    shadows: [
+                                                      const Shadow(
+                                                        offset:
+                                                            Offset(0.5, 0.5),
+                                                        blurRadius: 1.0,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ],
+                                                    fontWeight:
+                                                        FontWeight.w900),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const Spacer()
+                                        ],
+                                      ),
+                                      Gap(30.h),
+                                      IgnorePointer(
+                                        ignoring: _discountCodeValue,
+                                        child: Opacity(
+                                          opacity: _discountCodeValue ? 0.5 : 1,
+                                          child: AppInput(
+                                            // formFieldKey: _discountCodeKey,
+                                            hint:
+                                                "Entrer code de reduction si vous en avez un",
+                                            onChange: (value) {
+                                              setState(() {
+                                                _sponsorCodeValue =
+                                                    value.isNotEmpty;
+                                              });
+                                            },
+                                            controller: _discountCodeController,
+                                            keyboardType: TextInputType.text,
+                                            validators: [
+                                              FormBuilderValidators.required()
+                                            ],
+                                            onInputValidated: (value) {
+                                              setState(() {
+                                                _isValid2 = value;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                      Gap(30.h),
+                                      IgnorePointer(
+                                        ignoring: _sponsorCodeValue,
+                                        child: Opacity(
+                                          opacity: _sponsorCodeValue ? 0.5 : 1,
+                                          child: AppInput(
+                                            hint:
+                                                "Entrer code de parrainage si vous en avez un",
+                                            onChange: (value) {
+                                              _discountCodeValue =
+                                                  value.isNotEmpty;
+                                            },
+                                            controller: _sponsorCodeController,
+                                            keyboardType: TextInputType.text,
+                                            onInputValidated: (value) {
+                                              setState(() {
+                                                _isValid2 = value;
+                                              });
+                                            },
+                                            validators: [
+                                              FormBuilderValidators.required(),
+
+                                              // FormBuilderValidators.()
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Gap(30.h),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: context.width,
                                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                                 child: Column(
                                   children: [
                                     Gap(290.h),
-                                    Text(
-                                      "Choisis ton moyen de paiement",
-                                      style: context.textTheme.headlineMedium!
-                                          .copyWith(
-                                              color: AppColors.black,
-                                              shadows: [
-                                                const Shadow(
-                                                  offset: Offset(0.5, 0.5),
-                                                  blurRadius: 1.0,
-                                                  color: Colors.grey,
-                                                ),
-                                              ],
-                                              fontWeight: FontWeight.w900),
-                                      textAlign: TextAlign.center,
+                                    Row(
+                                      children: [
+                                        AppButton(
+                                          child: const Icon(Icons.arrow_back),
+                                          onPressed: () {
+                                            _pageController.previousPage(
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                                curve: Curves.linear);
+                                          },
+                                        ),
+                                        const Spacer(),
+                                        Container(
+                                          constraints: BoxConstraints(
+                                              maxWidth: context.width - 100.w),
+                                          child: Text(
+                                            "Choisis ton moyen de paiement",
+                                            style: context
+                                                .textTheme.headlineSmall!
+                                                .copyWith(
+                                                    color: AppColors.black,
+                                                    shadows: [
+                                                      const Shadow(
+                                                        offset:
+                                                            Offset(0.5, 0.5),
+                                                        blurRadius: 1.0,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ],
+                                                    fontWeight:
+                                                        FontWeight.w900),
+                                            maxLines: 2,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                      ],
                                     ),
                                     Gap(45.h),
                                     Opacity(
@@ -311,8 +456,6 @@ class _PaymentWidgetState extends State<PaymentWidget> {
                                               _isValid1 = value;
                                             });
                                           },
-
-                                          // validator: (p0) {},
                                           initialValue:
                                               PhoneNumber(isoCode: 'CM'),
                                           errorMessage:
@@ -324,11 +467,6 @@ class _PaymentWidgetState extends State<PaymentWidget> {
                                             setSelectorButtonAsPrefixIcon: true,
                                             leadingPadding: 10,
                                           ),
-
-                                          // inputBorder: const OutlineInputBorder(
-                                          //   borderSide:
-                                          //       BorderSide(color: Colors.red),
-                                          // ),
                                           inputDecoration: InputDecoration(
                                               filled: true,
                                               fillColor: Colors.white,
@@ -341,7 +479,7 @@ class _PaymentWidgetState extends State<PaymentWidget> {
                                                       BorderRadius.circular(
                                                           10.r)),
                                               enabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: AppColors.black,
                                                       style: BorderStyle.solid),
                                                   borderRadius:
@@ -422,20 +560,23 @@ class _PaymentWidgetState extends State<PaymentWidget> {
                                                   fontWeight: FontWeight.w900),
                                         ),
                                         const Spacer(),
-                                        Text(
-                                          "5000 Fcfa",
-                                          style: context.textTheme.titleLarge!
-                                              .copyWith(
-                                                  shadows: [
-                                                const Shadow(
-                                                  offset: Offset(0.5, 0.5),
-                                                  blurRadius: 5.0,
-                                                  color: Colors.grey,
-                                                ),
-                                              ],
-                                                  color: AppColors.black,
-                                                  fontWeight: FontWeight.w900),
-                                        )
+                                        Builder(builder: (context) {
+                                          return Text(
+                                            "$_amount Fcfa",
+                                            style: context.textTheme.titleLarge!
+                                                .copyWith(
+                                                    shadows: [
+                                                  const Shadow(
+                                                    offset: Offset(0.5, 0.5),
+                                                    blurRadius: 5.0,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ],
+                                                    color: AppColors.black,
+                                                    fontWeight:
+                                                        FontWeight.w900),
+                                          );
+                                        })
 
                                         // Text("5000 Fcfa"),
                                       ],
@@ -444,234 +585,23 @@ class _PaymentWidgetState extends State<PaymentWidget> {
                                   ],
                                 ),
                               ),
-                              Container(
-                                width: context.width,
-                                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      Gap(290.h),
-                                      Row(
-                                        children: [
-                                          AppButton(
-                                            child: const Icon(Icons.arrow_back),
-                                            onPressed: () {
-                                              _pageController.previousPage(
-                                                  duration: const Duration(
-                                                      milliseconds: 300),
-                                                  curve: Curves.linear);
-                                            },
-                                          ),
-                                          const Spacer(),
-                                          Text(
-                                            "Code de reduction ou de\nparrainage",
-                                            maxLines: 2,
-                                            style: context
-                                                .textTheme.headlineMedium!
-                                                .copyWith(
-                                                    color: AppColors.black,
-                                                    shadows: [
-                                                      const Shadow(
-                                                        offset:
-                                                            Offset(0.5, 0.5),
-                                                        blurRadius: 1.0,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ],
-                                                    fontWeight:
-                                                        FontWeight.w900),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          const Spacer()
-                                        ],
-                                      ),
-                                      Gap(30.h),
-                                      IgnorePointer(
-                                        ignoring: _discountCodeValue,
-                                        child: Opacity(
-                                          opacity: _discountCodeValue ? 0.5 : 1,
-                                          child: AppInput(
-                                            formFieldKey: _discountCodeKey,
-                                            hint:
-                                                "Entrer code de reduction si vous en avez un",
-                                            onChange: (value) {
-                                              setState(() {
-                                                _sponsorCodeValue =
-                                                    value.isNotEmpty;
-                                              });
-                                            },
-                                            controller: _discountCodeController,
-                                            keyboardType: TextInputType.text,
-                                            validators: [
-                                              FormBuilderValidators.required()
-                                            ],
-                                            onInputValidated: (value) {
-                                              setState(() {
-                                                _isValid2 = value;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      Gap(30.h),
-                                      IgnorePointer(
-                                        ignoring: _sponsorCodeValue,
-                                        child: Opacity(
-                                          opacity: _sponsorCodeValue ? 0.5 : 1,
-                                          child: AppInput(
-                                            hint:
-                                                "Entrer code de parrainage si vous en avez un",
-                                            onChange: (value) {
-                                              _discountCodeValue =
-                                                  value.isNotEmpty;
-                                            },
-                                            controller: _sponsorCodeController,
-                                            keyboardType: TextInputType.text,
-                                            onInputValidated: (value) {
-                                              setState(() {
-                                                _isValid2 = value;
-                                              });
-                                            },
-                                            validators: [
-                                              FormBuilderValidators.required(),
-
-                                              // FormBuilderValidators.()
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Gap(30.h),
-                                    ],
-                                  ),
-                                ),
-                              )
                             ],
                           ),
                         ),
-                        Positioned(
-                          bottom: 20.h,
-                          left: 0,
-                          right: 0,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20.w),
-                            child: Opacity(
-                              opacity: (_currentIndex == 0 ||
-                                      _currentIndex == 2 ||
-                                      (_currentIndex == 1 &&
-                                          _pm != null &&
-                                          _isValid1))
-                                  ? 1
-                                  : 0.5,
-                              child: IgnorePointer(
-                                  ignoring: (_currentIndex == 0 ||
-                                          _currentIndex == 2 ||
-                                          (_currentIndex == 1 &&
-                                              _pm != null &&
-                                              _isValid1))
-                                      ? false
-                                      : true,
-                                  child: _currentIndex != 2
-                                      ? AppButton(
-                                          text: _currentIndex == 0
-                                              ? "Continuer"
-                                              : "Valider",
-                                          height: 50.h,
-                                          onPressed: () {
-                                            if (_currentIndex == 0) {
-                                              _pageController.nextPage(
-                                                  duration: const Duration(
-                                                      milliseconds: 300),
-                                                  curve: Curves.linear);
-                                            }
-                                            if (_currentIndex == 1 &&
-                                                _phoneKey.currentState!
-                                                    .validate() &&
-                                                _pm != null) {
-                                              _pageController.nextPage(
-                                                  duration: const Duration(
-                                                      milliseconds: 300),
-                                                  curve: Curves.linear);
-                                            }
-                                          },
-                                          width: context.width - 20.w,
-                                          textColor: AppColors.white,
-                                          loading: state is PaymentLoading,
-                                          bgColor: AppColors.secondary,
-                                        )
-                                      : Column(
-                                          children: [
-                                            IgnorePointer(
-                                              ignoring: !_isValid2,
-                                              child: Opacity(
-                                                opacity: !_isValid2 ? 0.3 : 1,
-                                                child: AppButton(
-                                                  width: context.width,
-                                                  text: "Valider mon compte",
-                                                  loading:
-                                                      state is PaymentLoading,
-                                                  onPressed: () {
-                                                    context.read<PaymentCubit>().initPayment(
-                                                        appareil: getIt
-                                                            .get<LocalStorage>()
-                                                            .getString(
-                                                                'device')!,
-                                                        email: widget.email,
-                                                        phoneNumber:
-                                                            _phoneController
-                                                                .text
-                                                                .replaceAll(
-                                                                    ' ', ''),
-                                                        paymentService: _pm!,
-                                                        amount: 5000,
-                                                        sponsorCode:
-                                                            _sponsorCodeController
-                                                                .text
-                                                                .replaceAll(
-                                                                    ' ', ''),
-                                                        discountCode:
-                                                            _discountCodeController
-                                                                .text
-                                                                .replaceAll(
-                                                                    ' ', ''));
-                                                  },
-                                                  textColor: AppColors.white,
-                                                  bgColor: AppColors.primary,
-                                                ),
-                                              ),
-                                            ),
-                                            Gap(20.h),
-                                            AppButton(
-                                              width: context.width,
-                                              text: "Pas de compte? Continuer",
-                                              loading:
-                                                  (state is PaymentLoading),
-                                              onPressed: () {
-                                                context
-                                                    .read<PaymentCubit>()
-                                                    .initPayment(
-                                                        appareil: getIt
-                                                            .get<LocalStorage>()
-                                                            .getString(
-                                                                'device')!,
-                                                        email: widget.email,
-                                                        phoneNumber:
-                                                            _phoneController
-                                                                .text
-                                                                .replaceAll(
-                                                                    ' ', ''),
-                                                        paymentService: _pm!,
-                                                        amount: 5000,
-                                                        sponsorCode: "0",
-                                                        discountCode: "0");
-                                              },
-                                              textColor: AppColors.primary,
-                                              bgColor: AppColors.ternary,
-                                            )
-                                          ],
-                                        )),
-                            ),
-                          ),
-                        ),
+                        PaymentBottomNavigation(
+                            amount: _amount,
+                            paymentCubit: paymentCubit,
+                            state: state,
+                            currentIndex: _currentIndex,
+                            pm: _pm,
+                            isValid1: _isValid1,
+                            pageController: _pageController,
+                            phoneKey: _phoneKey,
+                            widget: widget,
+                            phoneController: _phoneController,
+                            sponsorCodeController: _sponsorCodeController,
+                            discountCodeController: _discountCodeController,
+                            isValid2: _isValid2),
                       ],
                     ),
                   ),

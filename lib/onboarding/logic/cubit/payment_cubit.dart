@@ -23,21 +23,36 @@ class PaymentCubit extends Cubit<PaymentState> {
   }) async {
     emit(const PaymentLoading());
     try {
-      final String transactionId = (await _paymentRepository.initPayment(
+      final result = (await _paymentRepository.initPayment(
           appareil: appareil,
           email: email,
           phoneNumber: phoneNumber,
           paymentService: paymentService,
           amount: amount,
           sponsorCode: sponsorCode,
-          discountCode: discountCode))!;
-      print("darrel $transactionId");
-
-      emit(PaymentSuccess(transactionId: transactionId));
+          discountCode: discountCode));
+      result.fold((ifLeft) {
+        emit(PaymentSuccess(user: ifLeft));
+      }, (ifRight) {
+        emit(PaymentSuccess(transactionId: ifRight));
+      });
+      // print("darrel $transactionId");
     } catch (e) {
       emit(PaymentFailure(
           message: Utils.extractErrorMessageFromMap(
               e, {"0": "imapossible d'initier la transaction"})));
+    }
+  }
+
+  Future<void> percent({required int code}) async {
+    emit(const PercentStateLoading());
+    try {
+      int total =
+          (5000 * (1 - (await _paymentRepository.percent(code: code))! / 100))
+              .toInt();
+      emit(PercentStateSucess(percent: total));
+    } catch (e) {
+      emit(PercentStateFailure(message: Utils.extractErrorMessage(e)));
     }
   }
 

@@ -64,6 +64,7 @@ class NotificationScreen extends StatelessWidget {
                 date: "2h",
                 title: "Nouveau cours",
               ),
+              Gap(20.h),
               const NotificationWidget(
                 content:
                     "  Lorem ipsum dolor sit amet consectetur. Pellentesque euismod habitasse tortor arcu neque a aliquam elit a. Sed in viverra pharetra convallis maecenas ut pretium. Commodo varius pellentesque gravida laoreet.",
@@ -77,6 +78,7 @@ class NotificationScreen extends StatelessWidget {
                 date: "2h",
                 title: "Nouveau cours",
               ),
+              Gap(20.h),
             ],
           ),
         ),

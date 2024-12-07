@@ -66,7 +66,6 @@ class _SubjectScreenState extends State<SubjectScreen> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (state.listSubjectModel!.status == Status.success) {
-                  
                   _filterListSubjectModel =
                       state.listSubjectModel!.data!.where((subjectModel) {
                     final matchSubjectModel = _currentIndex == 0 ||
@@ -94,12 +93,18 @@ class _SubjectScreenState extends State<SubjectScreen> {
                               _currentIndex = index;
                             });
                           },
-                          listSemester: state.listSubjectModel!.data!.where((item){})
-                          
-                          //  const [
-                          //   "Tous",
-                          //   "Semestre 1",
-                          // ]),
+                          listSemester: [
+                            "Tous",
+                            ...state.listSubjectModel!.data!
+                                .map((item) => item.semester!)
+                                .toSet()
+                                .map((item) => "Semestre ${item.toString()}")
+                          ]),
+
+                      //  const [
+                      //   "Tous",
+                      //   "Semestre 1",
+                      // ]),
                       Gap(20.h),
                       Expanded(
                         child: Padding(

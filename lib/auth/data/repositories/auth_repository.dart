@@ -88,8 +88,8 @@ class AuthRepository {
           "email": email,
         },
       );
-      if (response.data['data'] is String) {
-        return const Left(false);
+      if (response.data['data']['email'] is String) {
+        return const Left(true);
       } else {
         return Right(UserModel.fromJson(response.data["data"]));
       }

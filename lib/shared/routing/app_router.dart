@@ -4,6 +4,8 @@ import 'package:onbush/auth/presentation/pages/new_password_screen.dart';
 import 'package:onbush/course/pages/course_screen.dart';
 import 'package:onbush/course/pages/course_selected_menu_screen.dart';
 import 'package:onbush/course/pages/pdf_view_screen.dart';
+import 'package:onbush/download/logic/data/pdf_file_model.dart';
+import 'package:onbush/download/pages/download_pdf_view_screen.dart';
 import 'package:onbush/onboarding/pages/price_screen.dart';
 import 'package:onbush/course/pages/subject_screen.dart';
 import 'package:onbush/download/pages/download_screen.dart';
@@ -82,5 +84,6 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: CourseRoute.page),
         AutoRoute(page: CourseSelectionMenuRoute.page),
         AutoRoute(page: PdfViewRoute.page),
+        AutoRoute(page: DownloadPdfViewRoute.page),
       ];
 }

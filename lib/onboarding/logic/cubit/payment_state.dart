@@ -19,13 +19,14 @@ final class PaymentLoading extends PaymentState {
 
   @override
   List<Object> get props => [];
-} 
+}
 
 final class PaymentSuccess extends PaymentState {
-  final String transactionId;
-  const PaymentSuccess({required this.transactionId});
+  final String? transactionId;
+  final UserModel? user;
+  const PaymentSuccess({ this.transactionId, this.user});
   @override
-  List<Object> get props => [transactionId];
+  List<Object> get props => [];
 }
 
 final class PaymentFailure extends PaymentState {
@@ -53,6 +54,31 @@ final class VerifyingPaymentSuccess extends PaymentState {
 final class VerifyingPaymentFailure extends PaymentState {
   final String message;
   const VerifyingPaymentFailure({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+final class PercentStateSucess extends PaymentState {
+  final int percent;
+
+  const PercentStateSucess({required this.percent});
+
+  @override
+  List<Object> get props => [percent];
+}
+
+final class PercentStateLoading extends PaymentState {
+  const PercentStateLoading();
+
+  @override
+  List<Object> get props => [];
+}
+
+final class PercentStateFailure extends PaymentState {
+  final String message;
+
+  const PercentStateFailure({required this.message});
 
   @override
   List<Object> get props => [message];

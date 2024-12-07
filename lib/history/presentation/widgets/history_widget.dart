@@ -6,6 +6,7 @@ import 'package:onbush/shared/theme/app_colors.dart';
 class HistoryWidget extends StatelessWidget {
   const HistoryWidget({
     super.key,
+    
   });
 
   @override

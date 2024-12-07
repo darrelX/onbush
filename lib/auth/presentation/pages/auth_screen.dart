@@ -100,9 +100,8 @@ class _AuthScreenState extends State<AuthScreen> {
           }
 
           if (state is OTpStateSuccess) {
-            OTPInputRoute(
-                type: 'register',
-                email: state.email);
+            context.router
+                .popAndPush(OTPInputRoute(type: 'login', email: state.email));
           }
 
           if (state is LoginSuccess) {

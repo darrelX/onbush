@@ -35,8 +35,6 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(const LoginLoading());
     try {
-      //  final result = (await _repository.connexion(
-      //       appareil: getIt.get<LocalStorage>().getString('device')!));
       final result = await _repository.login(
         appareil: appareil,
         email: email,
@@ -51,8 +49,6 @@ class AuthCubit extends Cubit<AuthState> {
         }
       });
     } catch (e) {
-      print("object");
-
       emit(LoginFailure(
           message: Utils.extractErrorMessageFromMap(
               e, {"0": "telephone ou pass incorrect", "-1": "compte bloque"})));

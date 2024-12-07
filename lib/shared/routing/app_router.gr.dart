@@ -46,7 +46,7 @@ abstract class _$AppRouter extends RootStackRouter {
         child: CourseScreen(
           key: args.key,
           subjectModel: args.subjectModel,
-          instruction: args.instruction,
+          category: args.category,
         ),
       );
     },
@@ -57,6 +57,16 @@ abstract class _$AppRouter extends RootStackRouter {
         child: CourseSelectionMenuScreen(
           key: args.key,
           subjectModel: args.subjectModel,
+        ),
+      );
+    },
+    DownloadPdfViewRoute.name: (routeData) {
+      final args = routeData.argsAs<DownloadPdfViewRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: DownloadPdfViewScreen(
+          key: args.key,
+          pdfFileModel: args.pdfFileModel,
         ),
       );
     },
@@ -113,7 +123,8 @@ abstract class _$AppRouter extends RootStackRouter {
         routeData: routeData,
         child: PdfViewScreen(
           key: args.key,
-          pdfUrl: args.pdfUrl,
+          courseModel: args.courseModel,
+          category: args.category,
         ),
       );
     },
@@ -204,14 +215,14 @@ class CourseRoute extends PageRouteInfo<CourseRouteArgs> {
   CourseRoute({
     Key? key,
     required SubjectModel subjectModel,
-    required String instruction,
+    required String category,
     List<PageRouteInfo>? children,
   }) : super(
           CourseRoute.name,
           args: CourseRouteArgs(
             key: key,
             subjectModel: subjectModel,
-            instruction: instruction,
+            category: category,
           ),
           initialChildren: children,
         );
@@ -225,18 +236,18 @@ class CourseRouteArgs {
   const CourseRouteArgs({
     this.key,
     required this.subjectModel,
-    required this.instruction,
+    required this.category,
   });
 
   final Key? key;
 
   final SubjectModel subjectModel;
 
-  final String instruction;
+  final String category;
 
   @override
   String toString() {
-    return 'CourseRouteArgs{key: $key, subjectModel: $subjectModel, instruction: $instruction}';
+    return 'CourseRouteArgs{key: $key, subjectModel: $subjectModel, category: $category}';
   }
 }
 
@@ -276,6 +287,44 @@ class CourseSelectionMenuRouteArgs {
   @override
   String toString() {
     return 'CourseSelectionMenuRouteArgs{key: $key, subjectModel: $subjectModel}';
+  }
+}
+
+/// generated route for
+/// [DownloadPdfViewScreen]
+class DownloadPdfViewRoute extends PageRouteInfo<DownloadPdfViewRouteArgs> {
+  DownloadPdfViewRoute({
+    Key? key,
+    required PdfFileModel pdfFileModel,
+    List<PageRouteInfo>? children,
+  }) : super(
+          DownloadPdfViewRoute.name,
+          args: DownloadPdfViewRouteArgs(
+            key: key,
+            pdfFileModel: pdfFileModel,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'DownloadPdfViewRoute';
+
+  static const PageInfo<DownloadPdfViewRouteArgs> page =
+      PageInfo<DownloadPdfViewRouteArgs>(name);
+}
+
+class DownloadPdfViewRouteArgs {
+  const DownloadPdfViewRouteArgs({
+    this.key,
+    required this.pdfFileModel,
+  });
+
+  final Key? key;
+
+  final PdfFileModel pdfFileModel;
+
+  @override
+  String toString() {
+    return 'DownloadPdfViewRouteArgs{key: $key, pdfFileModel: $pdfFileModel}';
   }
 }
 
@@ -411,13 +460,15 @@ class OnboardingRoute extends PageRouteInfo<void> {
 class PdfViewRoute extends PageRouteInfo<PdfViewRouteArgs> {
   PdfViewRoute({
     Key? key,
-    required String pdfUrl,
+    required CourseModel courseModel,
+    required String category,
     List<PageRouteInfo>? children,
   }) : super(
           PdfViewRoute.name,
           args: PdfViewRouteArgs(
             key: key,
-            pdfUrl: pdfUrl,
+            courseModel: courseModel,
+            category: category,
           ),
           initialChildren: children,
         );
@@ -431,16 +482,19 @@ class PdfViewRoute extends PageRouteInfo<PdfViewRouteArgs> {
 class PdfViewRouteArgs {
   const PdfViewRouteArgs({
     this.key,
-    required this.pdfUrl,
+    required this.courseModel,
+    required this.category,
   });
 
   final Key? key;
 
-  final String pdfUrl;
+  final CourseModel courseModel;
+
+  final String category;
 
   @override
   String toString() {
-    return 'PdfViewRouteArgs{key: $key, pdfUrl: $pdfUrl}';
+    return 'PdfViewRouteArgs{key: $key, courseModel: $courseModel, category: $category}';
   }
 }
 

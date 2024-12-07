@@ -88,15 +88,14 @@ class ApplicationCubit extends Cubit<ApplicationState> {
   }
 
   Future<void> fetchCourseModel(
-      {required int subjectId, required String instruction}) async {
+      {required int subjectId, required String category}) async {
     emit(state.copyWith(
         user: _userModel,
         listCourseModel:
             state.listCourseModel!.copyWith(status: Status.loading)));
     try {
       final data = await _repository.fetchListCourseModel(
-          subjectId: subjectId, instruction: instruction);
-      print(data);
+          subjectId: subjectId, category: category);
       emit(state.copyWith(
           user: _userModel,
           listCourseModel: state.listCourseModel!

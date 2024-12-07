@@ -16,9 +16,9 @@ import 'package:onbush/shared/widget/app_button.dart';
 @RoutePage()
 class CourseScreen extends StatefulWidget {
   final SubjectModel subjectModel;
-  final String instruction;
+  final String category;
   const CourseScreen(
-      {super.key, required this.subjectModel, required this.instruction});
+      {super.key, required this.subjectModel, required this.category});
 
   @override
   State<CourseScreen> createState() => _CourseScreenState();
@@ -29,7 +29,7 @@ class _CourseScreenState extends State<CourseScreen> {
   void initState() {
     super.initState();
     context.read<ApplicationCubit>().fetchCourseModel(
-        subjectId: widget.subjectModel.id!, instruction: widget.instruction);
+        subjectId: widget.subjectModel.id!, category: widget.category);
   }
 
   @override
@@ -38,7 +38,7 @@ class _CourseScreenState extends State<CourseScreen> {
       backgroundColor: AppColors.quaternaire,
       appBar: AppBar(
         centerTitle: true,
-        title: Text(widget.subjectModel.name!),
+        title: Text(widget.subjectModel.name!,),
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -48,27 +48,35 @@ class _CourseScreenState extends State<CourseScreen> {
             Gap(30.h),
             Text(
               widget.subjectModel.name!,
-              style: context.textTheme.displaySmall!.copyWith(),
+              style: context.textTheme.headlineMedium!.copyWith(),
             ),
             Gap(50.h),
-            BlocBuilder<ApplicationCubit, ApplicationState>(
-              builder: (context, state) {
-                if (state.listCourseModel!.status == Status.failure) {
-                  return AppButton(
-                    text: "Retry",
-                    onPressed: () => context
-                        .read<ApplicationCubit>()
-                        .fetchCourseModel(
-                            subjectId: widget.subjectModel.id!,
-                            instruction: widget.instruction),
-                  );
-                }
-                if (state.listCourseModel!.status == Status.loading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (state.listCourseModel!.status == Status.success) {
-                  return Expanded(
-                    child: ListView.separated(
+            Expanded(
+              child: BlocBuilder<ApplicationCubit, ApplicationState>(
+                builder: (context, state) {
+                  if (state.listCourseModel!.status == Status.failure) {
+                    return Center(
+                      child: AppButton(
+                        child: Icon(Icons.refresh,
+                            size: 60.r, color: Colors.black38),
+                        onPressed: () => context
+                            .read<ApplicationCubit>()
+                            .fetchCourseModel(
+                                subjectId: widget.subjectModel.id!,
+                                category: widget.category),
+                      ),
+                    );
+                  }
+                  if (state.listCourseModel!.status == Status.loading) {
+                    return Center(
+                      child: SizedBox(
+                          width: 100.0.r, // Largeur personnalisée
+                          height: 100.0.r, // Hauteur personnalisée
+                          child: const CircularProgressIndicator()),
+                    );
+                  }
+                  if (state.listCourseModel!.status == Status.success) {
+                    return ListView.separated(
                       separatorBuilder: (context, index) => Gap(20.h),
                       itemBuilder: (context, index) {
                         return Container(
@@ -79,8 +87,9 @@ class _CourseScreenState extends State<CourseScreen> {
                           child: ListTile(
                             onTap: () {
                               context.router.push(PdfViewRoute(
-                                  pdfUrl:
-                                      state.listCourseModel!.data![index].pdf));
+                                category: widget.category,
+                                  courseModel:
+                                      state.listCourseModel!.data![index]));
                             },
                             leading: Image.asset(
                               "assets/icons/course.png",
@@ -92,20 +101,20 @@ class _CourseScreenState extends State<CourseScreen> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            trailing: const Icon(
+                            trailing: Icon(
                               Icons.arrow_forward_ios,
-                              size: 16,
+                              size: 16.r,
                               color: Color(0xffA7A7AB),
                             ),
                           ),
                         );
                       },
                       itemCount: state.listCourseModel!.data!.length,
-                    ),
-                  );
-                }
-                return SizedBox.shrink();
-              },
+                    );
+                  }
+                  return SizedBox.shrink();
+                },
+              ),
             )
           ],
         ),

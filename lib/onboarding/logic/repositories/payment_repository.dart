@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:onbush/auth/data/models/user_model.dart';
 import 'package:onbush/service_locator.dart';
@@ -6,7 +7,7 @@ class PaymentRepository {
   final Dio _dio;
   PaymentRepository() : _dio = getIt<Dio>(instanceName: 'accountApi');
 
-  Future<String?> initPayment ({
+  Future<Either<UserModel, String?>> initPayment({
     required String appareil,
     required String email,
     required String phoneNumber,
@@ -25,7 +26,28 @@ class PaymentRepository {
         "code_parrain": sponsorCode,
         "code_reduction": discountCode
       });
-      return response.data['data'];
+      if (response.data['data'] is String) {
+        return Right(response.data['data']);
+      } else {
+        return Left(UserModel.fromJson(response.data['data']));
+      }
+      // return response.data['data'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<int?> percent({required int code}) async {
+    try {
+      final Response response = await _dio.get(
+        '/code_reduction/$code',
+      );
+      final int value = response.data['data'];
+      if (value == 0) {
+        return null;
+      } else {
+        return value;
+      }
     } catch (e) {
       rethrow;
     }
@@ -33,9 +55,8 @@ class PaymentRepository {
 
   Future<UserModel?> verifying({required String transactionId}) async {
     try {
-      final Response response = await _dio.post('/auth/payment/status', data: {
-        "transaction_id": transactionId
-      });
+      final Response response = await _dio.post('/auth/payment/status',
+          data: {"transaction_id": transactionId});
       return UserModel.fromJson(response.data);
     } catch (e) {
       rethrow;

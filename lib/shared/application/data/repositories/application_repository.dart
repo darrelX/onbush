@@ -42,23 +42,29 @@ class ApplicationRepository {
     }
   }
 
-  Future<List<SubjectModel>> fetchListSubjectModel({required int specialityId}) async {
+  Future<List<SubjectModel>> fetchListSubjectModel(
+      {required int specialityId}) async {
     try {
-      Response response = await _dioDataApi.get("/filiere/$specialityId/matieres");
+      Response response =
+          await _dioDataApi.get("/filiere/$specialityId/matieres");
       List<dynamic> data = response.data['data'] as List<dynamic>;
       return data
-          .map((item) => SubjectModel.fromJson(item as Map<String, dynamic>)).toList();
+          .map((item) => SubjectModel.fromJson(item as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       rethrow;
     }
   }
 
-    Future<List<CourseModel>> fetchListCourseModel({required int subjectId, required String instruction }) async {
+  Future<List<CourseModel>> fetchListCourseModel(
+      {required int subjectId, required String category}) async {
     try {
-      Response response = await _dioDataApi.get("/matiere/$subjectId/$instruction");
+      Response response =
+          await _dioDataApi.get("/matiere/$subjectId/$category");
       List<dynamic> data = response.data['data'] as List<dynamic>;
       return data
-          .map((item) => CourseModel.fromJson(item as Map<String, dynamic>)).toList();
+          .map((item) => CourseModel.fromJson(item as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       rethrow;
     }

@@ -20,7 +20,7 @@ class NotificationWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
       color: AppColors.white,
-      constraints: BoxConstraints(maxHeight: 170.h),
+      constraints: BoxConstraints(maxHeight: 165.h),
       child: Column(
         children: [
           Row(
@@ -48,6 +48,8 @@ class NotificationWidget extends StatelessWidget {
           Container(
               child: Text(
             content,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 4,
             style: context.textTheme.bodyLarge!
                 .copyWith(fontWeight: FontWeight.w900),
           ))
