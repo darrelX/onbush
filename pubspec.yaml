@@ -49,11 +49,14 @@ dependencies:
   device_info_plus: ^10.1.2
   flutter_dotenv: ^5.2.1
   path_provider: ^2.1.5
-  go_router: ^14.6.1
+  go_router: ^14.6.2
   shimmer: ^3.0.0
   syncfusion_flutter_pdfviewer: ^27.2.5
   flutter_windowmanager_plus: ^1.0.1
   dartz: ^0.10.1
+  cached_network_image: ^3.4.0
+  share_plus: ^10.0.0
+  webview_flutter: ^4.10.0
 
 
 dev_dependencies:

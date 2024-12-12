@@ -1,19 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
-import 'package:onbush/auth/data/repositories/auth_repository.dart';
-import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
-import 'package:onbush/auth/logic/otp_cubit/otp_bloc.dart';
-import 'package:onbush/download/logic/cubit/download_cubit.dart';
-import 'package:onbush/shared/application/cubit/application_cubit.dart';
-import 'package:onbush/shared/connectivity/bloc/network_cubit.dart';
+import 'package:onbush/presentation/auth/data/repositories/auth_repository.dart';
+import 'package:onbush/presentation/otp_screen/logic/repositories/otp_repository.dart';
+import 'package:onbush/presentation/auth/logic/auth_cubit/auth_cubit.dart';
+import 'package:onbush/presentation/otp_screen/logic/otp_cubit/otp_bloc.dart';
+import 'package:onbush/presentation/dashboard/download/logic/cubit/download_cubit.dart';
+import 'package:onbush/core/application/cubit/application_cubit.dart';
+import 'package:onbush/core/connectivity/bloc/network_cubit.dart';
 import 'package:logger/logger.dart';
-import 'package:onbush/shared/local/local_storage.dart';
+import 'package:onbush/core/database/local_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'shared/networking/http_logger_interceptor.dart';
-import 'shared/networking/token_interceptor.dart';
-import 'shared/routing/app_router.dart';
+import 'core/networking/http_logger_interceptor.dart';
+import 'core/networking/token_interceptor.dart';
+import 'core/routing/app_router.dart';
 
 final getIt = GetIt.instance;
 
@@ -73,8 +74,7 @@ Future<void> setupLocator() async {
     ..registerSingleton<AuthCubit>(
       AuthCubit(),
     )
-    ..registerSingleton<OtpBloc>(OtpBloc())
-
+    ..registerSingleton<OtpBloc>(OtpBloc(repository: OtpRepository()))
     ..registerSingleton<DownloadCubit>(DownloadCubit());
 
   // ..registerSingleton<NetworkCubit>(NetworkCubit());

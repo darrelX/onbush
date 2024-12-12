@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:onbush/auth/logic/auth_cubit/auth_cubit.dart';
-import 'package:onbush/auth/logic/otp_cubit/otp_bloc.dart';
-import 'package:onbush/download/logic/cubit/download_cubit.dart';
+import 'package:onbush/presentation/auth/logic/auth_cubit/auth_cubit.dart';
+import 'package:onbush/presentation/otp_screen/logic/otp_cubit/otp_bloc.dart';
+import 'package:onbush/presentation/dashboard/download/logic/cubit/download_cubit.dart';
 import 'package:onbush/l10n/l10n.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:onbush/my_bloc_observer.dart';
-import 'package:onbush/shared/application/cubit/application_cubit.dart';
-import 'package:onbush/shared/connectivity/bloc/network_cubit.dart';
-import 'package:onbush/shared/routing/my_observer.dart';
+import 'package:onbush/core/application/cubit/application_cubit.dart';
+import 'package:onbush/core/connectivity/bloc/network_cubit.dart';
+import 'package:onbush/core/routing/my_observer.dart';
 
 import 'service_locator.dart';
-import 'shared/routing/app_router.dart';
-import 'shared/theme/light_theme.dart';
+import 'core/routing/app_router.dart';
+import 'core/theme/light_theme.dart';
 
 class Application extends StatefulWidget {
   const Application({super.key});
