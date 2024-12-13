@@ -14,8 +14,9 @@ class TokenInterceptor extends QueuedInterceptor {
     RequestInterceptorHandler handler,
   ) async {
     var token = prefs.getString('token');
-
-    log("Current token $token", name: "TokenInterceptor+onRequest");
+    if (token != null) {
+      log("Current token $token", name: "TokenInterceptor+onRequest");
+    }
 
     if (token != null) {
       options.headers["userKey"] = token;

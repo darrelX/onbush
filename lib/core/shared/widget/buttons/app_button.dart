@@ -23,9 +23,11 @@ class AppButton extends StatefulWidget {
   final double? minWidth;
   final TextStyle? style;
   final double? radius;
+  final List<BoxShadow>? boxShadow;
 
   const AppButton({
     super.key,
+    this.boxShadow,
     this.child,
     this.onPressed,
     this.enable = true,
@@ -67,6 +69,7 @@ class _AppButtonState extends State<AppButton> {
     return InkWell(
       onTap: _onTap,
       borderRadius: BorderRadius.circular(15.r),
+
       // onHighlightChanged: (isHighlighted) {
       //   // Changer l'état lorsque l'utilisateur sélectionne ou désélectionne le bouton
       //   setState(() {
@@ -77,6 +80,7 @@ class _AppButtonState extends State<AppButton> {
       child: Container(
           height: widget.child == null ? widget.height : null,
           width: widget.width,
+          
           constraints: widget.constraints,
           padding: widget.child == null
               ? EdgeInsets.symmetric(horizontal: 10.w)
@@ -89,6 +93,7 @@ class _AppButtonState extends State<AppButton> {
                     ? widget.activeBgColor
                     : widget.bgColor)
                 : widget.bgColor?.withOpacity(.6),
+                boxShadow: widget.boxShadow,
             border: widget.borderColor != null && widget.child == null
                 ? Border.all(
                     color: widget.borderColor!,

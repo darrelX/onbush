@@ -71,17 +71,58 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
       ],
       bottomNavigationBuilder: (_, tabsRouter) {
         return FlashyTabBar(
+          // height: 65.h,
           selectedIndex: tabsRouter.activeIndex,
           showElevation: true,
+          // onItemSelected: tabsRouter.setActiveIndex,
           onItemSelected: tabsRouter.setActiveIndex,
+
           backgroundColor: _.theme.scaffoldBackgroundColor,
           items: [
             FlashyTabBarItem(
+              icon: SvgPicture.asset('assets/icons/home.svg',
+                  height: 30,
+                  width: 30,
+                  colorFilter: const ColorFilter.mode(
+                    AppColors.sponsorButton,
+                    BlendMode.srcIn,
+                  )),
+              title: SvgPicture.asset(
+                'assets/icons/home-active.svg',
+                height: 30,
+                width: 30,
+              ),
+              activeColor: AppColors.primary,
+              inactiveColor: AppColors.icon,
+            ),
+            FlashyTabBarItem(
               icon: SvgPicture.asset(
-                'assets/icons/home.svg',
+                'assets/icons/course_inactive.svg',
+                height: 30,
+                width: 30,
+                // color: AppColors.icon,
               ),
               title: SvgPicture.asset(
-                'assets/icons/home.svg',
+                'assets/icons/course_inactive.svg',
+                height: 30,
+                width: 30,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.primary,
+                  BlendMode.srcIn,
+                ),
+                // color: AppColors.primary,
+              ),
+            ),
+            FlashyTabBarItem(
+              icon: SvgPicture.asset(
+                'assets/icons/clock.svg',
+                height: 30,
+                width: 30,
+              ),
+              title: SvgPicture.asset(
+                'assets/icons/clock.svg',
+                height: 30,
+                width: 30,
                 colorFilter: const ColorFilter.mode(
                   AppColors.primary,
                   BlendMode.srcIn,
@@ -91,40 +132,15 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
               inactiveColor: AppColors.icon,
             ),
             FlashyTabBarItem(
-              icon: Image.asset(
-                'assets/icons/course.png',
-                height: 25,
-                width: 25,
-                color: AppColors.icon,
-              ),
-              title: Image.asset(
-                'assets/icons/course.png',
+              icon: SvgPicture.asset(
+                'assets/icons/user.svg',
                 height: 30,
                 width: 30,
-                color: AppColors.primary,
-              ),
-              activeColor: AppColors.primary,
-              inactiveColor: AppColors.icon,
-            ),
-            FlashyTabBarItem(
-              icon: Icon(
-                Icons.history,
-                size: 30.r,
-              ),
-              title: Icon(
-                Icons.history,
-                size: 30.r,
-                color: AppColors.primary,
-              ),
-              activeColor: AppColors.primary,
-              inactiveColor: AppColors.icon,
-            ),
-            FlashyTabBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/profile.svg',
               ),
               title: SvgPicture.asset(
-                'assets/icons/profile.svg',
+                'assets/icons/user.svg',
+                height: 30,
+                width: 30,
                 colorFilter: const ColorFilter.mode(
                   AppColors.primary,
                   BlendMode.srcIn,

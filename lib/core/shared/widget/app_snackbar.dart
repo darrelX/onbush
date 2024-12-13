@@ -8,10 +8,13 @@ import 'package:onbush/core/shared/widget/online_status_widget.dart';
 class AppSnackBar {
   static Flushbar? _flushbar;
 
+  // Fonction pour afficher une erreur avec possibilité de spécifier la position
   static Future showError({
     required String message,
     required BuildContext context,
     duration = const Duration(seconds: 3),
+    FlushbarPosition flushbarPosition =
+        FlushbarPosition.TOP, // Ajout de la position
   }) async {
     if (_flushbar != null && _flushbar!.isShowing()) {
       await _flushbar!.dismiss();
@@ -21,7 +24,7 @@ class AppSnackBar {
           message.length > 750 ? "${message.substring(0, 750)}..." : message,
       margin: const EdgeInsets.all(8),
       borderRadius: BorderRadius.circular(8),
-      flushbarPosition: FlushbarPosition.TOP,
+      flushbarPosition: flushbarPosition, // Utilisation du paramètre
       icon: const Icon(
         Icons.info_outline,
         size: 28.0,
@@ -34,12 +37,15 @@ class AppSnackBar {
     return _flushbar!.show(context);
   }
 
+  // Fonction pour afficher un message de succès avec possibilité de spécifier la position
   static Future showSuccess({
     required String message,
     Widget? child,
     required BuildContext context,
     Function(Flushbar<dynamic>)? onTap,
     duration = const Duration(seconds: 3),
+    FlushbarPosition flushbarPosition =
+        FlushbarPosition.TOP, // Ajout de la position
   }) async {
     if (_flushbar != null && _flushbar!.isShowing()) {
       await _flushbar!.dismiss();
@@ -63,8 +69,7 @@ class AppSnackBar {
       ),
       margin: const EdgeInsets.all(20),
       borderRadius: BorderRadius.circular(8),
-      flushbarPosition: FlushbarPosition.TOP,
-      // icon: Image.asset("assets/images/app_icon.png"),
+      flushbarPosition: flushbarPosition, // Utilisation du paramètre
       backgroundColor: AppColors.green,
       duration: duration,
     );
@@ -72,13 +77,17 @@ class AppSnackBar {
     return _flushbar!.show(context);
   }
 
-  static Future showCheckConnectivity(
-      {required BuildContext context, required bool isConnected}) async {
+  // Fonction pour afficher un message de connectivité avec possibilité de spécifier la position
+  static Future showCheckConnectivity({
+    required BuildContext context,
+    required bool isConnected,
+    FlushbarPosition flushbarPosition =
+        FlushbarPosition.TOP, // Ajout de la position
+  }) async {
     if (_flushbar != null && _flushbar!.isShowing()) {
       await _flushbar!.dismiss();
     }
     _flushbar = Flushbar(
-      // onTap: onTap,
       messageText: Row(
         children: [
           Expanded(
@@ -88,10 +97,8 @@ class AppSnackBar {
           ),
         ],
       ),
-      // margin: const EdgeInsets.only(top: 500),
       borderRadius: BorderRadius.circular(8),
-      flushbarPosition: FlushbarPosition.TOP,
-      // icon: Image.asset("assets/images/app_icon.png"),
+      flushbarPosition: flushbarPosition, // Utilisation du paramètre
       backgroundColor: AppColors.transparent,
       duration: const Duration(seconds: 2),
     );

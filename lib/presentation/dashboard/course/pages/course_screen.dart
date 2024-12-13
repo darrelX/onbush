@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/presentation/pricing/pages/price_screen.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
@@ -38,7 +39,9 @@ class _CourseScreenState extends State<CourseScreen> {
       backgroundColor: AppColors.quaternaire,
       appBar: AppBar(
         centerTitle: true,
-        title: Text(widget.subjectModel.name!,),
+        title: Text(
+          widget.subjectModel.name!,
+        ),
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -81,19 +84,19 @@ class _CourseScreenState extends State<CourseScreen> {
                       itemBuilder: (context, index) {
                         return Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.r),
-                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(9.r),
+                            // color: AppColors.white,
                           ),
                           child: ListTile(
                             onTap: () {
                               context.router.push(PdfViewRoute(
-                                category: widget.category,
+                                  category: widget.category,
                                   courseModel:
                                       state.listCourseModel!.data![index]));
                             },
-                            leading: Image.asset(
-                              "assets/icons/course.png",
-                              color: AppColors.primary,
+                            leading: SvgPicture.asset(
+                              "assets/icons/course_not_downloaded.svg",
+                              // color: AppColors.primary,
                             ),
                             title: Text(
                               state.listCourseModel!.data![index].name,
@@ -101,11 +104,8 @@ class _CourseScreenState extends State<CourseScreen> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            trailing: Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16.r,
-                              color: Color(0xffA7A7AB),
-                            ),
+                            trailing: Icon(Icons.arrow_forward_ios,
+                                size: 16.r, color: AppColors.sponsorButton),
                           ),
                         );
                       },

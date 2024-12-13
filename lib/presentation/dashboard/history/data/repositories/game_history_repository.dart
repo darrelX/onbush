@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:onbush/presentation/history/data/models/game_history_model.dart';
+import 'package:onbush/presentation/dashboard/history/data/models/game_history_model.dart';
 import 'package:onbush/service_locator.dart';
 
 class GameHistoryRepository {

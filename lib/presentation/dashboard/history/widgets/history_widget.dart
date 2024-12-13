@@ -6,18 +6,15 @@ import 'package:onbush/core/theme/app_colors.dart';
 class HistoryWidget extends StatelessWidget {
   const HistoryWidget({
     super.key,
-    
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 90.h,
-      padding:
-          EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(15.r)),
+          color: AppColors.white, borderRadius: BorderRadius.circular(9.r)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -36,8 +33,8 @@ class HistoryWidget extends StatelessWidget {
                 width: 200.w,
                 child: Text(
                   "Lorem ipsum indolors apsum Lorem ipsum indolors apsum 90",
-                  style: context.textTheme.bodyLarge!.copyWith(
-                      fontSize: 14.r, fontWeight: FontWeight.bold),
+                  style: context.textTheme.bodyLarge!
+                      .copyWith(fontSize: 14.r, fontWeight: FontWeight.bold),
                   maxLines: 2,
                   textAlign: TextAlign.left,
                   overflow: TextOverflow.clip,
@@ -52,14 +49,12 @@ class HistoryWidget extends StatelessWidget {
                     Text(
                       "Resume de cours",
                       style: context.textTheme.bodyLarge!.copyWith(
-                          fontSize: 13.r,
-                          color: Colors.grey.shade600),
+                          fontSize: 13.r, color: Colors.grey.shade600),
                     ),
                     Text(
                       "Il y'a 2h",
                       style: context.textTheme.bodyLarge!.copyWith(
-                          fontSize: 13.r,
-                          color: Colors.grey.shade600),
+                          fontSize: 13.r, color: Colors.grey.shade600),
                     ),
                   ],
                 ),

@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
@@ -180,33 +181,82 @@ class _HomeScreenState extends State<HomeScreen> {
                             .copyWith(fontWeight: FontWeight.bold),
                       ),
                       Gap(10.h),
-                      DashboardSummaryWidget(
+                      const DashboardSummaryWidget(
                         numberOfCourses: 12,
                         numberOfTD: 13,
                         processedTopics: 6,
                       ),
                       Gap(20.h),
                       Text(
-                        "Raccourcis",
+                        "Bientôt disponible",
                         style: context.textTheme.titleMedium!
                             .copyWith(fontWeight: FontWeight.bold),
                       ),
+                      Gap(20.h),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF82B0FF),
+                          borderRadius: BorderRadius.circular(9.r),
+                        ),
+                        child: ListTile(
+                          title: const Text(
+                            "Prendre un quiz",
+                            style: TextStyle(color: AppColors.white),
+                          ),
+                          leading: SvgPicture.asset(
+                            "assets/icons/course_white.svg",
+                            // color: AppColors.white,
+                          ),
+                          trailing: Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16.r,
+                            color: AppColors.white,
+                          ),
+                        ),
+                      ),
+                      Gap(20.h),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF82B0FF),
+                          borderRadius: BorderRadius.circular(9.r),
+                        ),
+                        child: ListTile(
+                          title: const Text(
+                            "Rejoindre un groupe d'etude",
+                            style: TextStyle(color: AppColors.white),
+                          ),
+                          leading: SvgPicture.asset(
+                            "assets/icons/groupe.svg",
+                            // color: AppColors.white,
+                          ),
+                          trailing: Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16.r,
+                            color: AppColors.white,
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),
                 Gap(5.h),
-                AppCarouselWidget(
-                  carouselController: _carouselController,
-                  height: 170.h,
-                  viewportFraction: 0.44,
-                  children: const [
-                    _Shortcut(
-                      title: "Resume de cours",
-                    ),
-                    _Shortcut(title: "Fiches de TD"),
-                    _Shortcut(title: "Sujets d'examens"),
-                  ],
-                ),
+
+                // AppCarouselWidget(
+                //   carouselController: _carouselController,
+                //   height: 170.h,
+                //   viewportFraction: 0.44,
+                //   children: [
+                //     _Shortcut(
+                //         title: "Resume de cours",
+                //         image: Image.asset("assets/images/1.jpeg")),
+                //     _Shortcut(
+                //         title: "Fiches de TD",
+                //         image: Image.asset("assets/images/2.png")),
+                //     _Shortcut(
+                //         title: "Sujets d'examens",
+                //         image: Image.asset("assets/images/3.jpeg")),
+                //   ],
+                // ),
               ],
             ),
           ),
@@ -218,7 +268,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class _Shortcut extends StatelessWidget {
   final String title;
+  final Widget image;
   const _Shortcut({
+    required this.image,
     required this.title,
   });
 
@@ -237,11 +289,13 @@ class _Shortcut extends StatelessWidget {
         children: [
           Container(
             height: 90.h,
+            width: context.width,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.r),
               border: Border.all(width: 2.r, color: AppColors.ternary),
               color: AppColors.ternary,
             ),
+            child: image,
           ),
           Text(
             title,

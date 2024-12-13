@@ -6,6 +6,8 @@ import 'package:onbush/presentation/dashboard/course/pages/course_selected_menu_
 import 'package:onbush/presentation/dashboard/course/pages/pdf_view_screen.dart';
 import 'package:onbush/presentation/dashboard/download/logic/data/pdf_file_model.dart';
 import 'package:onbush/presentation/dashboard/download/pages/download_pdf_view_screen.dart';
+import 'package:onbush/presentation/dashboard/profil/pages/edit_avatar_screen.dart';
+import 'package:onbush/presentation/dashboard/profil/pages/edit_profil_screen.dart';
 import 'package:onbush/presentation/pricing/pages/price_screen.dart';
 import 'package:onbush/presentation/dashboard/course/pages/subject_screen.dart';
 import 'package:onbush/presentation/dashboard/download/pages/download_screen.dart';
@@ -19,7 +21,7 @@ import 'package:onbush/core/application/data/models/subject_model.dart';
 import '../../app_init_screen.dart';
 import '../../presentation/auth/pages/auth_screen.dart';
 import '../application/pages/application_screen.dart';
-import '../../presentation/history/pages/history_screen.dart';
+import '../../presentation/dashboard/history/pages/history_screen.dart';
 import '../../presentation/dashboard/home/pages/home_screen.dart';
 import 'package:onbush/presentation/otp_screen/pages/otp_input_screen.dart';
 import 'package:onbush/presentation/auth/pages/forget_password_screen.dart';
@@ -86,5 +88,6 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: CourseSelectionMenuRoute.page),
         AutoRoute(page: PdfViewRoute.page),
         AutoRoute(page: DownloadPdfViewRoute.page),
+        AutoRoute(page: EditProfilRoute.page),
       ];
 }

@@ -4,10 +4,10 @@ import 'package:gap/gap.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/theme/app_colors.dart';
 
-class SponsoredChild extends StatelessWidget {
+class SponsoredChildWidget extends StatelessWidget {
   final String name;
   final String date;
-  const SponsoredChild({
+  const SponsoredChildWidget({
     super.key,
     required this.name,
     required this.date,
@@ -18,8 +18,18 @@ class SponsoredChild extends StatelessWidget {
     return Container(
       height: 70.h,
       padding: EdgeInsets.symmetric(vertical: 10.h),
-      decoration: BoxDecoration(
-          color: AppColors.white, borderRadius: BorderRadius.circular(10.r)),
+      decoration: BoxDecoration(boxShadow: const [
+        BoxShadow(
+          offset: Offset(1, 5),
+          blurRadius: 5,
+          color: Colors.grey,
+        ),
+        // BoxShadow(
+        //   offset: Offset(-10, -10),
+        //   blurRadius: 20,
+        //   color: Colors.grey,
+        // )
+      ], color: AppColors.white, borderRadius: BorderRadius.circular(9.r)),
       child: Row(
         children: [
           Gap(10.w),

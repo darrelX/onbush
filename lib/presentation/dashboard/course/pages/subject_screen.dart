@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/presentation/dashboard/course/pages/course_selected_menu_screen.dart';
 import 'package:onbush/presentation/dashboard/course/widgets/academic_semester_tab.dart';
@@ -113,15 +114,30 @@ class _SubjectScreenState extends State<SubjectScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               AppInput(
-                                hint: "Chercher un cours",
-                                width: context.width,
-                                onChange: (value) {
-                                  setState(() {
-                                    searchQuery = value;
-                                  });
-                                },
-                                prefix: const Icon(Icons.search),
-                              ),
+                                  hint: "Chercher un cours",
+                                  hintStyle: const TextStyle(
+                                      color: AppColors.textGrey),
+                                  // style: context.textTheme.bodyLarge!.copyWith(),
+                                  width: context.width,
+                                  colorBorder: AppColors.transparent,
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 20.h, horizontal: 10.w),
+                                  onChange: (value) {
+                                    setState(() {
+                                      searchQuery = value;
+                                    });
+                                  },
+                                  prefix: Container(
+                                    // margin: EdgeInsets.only(right: 5.w),
+                                    margin:
+                                        EdgeInsets.symmetric(vertical: 10.h),
+
+                                    child: SvgPicture.asset(
+                                      "assets/icons/search.svg",
+                                      // height: 10,
+                                      // width: 10,
+                                    ),
+                                  )),
                               Gap(20.h),
                               Expanded(
                                 child: SubjectTileWidget(

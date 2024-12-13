@@ -75,6 +75,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
     return BlocConsumer<ApplicationCubit, ApplicationState>(
       // bloc: getIt.get<ApplicationCubit>(),
       listener: (context, state) {
+        print("status $state");
         // if (state is LogoutFailure) {
         //   print("Probleme");
         // }
@@ -122,16 +123,16 @@ class _ProfilScreenState extends State<ProfilScreen> {
                           opacity: 0.3,
                           child: Center(
                               child: AppButton(
-                            child: Icon(
-                              Icons.refresh,
-                              size: 45.r,
-                            ),
                             borderColor: AppColors.black,
                             onPressed: () async {
                               await context
                                   .read<ApplicationCubit>()
                                   .addSpecialty();
                             },
+                            child: Icon(
+                              Icons.refresh,
+                              size: 45.r,
+                            ),
                           )),
                         );
                       } else if (state.speciality.status == Status.success) {
@@ -226,6 +227,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     width: double.infinity,
                     text: "Modifier mon profil",
                     textColor: AppColors.secondary,
+                    onPressed: () {
+                      context.router.push(EditProfilRoute());
+                    },
                     height: 45.h,
                     // width: 200.w,
                     bgColor: AppColors.ternary,
@@ -336,7 +340,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     text: "Deconnexion",
                     onPressed: () async {
                       // getIt.get<LocalStorage>().remove('device');
-                      await getIt.get<ApplicationCubit>().logout();
+                      await context.read<ApplicationCubit>().logout();
 
                       context.router.popAndPush(const AuthRoute());
                     },

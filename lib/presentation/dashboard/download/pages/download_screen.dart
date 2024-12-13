@@ -7,7 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:onbush/presentation/dashboard/download/logic/cubit/download_cubit.dart';
 import 'package:onbush/presentation/dashboard/download/logic/data/pdf_file_model.dart';
 import 'package:onbush/presentation/dashboard/download/widgets/pdf_file_widget.dart';
-import 'package:onbush/presentation/history/widgets/history_widget.dart';
+import 'package:onbush/presentation/dashboard/history/widgets/history_widget.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/theme/app_colors.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';

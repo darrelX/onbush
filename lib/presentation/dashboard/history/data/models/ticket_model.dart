@@ -1,4 +1,4 @@
-import 'package:onbush/presentation/history/data/models/product_ticket_model.dart';
+import 'package:onbush/presentation/dashboard/history/data/models/product_ticket_model.dart';
 
 class TicketModel {
   final String? id;

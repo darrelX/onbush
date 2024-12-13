@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:onbush/presentation/history/data/models/game_history_model.dart';
-import 'package:onbush/presentation/history/data/repositories/game_history_repository.dart';
+import 'package:onbush/presentation/dashboard/history/data/models/game_history_model.dart';
+import 'package:onbush/presentation/dashboard/history/data/repositories/game_history_repository.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
 // import 'package:onbush/history/data/repositories/ticket_repository.dart';

@@ -138,11 +138,11 @@ class ApplicationCubit extends Cubit<ApplicationState> {
       await _repository.logout(
           appareil: getIt.get<LocalStorage>().getString('device')!,
           email: _userModel.email!);
+                pref.remove('token');
 
       emit(state.copyWith(
           user: _userModel,
           loading: state.loading!.copyWith(status: Status.success)));
-      pref.remove('token');
     } catch (e) {
       emit(state.copyWith(
           user: _userModel,

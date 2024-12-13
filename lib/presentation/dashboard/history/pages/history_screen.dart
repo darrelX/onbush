@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:onbush/presentation/history/logic/history_cubit/game_history_cubit.dart';
-import 'package:onbush/presentation/history/widgets/game_history_widget.dart';
-import 'package:onbush/presentation/history/widgets/history_widget.dart';
+import 'package:onbush/presentation/dashboard/history/logic/history_cubit/game_history_cubit.dart';
+import 'package:onbush/presentation/dashboard/history/widgets/game_history_widget.dart';
+import 'package:onbush/presentation/dashboard/history/widgets/history_widget.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/theme/app_colors.dart';
 
@@ -116,7 +116,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 Gap(40.h),
                 Text(
                   "Votre historique",
-                  style: context.textTheme.titleMedium!.copyWith(),
+                  style: context.textTheme.headlineMedium!.copyWith(),
                 ),
                 Gap(20.h),
                 const HistoryWidget()
@@ -128,4 +128,3 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 }
-

@@ -110,7 +110,7 @@ class RegisterWidgetState extends State<RegisterWidget> {
           } else if (_authCubit.currentRequest == "specialities") {
             widget.listId['specialitie'] = await _bottomSheetSelect(
               context,
-              title: "Sélectionner l'école",
+              title: "Sélectionner la specialite",
               allItems: state.listSpeciality.asMap().map(
                     (key, value) => MapEntry(value.id!, value.name!),
                   ),

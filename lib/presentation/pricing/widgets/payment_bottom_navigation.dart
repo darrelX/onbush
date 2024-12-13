@@ -114,8 +114,15 @@ class PaymentBottomNavigation extends StatelessWidget {
                           text: "Valider mon compte",
                           loading: state is PercentStateLoading,
                           onPressed: () {
-                            _paymentCubit.percent(
-                                code: int.parse(_discountCodeController.text));
+                            if (_discountCodeController.text.isNotEmpty) {
+                              _paymentCubit.percent(
+                                  code:
+                                      int.parse(_discountCodeController.text));
+                            } else {
+                              _pageController.nextPage(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.linear);
+                            }
                           },
                           textColor: AppColors.white,
                           bgColor: AppColors.primary,

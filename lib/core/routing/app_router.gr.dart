@@ -76,6 +76,18 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const DownloadScreen(),
       );
     },
+    EditAvatarRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const EditAvatarScreen(),
+      );
+    },
+    EditProfilRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const EditProfilScreen(),
+      );
+    },
     HistoryRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -338,6 +350,34 @@ class DownloadRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'DownloadRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [EditAvatarScreen]
+class EditAvatarRoute extends PageRouteInfo<void> {
+  const EditAvatarRoute({List<PageRouteInfo>? children})
+      : super(
+          EditAvatarRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'EditAvatarRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [EditProfilScreen]
+class EditProfilRoute extends PageRouteInfo<void> {
+  const EditProfilRoute({List<PageRouteInfo>? children})
+      : super(
+          EditProfilRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'EditProfilRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

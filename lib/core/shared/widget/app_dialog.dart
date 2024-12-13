@@ -25,25 +25,30 @@ class AppDialog {
       transitionDuration: appDuration,
       context: context,
       pageBuilder: (context, anim1, anim2) {
-        return Align(
-          alignment: alignment,
-          child: Padding(
-            padding: padding,
-            child: Container(
-              height: height.h,
-              width: width.w,
-              // padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: context.theme.scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(12),
+        return StatefulBuilder(
+
+          builder: (context, StateSetter setModalState) {
+            return Align(
+              alignment: alignment,
+              child: Padding(
+                padding: padding,
+                child: Container(
+                  height: height.h,
+                  width: width.w,
+                  // padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: context.theme.scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Material(
+                    borderRadius: BorderRadius.circular(12),
+                    color: context.theme.scaffoldBackgroundColor,
+                    child: child,
+                  ),
+                ),
               ),
-              child: Material(
-                borderRadius: BorderRadius.circular(12),
-                color: context.theme.scaffoldBackgroundColor,
-                child: child,
-              ),
-            ),
-          ),
+            );
+          }
         );
       },
       transitionBuilder: (context, anim1, anim2, child) {

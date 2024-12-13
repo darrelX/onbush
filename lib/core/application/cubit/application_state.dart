@@ -16,7 +16,7 @@ class ApplicationState extends Equatable {
 
   @override
   List<Object?> get props =>
-      [user, speciality, listSubjectModel, listCourseModel];
+      [user, speciality, listSubjectModel, listCourseModel, loading];
 
   ApplicationState copyWith(
       {UserModel? user,

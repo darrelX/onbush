@@ -52,18 +52,19 @@ class UserModel {
   // }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    print(json);
     return UserModel(
       id: json['token'] as String,
       name: json['nom'] as String?,
       gender: json['sexe'] as String?,
       email: json['email'] as String?,
-      phoneNumber: json['phone_number'] as String?,
+      phoneNumber: json['telephone'] as String?,
       studentId: json['matricule'] as String?,
       avatar: json['avatar'] as String?,
       role: json['role'] as String?,
       majorSchoolId: json['filiere_id'] as int?,
       schoolId: json['etablissement_id'] as int?,
-      sponsorCode: json['code_parrrain'] as String?,
+      sponsorCode: json['code_parrain'] as String?,
       academiclevel: json['niveau'] as int?,
       birthday: json['naissance'] as String?,
     );

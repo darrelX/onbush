@@ -34,9 +34,12 @@ class AcademicSemesterTab extends StatelessWidget {
           final isSelected = index == selectedIndex;
           return AppButton(
             onPressed: () => onPressed(index),
+            radius: 10.r,
             width: 120.w,
             text: listSemester[index],
-            textColor: isSelected ? selectedText : null,
+
+            textColor: isSelected ? selectedText : AppColors.textGrey,
+            // textColor: Color(0xFF969DAC),
             activeBgColor: isSelected ? selectedColor : null,
             bgColor: isSelected ? selectedColor : AppColors.grey,
           );
