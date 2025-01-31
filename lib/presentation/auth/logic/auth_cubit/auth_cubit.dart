@@ -1,6 +1,4 @@
-import 'dart:developer';
 
-import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:onbush/presentation/auth/data/models/college_model.dart';
 import 'package:onbush/presentation/auth/data/models/specialty_model.dart';
@@ -10,7 +8,6 @@ import 'package:onbush/presentation/auth/data/repositories/auth_repository.dart'
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/database/local_storage.dart';
 import 'package:onbush/core//utils/utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 part 'auth_state.dart';
 
@@ -18,11 +15,11 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _repository;
   final LocalStorage _prefs;
   final List<CollegeModel> _listAllColleges = [];
-  final List<Speciality> _listAllSpecialities = [];
+  final List<SpecialityModel> _listAllSpecialities = [];
   String? currentRequest;
 
   List<CollegeModel> get listAllColleges => _listAllColleges;
-  List<Speciality> get listAllSpecialities => _listAllSpecialities;
+  List<SpecialityModel> get listAllSpecialities => _listAllSpecialities;
 
   AuthCubit()
       : _repository = AuthRepository(),
@@ -42,12 +39,8 @@ class AuthCubit extends Cubit<AuthState> {
       result.fold((ifLeft) {
         emit(OTpStateSuccess(email: email, type: 'login'));
       }, (ifRight) {
-        if (ifRight == null) {
-          emit(const LoginFailure(message: "Erreur inconnue"));
-        } else {
-          emit(LoginSuccess(user: ifRight));
-        }
-      });
+        emit(LoginSuccess(user: ifRight));
+            });
     } catch (e) {
       emit(LoginFailure(
           message: Utils.extractErrorMessageFromMap(

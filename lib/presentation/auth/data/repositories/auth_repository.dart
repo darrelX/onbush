@@ -6,7 +6,6 @@ import 'package:onbush/presentation/auth/data/models/specialty_model.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/database/local_storage.dart';
 // Assurez-vous que cet import est nécessaire
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 
 class AuthRepository {
@@ -159,12 +158,12 @@ class AuthRepository {
     }
   }
 
-  Future<List<Speciality>> allSpecialities(int schoolId) async {
+  Future<List<SpecialityModel>> allSpecialities(int schoolId) async {
     try {
       Response response = await _dioDataApi.get("/filieres");
       List<dynamic> data = response.data['data'] as List<dynamic>;
       final a = data
-          .map((item) => Speciality.fromJson(item as Map<String, dynamic>))
+          .map((item) => SpecialityModel.fromJson(item as Map<String, dynamic>))
           .where((e) => e.collegeId == schoolId)
           .toList();
       return a;

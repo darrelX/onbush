@@ -1,15 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:onbush/service_locator.dart';
-import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
 
-import '../../application/cubit/application_cubit.dart';
-import '../../theme/app_colors.dart';
 
 class OnbushAppBar extends StatefulWidget {
   const OnbushAppBar({
@@ -27,16 +22,19 @@ class _OnbushAppBarState extends State<OnbushAppBar> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Image.asset(
-          'assets/images/logo.png',
-          width: 100.w,
+        AppButton(
+          onPressed: () => context.router
+              .pushAndPopUntil(const HomeRoute(), predicate: (route) => true),
+          child: Image.asset(
+            'assets/images/logo.png',
+            width: 100.w,
+          ),
         ),
         // BlocBuilder<ApplicationCubit, ApplicationState>(
         //   bloc: getIt.get<ApplicationCubit>(),

@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,13 +9,17 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
+import 'package:onbush/core/database/local_storage.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
+import 'package:onbush/core/routing/app_router.dart';
 import 'package:onbush/core/shared/widget/app_input.dart';
+import 'package:onbush/core/shared/widget/app_snackbar.dart';
 import 'package:onbush/core/shared/widget/bottom_sheet/app_bottom_sheet.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
 import 'package:onbush/core/theme/app_colors.dart';
 import 'package:onbush/presentation/auth/logic/auth_cubit/auth_cubit.dart';
 import 'package:onbush/presentation/dashboard/profil/cubit/mentee_cubit.dart';
+import 'package:onbush/presentation/dashboard/profil/pages/edit_avatar_screen.dart';
 import 'package:onbush/presentation/dashboard/profil/widgets/editable_avatar_widget.dart';
 import 'package:onbush/service_locator.dart';
 
@@ -35,25 +40,31 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
   final TextEditingController majorStudyController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController userNameController = TextEditingController();
+  final TextEditingController levelController = TextEditingController();
   final Map<String, int> listId = {};
   final TextEditingController studentIdController = TextEditingController();
   DateTime? _selectedDate;
   int gender = 1;
   PhoneNumber? _number = PhoneNumber(isoCode: "CM");
   final MenteeCubit _menteeCubit = MenteeCubit();
+  final GlobalKey<EditAvatarScreenState> _avatarGlobalKey =
+      GlobalKey<EditAvatarScreenState>();
 
-  Future<void> initialValues() async {
+  // final GlobalKey<StatelessWidget> f;
+
+  Future<void> _initialValues() async {
     emailController.text = getIt.get<ApplicationCubit>().userModel.email!;
     userNameController.text = getIt.get<ApplicationCubit>().userModel.name!;
     phoneController.text = getIt.get<ApplicationCubit>().userModel.phoneNumber!;
     birthdayController.text = getIt.get<ApplicationCubit>().userModel.birthday!;
     genderController.text = getIt.get<ApplicationCubit>().userModel.gender!;
-    // schoolController.text = getIt.get<ApplicationCubit>().userModel.schoolId!;
-    majorStudyController.text = "";
+    schoolController.text = getIt.get<ApplicationCubit>().userModel.schoolName!;
+    majorStudyController.text =
+        getIt.get<ApplicationCubit>().userModel.majorSchoolName!;
     academicLevelController.text =
         getIt.get<ApplicationCubit>().userModel.academiclevel.toString();
     studentIdController.text =
-        getIt.get<ApplicationCubit>().userModel.majorSchoolId.toString();
+        getIt.get<ApplicationCubit>().userModel.studentId.toString();
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -89,7 +100,8 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
   @override
   void initState() {
     super.initState();
-    initialValues();
+
+    _initialValues();
   }
 
   @override
@@ -102,21 +114,55 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
     userNameController.dispose();
     academicLevelController.dispose();
     studentIdController.dispose();
+    levelController.dispose();
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<String> listAavatar = [
+      "assets/avatars/avatar 1.png",
+      "assets/avatars/avatar 2.png",
+      "assets/avatars/avatar 3.png",
+      "assets/avatars/avatar 4.png",
+      "assets/avatars/avatar 5.png",
+    ];
+
+    // _avatarGlobalKey.currentState.
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: const Text("Editer Profil"),
+          leading: AppButton(
+            onPressed: () => context.router.push(const ProfilRoute()),
+            child: const Icon(Icons.arrow_back),
+          ),
           backgroundColor: AppColors.primary,
         ),
+        backgroundColor: AppColors.quaternaire,
         body: BlocConsumer<MenteeCubit, MenteeState>(
           listener: (context, state) {
-            // TODO: implement listener
+            if (state is EditSuccess) {
+              AppSnackBar.showConfig(
+                  context: context,
+                  backgroundColor: AppColors.white,
+                  leading: SvgPicture.asset(
+                    "assets/icons/onbush_original.svg",
+                    // color: AppColors.primary,
+                  ),
+                  child: const Text(
+                    "Sauvegarder avec succes",
+                    style: TextStyle(color: AppColors.primary),
+                  ),
+                  flushbarPosition: FlushbarPosition.BOTTOM);
+            }
+            if (state is EditFailure) {
+              AppSnackBar.showConfig(
+                  context: context,
+                  child: const Text("Erreur de sauvegarde"),
+                  backgroundColor: AppColors.red);
+            }
           },
           bloc: _menteeCubit,
           builder: (context, state) {
@@ -125,9 +171,33 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 30.w),
                   child: Column(
                     children: [
-                      Gap(20.h),
-                      EditableAvatarWidget(),
-                      Gap(15.h),
+                      EditableAvatarWidget(
+                        onPressed: () => context.router.pushAll([
+                          EditAvatarRoute(
+                              key: _avatarGlobalKey, avatarList: listAavatar)
+                        ]),
+                        image: Image.asset(
+                          getIt.get<LocalStorage>().getString("avatar")!,
+                          fit: BoxFit.fill,
+                          width: 150.r,
+                          height: 150.r,
+                        ),
+                        subIcon: Container(
+                            height: 42.r,
+                            width: 42.r,
+                            decoration: const BoxDecoration(
+                              color: AppColors.secondary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Container(
+                              margin: EdgeInsets.all(10.r),
+                              child: SvgPicture.asset(
+                                "assets/icons/pencil.svg",
+                                color: AppColors.white,
+                              ),
+                            )),
+                      ),
+                      // Gap(10.h),
                       AppInput(
                         controller: userNameController,
                         hint: 'Noms et prenoms',
@@ -350,9 +420,24 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
                       Gap(25.h),
                       AppButton(
                         text: "Sauvegarder",
+                        loading: state is EditLoading,
+                        loadingColor: AppColors.white,
                         textColor: AppColors.white,
                         width: context.width,
                         bgColor: AppColors.secondary,
+                        onPressed: () => _menteeCubit.editProfil(
+                            device:
+                                getIt.get<LocalStorage>().getString('device')!,
+                            studentId: studentIdController.text,
+                            name: userNameController.text,
+                            level: academicLevelController.text,
+                            gender: genderController.text,
+                            email: emailController.text,
+                            birthday: birthdayController.text,
+                            role: 'etudiant',
+                            phone: phoneController.text,
+                            avatar: "",
+                            language: "fr"),
                       )
                     ],
                   )),

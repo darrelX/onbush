@@ -1,27 +1,20 @@
-import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:onbush/presentation/auth/logic/auth_cubit/auth_cubit.dart';
 import 'package:onbush/presentation/auth/widgets/auh_switcher_widget.dart';
 import 'package:onbush/presentation/auth/widgets/register_widget.dart';
-import 'package:onbush/presentation/pricing/pages/price_screen.dart';
-import 'package:onbush/core/device_info/device_info.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
-import 'package:onbush/core/hash/hash.dart';
 import 'package:onbush/core/database/local_storage.dart';
 import 'package:onbush/core/routing/app_router.dart';
 import 'package:onbush/core/theme/app_colors.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
 import 'package:onbush/core/shared/widget/app_input.dart';
 import 'package:onbush/core/shared/widget/app_snackbar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../service_locator.dart';
 import '../../../core/application/cubit/application_cubit.dart';
@@ -52,7 +45,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final GlobalKey<RegisterWidgetState> _registerWidgetState =
       GlobalKey<RegisterWidgetState>();
   int _currentIndex = 0;
-  Map<String, int> _listId = {};
+  final Map<String, int> _listId = {};
 
   @override
   void initState() {

@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:onbush/my_bloc_observer.dart';
 
 enum Status { connected, disconnected }
 
@@ -86,7 +84,7 @@ class MyObserver extends AutoRouteObserver {
             content: Text(message),
             backgroundColor:
                 status == Status.connected ? Colors.green : Colors.red,
-            duration: Duration(seconds: 2),
+            duration: const Duration(seconds: 2),
           );
           ScaffoldMessenger.of(navigator!.context).showSnackBar(snackBar);
         });

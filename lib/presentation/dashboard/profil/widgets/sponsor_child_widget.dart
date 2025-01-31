@@ -47,7 +47,7 @@ class SponsoredChildWidget extends StatelessWidget {
                 style: context.textTheme.bodyMedium!
                     .copyWith(fontWeight: FontWeight.bold),
               ),
-              Spacer(),
+              const Spacer(),
               Text("Il y a $date")
             ],
           )

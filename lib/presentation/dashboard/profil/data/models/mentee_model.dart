@@ -1,13 +1,15 @@
 import 'package:equatable/equatable.dart';
 
 class MenteeModel extends Equatable {
-  final String name;
-  final int level;
-  final String majorSchoolId;
-  final String schoolId;
+  final String? name;
+  final int? level;
+  final String? majorSchoolId;
+  final String? schoolId;
+  final double? amount;
 
   const MenteeModel(
       {required this.level,
+      required this.amount,
       required this.name,
       required this.majorSchoolId,
       required this.schoolId});
@@ -20,6 +22,7 @@ class MenteeModel extends Equatable {
       name: json['nom'],
       level: json['level'],
       majorSchoolId: json['filiere'],
+      amount: json['montant'],
       schoolId: json['etablissement'],
     );
   }

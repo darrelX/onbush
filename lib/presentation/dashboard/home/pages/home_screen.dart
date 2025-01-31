@@ -10,8 +10,9 @@ import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
 import 'package:onbush/core/theme/app_colors.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
-import 'package:onbush/core/shared/widget/carrousel/app_carousel_widget.dart';
+import 'package:onbush/presentation/dashboard/download/logic/cubit/download_cubit.dart';
 import 'package:onbush/presentation/dashboard/home/widgets/dashboard_summary_widget.dart';
+import 'package:onbush/presentation/dashboard/home/widgets/user_info_card_widget.dart';
 
 @RoutePage()
 class HomeScreen extends StatefulWidget {
@@ -23,15 +24,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late ApplicationCubit _cubit;
+  final DownloadCubit _downloadCubit = DownloadCubit();
   @override
   void initState() {
     super.initState();
     _cubit = context.read<ApplicationCubit>();
+    _downloadCubit.getMostRecentDocuments();
   }
 
   @override
   Widget build(BuildContext context) {
-    final CarouselSliderController _carouselController =
+    final CarouselSliderController carouselController =
         CarouselSliderController();
 
     return BlocConsumer<ApplicationCubit, ApplicationState>(
@@ -51,72 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Gap(10.h),
-                      Row(
-                        children: [
-                          Image.asset(
-                            "assets/images/account_image.png",
-                            height: 43.h,
-                            fit: BoxFit.fitHeight,
-                          ),
-                          Gap(5.w),
-                          SizedBox(
-                            height: 49.h,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Salut",
-                                  style:
-                                      context.textTheme.titleSmall!.copyWith(),
-                                ),
-                                Text(
-                                  _cubit.userModel.name!,
-                                  style: context.textTheme.titleMedium!
-                                      .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          shadows: [
-                                        const Shadow(
-                                          offset: Offset(0.5, 0.5),
-                                          blurRadius: 1.0,
-                                          color: Colors.grey,
-                                        ),
-                                      ]),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Spacer(),
-                          SizedBox(
-                            height: 49.h,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  "Niveau : ${_cubit.userModel.academiclevel}",
-                                  style:
-                                      context.textTheme.titleSmall!.copyWith(),
-                                ),
-                                Text(
-                                  "Enspd",
-                                  style: context.textTheme.titleMedium!
-                                      .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          shadows: [
-                                        const Shadow(
-                                          offset: Offset(0.5, 0.5),
-                                          blurRadius: 1.0,
-                                          color: Colors.grey,
-                                        ),
-                                      ]),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      Gap(20.h),
+                      UserInfoCardWidget(cubit: _cubit),
+                      Gap(15.h),
                       Stack(
                         children: [
                           Container(
@@ -176,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Gap(20.h),
                       Text(
-                        "Donnees disponibles",
+                        "Données disponibles",
                         style: context.textTheme.titleMedium!
                             .copyWith(fontWeight: FontWeight.bold),
                       ),
@@ -188,53 +127,40 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Gap(20.h),
                       Text(
-                        "Bientôt disponible",
+                        "Reprends où tu t'es arrêté(e).",
                         style: context.textTheme.titleMedium!
                             .copyWith(fontWeight: FontWeight.bold),
                       ),
-                      Gap(20.h),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF82B0FF),
-                          borderRadius: BorderRadius.circular(9.r),
-                        ),
-                        child: ListTile(
-                          title: const Text(
-                            "Prendre un quiz",
-                            style: TextStyle(color: AppColors.white),
-                          ),
-                          leading: SvgPicture.asset(
-                            "assets/icons/course_white.svg",
-                            // color: AppColors.white,
-                          ),
-                          trailing: Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16.r,
-                            color: AppColors.white,
-                          ),
-                        ),
-                      ),
-                      Gap(20.h),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF82B0FF),
-                          borderRadius: BorderRadius.circular(9.r),
-                        ),
-                        child: ListTile(
-                          title: const Text(
-                            "Rejoindre un groupe d'etude",
-                            style: TextStyle(color: AppColors.white),
-                          ),
-                          leading: SvgPicture.asset(
-                            "assets/icons/groupe.svg",
-                            // color: AppColors.white,
-                          ),
-                          trailing: Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16.r,
-                            color: AppColors.white,
-                          ),
-                        ),
+                      Gap(10.h),
+                      BlocBuilder<DownloadCubit, DownloadState>(
+                        bloc: _downloadCubit,
+                        builder: (context, state) {
+                          if (state is DownloadLoading) {
+                            return const Text("error");
+                          }
+                          if (state is DownloadFailure) {
+                            return const Text("Error 1");
+                          }
+                          if (state is DownloadSuccess) {
+                            print(state.listPdfModel);
+                            return Column(
+                              children: [
+                                ...state.listPdfModel.map((elt) {
+                                  return ListTile(
+                                    leading: SvgPicture.asset(
+                                        "assets/icons/course_downloaded.svg"),
+                                    title: Text(elt.name!),
+                                    onTap: () {
+                                      context.router.push(DownloadPdfViewRoute(
+                                          pdfFileModel: elt));
+                                    },
+                                  );
+                                }),
+                              ],
+                            );
+                          }
+                          return const Text("ok ok");
+                        },
                       )
                     ],
                   ),

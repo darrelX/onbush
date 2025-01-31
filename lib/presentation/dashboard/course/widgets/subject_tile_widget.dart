@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:onbush/presentation/dashboard/course/pages/course_selected_menu_screen.dart';
 import 'package:onbush/core/application/data/models/subject_model.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';

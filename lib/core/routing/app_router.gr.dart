@@ -77,9 +77,13 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     EditAvatarRoute.name: (routeData) {
+      final args = routeData.argsAs<EditAvatarRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const EditAvatarScreen(),
+        child: EditAvatarScreen(
+          key: args.key,
+          avatarList: args.avatarList,
+        ),
       );
     },
     EditProfilRoute.name: (routeData) {
@@ -356,16 +360,40 @@ class DownloadRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [EditAvatarScreen]
-class EditAvatarRoute extends PageRouteInfo<void> {
-  const EditAvatarRoute({List<PageRouteInfo>? children})
-      : super(
+class EditAvatarRoute extends PageRouteInfo<EditAvatarRouteArgs> {
+  EditAvatarRoute({
+    Key? key,
+    required List<String> avatarList,
+    List<PageRouteInfo>? children,
+  }) : super(
           EditAvatarRoute.name,
+          args: EditAvatarRouteArgs(
+            key: key,
+            avatarList: avatarList,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'EditAvatarRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<EditAvatarRouteArgs> page =
+      PageInfo<EditAvatarRouteArgs>(name);
+}
+
+class EditAvatarRouteArgs {
+  const EditAvatarRouteArgs({
+    this.key,
+    required this.avatarList,
+  });
+
+  final Key? key;
+
+  final List<String> avatarList;
+
+  @override
+  String toString() {
+    return 'EditAvatarRouteArgs{key: $key, avatarList: $avatarList}';
+  }
 }
 
 /// generated route for

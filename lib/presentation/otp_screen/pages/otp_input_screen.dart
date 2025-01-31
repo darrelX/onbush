@@ -8,7 +8,6 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:onbush/presentation/otp_screen/logic/otp_cubit/otp_bloc.dart';
-import 'package:onbush/presentation/auth/widgets/pin_code_widget.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/database/local_storage.dart';
@@ -177,7 +176,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                             ),
                             TextSpan(
                               text: widget.email,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color:
                                     AppColors.primary, // Met le texte en bleu
                                 fontWeight: FontWeight.bold,

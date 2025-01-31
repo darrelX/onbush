@@ -29,3 +29,21 @@ final class MenteePending extends MenteeState {
   @override
   List<Object> get props => [];
 }
+
+final class EditSuccess extends MenteeState {
+  @override
+  List<Object> get props => [];
+}
+
+final class EditLoading extends MenteeState {
+  @override
+  List<Object> get props => [];
+}
+
+final class EditFailure extends MenteeState {
+  final String message;
+  const EditFailure({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}

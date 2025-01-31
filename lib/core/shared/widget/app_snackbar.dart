@@ -1,6 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:onbush/core/theme/app_colors.dart';
 import 'package:onbush/core/shared/widget/offline_status_widget.dart';
 import 'package:onbush/core/shared/widget/online_status_widget.dart';
@@ -104,6 +105,44 @@ class AppSnackBar {
     );
     if (!context.mounted) return;
 
+    return _flushbar!.show(context);
+  }
+
+  static Future showConfig({
+    required BuildContext context,
+    required Widget child,
+    Function(Flushbar<dynamic>)? onTap,
+    Widget? leading,
+    double? maxWidth = 400,
+    Color? backgroundColor,
+    duration = const Duration(seconds: 3),
+    Widget? trailling,
+    FlushbarPosition flushbarPosition =
+        FlushbarPosition.TOP, // Ajout de la position
+  }) async {
+    if (_flushbar != null && _flushbar!.isShowing()) {
+      await _flushbar!.dismiss();
+    }
+    _flushbar = Flushbar(
+      onTap: onTap,
+      maxWidth: maxWidth,
+
+      messageText: Row(
+        children: [
+          leading ?? const SizedBox.shrink(),
+          Gap(20.w),
+          Expanded(child: child),
+          Gap(20.w),
+          trailling ?? const SizedBox.shrink(),
+        ],
+      ),
+      margin: const EdgeInsets.all(20),
+      borderRadius: BorderRadius.circular(8),
+      flushbarPosition: flushbarPosition, // Utilisation du paramètre
+      backgroundColor: backgroundColor ?? AppColors.primary,
+      duration: duration,
+    );
+    if (!context.mounted) return;
     return _flushbar!.show(context);
   }
 }

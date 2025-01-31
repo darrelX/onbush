@@ -3,7 +3,6 @@ import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gap/gap.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
 import 'package:onbush/core/theme/app_colors.dart';
@@ -66,8 +65,8 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
       routes: const [
         HomeRoute(),
         SubjectRoute(),
-        HistoryRoute(),
-        ProfilRoute()
+        ProfilRoute(),
+        AmbassadorSpaceRoute(),
       ],
       bottomNavigationBuilder: (_, tabsRouter) {
         return FlashyTabBar(
@@ -115,12 +114,12 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
             ),
             FlashyTabBarItem(
               icon: SvgPicture.asset(
-                'assets/icons/clock.svg',
+                'assets/icons/user.svg',
                 height: 30,
                 width: 30,
               ),
               title: SvgPicture.asset(
-                'assets/icons/clock.svg',
+                'assets/icons/user.svg',
                 height: 30,
                 width: 30,
                 colorFilter: const ColorFilter.mode(
@@ -133,18 +132,18 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
             ),
             FlashyTabBarItem(
               icon: SvgPicture.asset(
-                'assets/icons/user.svg',
+                'assets/icons/ambassador.svg',
                 height: 30,
                 width: 30,
               ),
               title: SvgPicture.asset(
-                'assets/icons/user.svg',
+                'assets/icons/ambassador_active.svg',
                 height: 30,
                 width: 30,
-                colorFilter: const ColorFilter.mode(
-                  AppColors.primary,
-                  BlendMode.srcIn,
-                ),
+                // colorFilter: const ColorFilter.mode(
+                //   AppColors.primary,
+                //   BlendMode.srcIn,
+                // ),
               ),
               activeColor: AppColors.primary,
               inactiveColor: AppColors.icon,

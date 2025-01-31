@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:onbush/core/database/local_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:onbush/service_locator.dart';
 
 class TokenInterceptor extends QueuedInterceptor {

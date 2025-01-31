@@ -29,7 +29,7 @@ class HistoryWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
+              SizedBox(
                 width: 200.w,
                 child: Text(
                   "Lorem ipsum indolors apsum Lorem ipsum indolors apsum 90",

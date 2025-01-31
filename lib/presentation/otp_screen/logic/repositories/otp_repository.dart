@@ -3,7 +3,6 @@ import 'package:dio/dio.dart';
 import 'package:onbush/presentation/auth/data/models/user_model.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/database/local_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpRepository {
   final Dio _dio;

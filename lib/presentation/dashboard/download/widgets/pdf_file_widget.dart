@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,6 @@ import 'package:onbush/presentation/dashboard/download/logic/data/pdf_file_model
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
 import 'package:onbush/core/theme/app_colors.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class PdfFileWidget extends StatefulWidget {
   final PdfFileModel pdfFileModel;
@@ -80,7 +78,7 @@ class _PdfFileWidgetState extends State<PdfFileWidget> {
                             fontSize: 13.r, color: Colors.grey.shade600),
                       ),
                       Text(
-                        "Il y'a ${widget.pdfFileModel.date!}h",
+                        "Il y'a ${widget.pdfFileModel.date}",
                         style: context.textTheme.bodyLarge!.copyWith(
                             fontSize: 13.r, color: Colors.grey.shade600),
                       ),

@@ -15,7 +15,7 @@ class DownloadPdfViewScreen extends StatefulWidget {
 
 class _DownloadPdfViewScreenState extends State<DownloadPdfViewScreen> {
   // Bloque les captures d'écran
-  void _enableSecureMode() async {
+  Future<void> _enableSecureMode() async {
     await FlutterWindowManagerPlus.addFlags(
         FlutterWindowManagerPlus.FLAG_SECURE);
   }
@@ -26,11 +26,10 @@ class _DownloadPdfViewScreenState extends State<DownloadPdfViewScreen> {
     _enableSecureMode();
   }
 
-  @override 
-  void dispose(){
+  @override
+  void dispose() {
     FlutterWindowManagerPlus.clearFlags(FlutterWindowManagerPlus.FLAG_SECURE);
-
-super.dispose();
+    super.dispose();
   }
 
   @override

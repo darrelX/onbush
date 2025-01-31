@@ -64,12 +64,13 @@ class DownloadCubit extends Cubit<DownloadState> {
     try {
       for (var file in files) {
         final modifiedDate = (await _getFileModifiedDate(file.path));
+        final foomatedDate = _convertirHeuresEnFormat(modifiedDate!);
         final category = _getCategoryFromFilePath(file.path);
         pdfModels.add(
           PdfFileModel(
             file: file,
             category: category, // Catégorie générique pour tous les fichiers.
-            date: modifiedDate!,
+            date: foomatedDate,
             name: file.path.split('/').last,
           ),
         );
@@ -79,6 +80,68 @@ class DownloadCubit extends Cubit<DownloadState> {
       rethrow;
     }
     return pdfModels;
+  }
+
+  /// Retourne les fichiers PDF les plus récents dans le répertoire principal (toutes catégories et sous-dossiers confondus).
+  Future<void> getMostRecentDocuments({int maxResults = 3}) async {
+    emit(const DownloadLoading());
+
+    try {
+      // Obtenez le répertoire principal de l'application.
+      final Directory appDirectory = await getApplicationDocumentsDirectory();
+
+      // Chargez tous les fichiers PDF (de manière récursive).
+      final List<File> allPdfFiles =
+          await _loadAllPdfFilesFromDirectory(appDirectory);
+
+      // Trie les fichiers par date de modification décroissante.
+      allPdfFiles.sort((file1, file2) {
+        final FileStat stat1 = file1.statSync();
+        final FileStat stat2 = file2.statSync();
+        return stat2.modified.compareTo(stat1.modified); // Tri décroissant.
+      });
+
+      List<PdfFileModel> pdfModel = await _convertFilesToPdfFileModel(
+          allPdfFiles.take(maxResults).toList());
+
+      // Retourne les N fichiers les plus récents (par défaut 10).
+      emit(DownloadSuccess(listPdfModel: pdfModel));
+
+      // return allPdfFiles.take(maxResults).toList();
+    } catch (e) {
+      print('Erreur lors de la récupération des fichiers récents : $e');
+      final errorMessage = Utils.extractErrorMessage(e);
+      print('Erreur dans `downloadAllPdfs` : $errorMessage');
+      emit(DownloadFailure(message: errorMessage));
+    }
+  }
+
+  String _convertirHeuresEnFormat(int heuresTotales) {
+    // Constantes pour les conversions
+    const int heuresParJour = 24;
+    const int joursParMois = 30; // Approximation pour un mois
+    const int moisParAn = 12;
+
+    // Calculs
+    int annees = heuresTotales ~/ (heuresParJour * joursParMois * moisParAn);
+    int resteApresAnnees =
+        heuresTotales % (heuresParJour * joursParMois * moisParAn);
+
+    int mois = resteApresAnnees ~/ (heuresParJour * joursParMois);
+    int resteApresMois = resteApresAnnees % (heuresParJour * joursParMois);
+
+    int jours = resteApresMois ~/ heuresParJour;
+    int heures = resteApresMois % heuresParJour;
+
+    // Création d'une liste pour les parties non nulles
+    List<String> parties = [];
+    if (annees > 0) parties.add('${annees}A');
+    if (mois > 0) parties.add('${mois}M');
+    if (jours > 0) parties.add('${jours}j');
+    if (heures > 0) parties.add('${heures}h');
+
+    // Assemblage des parties avec ':' comme séparateur
+    return parties.join(':');
   }
 
   /// Récupère tous les fichiers PDF depuis le répertoire principal de l'application.

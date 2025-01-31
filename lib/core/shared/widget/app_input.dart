@@ -143,7 +143,7 @@ class _AppInputState extends State<AppInput> {
       _isObscure = widget.hideText!;
     }
 
-    return Container(
+    return SizedBox(
       height: widget.height,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -172,7 +172,7 @@ class _AppInputState extends State<AppInput> {
               ),
             ),
           Center(
-            child: Container(
+            child: SizedBox(
               width: widget.width ?? 320.w,
               // height: widget.height,
               child: TextFormField(

@@ -8,7 +8,6 @@ import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:onbush/core/database/local_storage.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/shared/widget/app_dialog.dart';
-import 'package:onbush/presentation/dashboard/home/pages/home_screen.dart';
 import 'package:onbush/core/theme/app_colors.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
 import 'package:onbush/presentation/dashboard/profil/cubit/mentee_cubit.dart';
@@ -16,10 +15,9 @@ import 'package:onbush/presentation/dashboard/profil/widgets/empty_referral_widg
 import 'package:onbush/presentation/dashboard/profil/widgets/referral_overview_card_widget.dart';
 import 'package:onbush/presentation/dashboard/profil/widgets/sponsor_child_widget.dart';
 import 'package:onbush/presentation/dashboard/profil/widgets/sponsor_popup_widget.dart';
+import 'package:onbush/presentation/dashboard/profil/widgets/withdrawal_notice_widget%20.dart';
 import 'package:onbush/service_locator.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 @RoutePage()
 class AmbassadorSpaceScreen extends StatefulWidget {
@@ -32,20 +30,7 @@ class AmbassadorSpaceScreen extends StatefulWidget {
 class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
   final MenteeCubit _cubit = MenteeCubit();
   int _numberOfMentees = 0;
-  Future<void> _shareWithSubject() async {
-    const textToShare = 'Découvrez Flutter !';
-    const subjectToShare = 'Découvrez cette technologie géniale';
-
-    try {
-      await Share.share(
-        textToShare,
-        sharePositionOrigin: const Rect.fromLTWH(0, 0, 100, 100),
-      );
-      print('Partage réussi');
-    } catch (e) {
-      print('Erreur lors du partage : $e');
-    }
-  }
+  double _total = 0;
 
   @override
   void initState() {
@@ -61,20 +46,21 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
       listener: (context, state) {
         print(state);
         if (state is MenteeSuccess) {
-          setState(() {
-            _numberOfMentees = state.listMentees.length;
-          });
+          if (state.listMentees.isNotEmpty) {
+            setState(() {
+              _total = state.listMentees
+                  .map((element) => element.amount!)
+                  .toList()
+                  .reduce((value, element) => value + element);
+              _numberOfMentees = state.listMentees.length;
+            });
+          }
         }
-        // TODO: implement listener
       },
       bloc: _cubit,
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.quaternaire,
-          appBar: AppBar(
-            title: const Text("Espace Parrain"),
-            centerTitle: true,
-          ),
           body: Container(
               width: context.width,
               padding: EdgeInsets.symmetric(horizontal: 15.w),
@@ -84,12 +70,12 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
                   Row(
                     children: [
                       Image.asset(
-                        "assets/images/account_image.png",
+                        getIt.get<LocalStorage>().getString('avatar')!,
                         height: 60.h,
                       ),
                       const Spacer(),
                       ReferralOverviewCardWidget(
-                        amount: _numberOfMentees * 10,
+                        amount: _total,
                         numberOfMentees: _numberOfMentees,
                       ),
                     ],
@@ -97,11 +83,24 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
                   Gap(20.h),
                   AppButton(
                     text: "Faire un retrait",
+                    textColor: _numberOfMentees > 0
+                        ? const Color(0xFF07BD56)
+                        : AppColors.textGrey,
                     width: context.width,
-                    bgColor: AppColors.grey,
+                    // bgColor: Color(0xFFECEEF0),
+                    bgColor: _numberOfMentees > 0
+                        ? const Color(0xFF9EFFC8)
+                        : const Color(0xFFECEEF0),
+                    onPressed: () => _numberOfMentees > 0
+                        ? AppDialog.showDialog(
+                            height: 190.h,
+                            width: 360.w,
+                            child: const WithdrawalNoticeWidget(),
+                            context: context)
+                        : null,
                     // textColor: ,
                   ),
-                  Gap(20.h),
+                  Gap(10.h),
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.r),
@@ -112,15 +111,15 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
                         AppDialog.showDialog(
                             context: context,
                             width: context.width - 30.w,
+                            height: 380.h,
                             child: SponsorPopupWidget(
-                                shareIt: _shareWithSubject,
                                 sponsorCode: getIt
                                     .get<ApplicationCubit>()
                                     .userModel
                                     .sponsorCode!));
                       },
-                      leading: Image.asset(
-                        'assets/icons/coins.png',
+                      leading: SvgPicture.asset(
+                        'assets/icons/copy.svg',
                         width: 30,
                         height: 30,
                       ),
@@ -137,7 +136,7 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
                       ),
                     ),
                   ),
-                  Gap(50.h),
+                  Gap(40.h),
                   Row(
                     children: [
                       const Text(
@@ -151,7 +150,7 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
                       )
                     ],
                   ),
-                  Gap(60.h),
+                  Gap(40.h),
                   Expanded(
                     child: Builder(builder: (context) {
                       if (state is MenteePending) {

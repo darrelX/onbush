@@ -22,8 +22,12 @@ class LocalStorage {
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
     final device = _prefs!.getString('device');
+    final avatar = _prefs!.getString('avatar');
     if (device == null || device.isEmpty || device == "null") {
       await _deviceInfo();
+    }
+    if (avatar == null || avatar.isEmpty || avatar == "null") {
+      await _prefs!.setString('avatar',  "assets/avatars/avatar 1.png");
     }
   }
 

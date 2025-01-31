@@ -5,10 +5,8 @@ import 'package:onbush/presentation/auth/data/models/college_model.dart';
 import 'package:onbush/presentation/auth/data/models/specialty_model.dart';
 import 'package:onbush/core/application/data/models/course_model.dart';
 import 'package:onbush/core/application/data/models/subject_model.dart';
-import 'package:onbush/presentation/auth/data/models/user_model.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/database/local_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ApplicationRepository {
   final Dio _dioDataApi;
@@ -33,10 +31,10 @@ class ApplicationRepository {
     }
   }
 
-  Future<Speciality?> fetchSpecialitie({required int id}) async {
+  Future<SpecialityModel?> fetchSpecialitie({required int id}) async {
     try {
       Response response = await _dioDataApi.get("/filiere/$id");
-      return Speciality.fromJson(response.data["data"] as Map<String, dynamic>);
+      return SpecialityModel.fromJson(response.data["data"] as Map<String, dynamic>);
     } catch (e) {
       rethrow;
     }
@@ -56,11 +54,18 @@ class ApplicationRepository {
     }
   }
 
-  Future<List<CourseModel>> fetchListCourseModel(
-      {required int subjectId, required String category}) async {
+  
+
+  Future<List<CourseModel>> fetchListCourseModel({
+    required int subjectId,
+    required String category,
+    void Function(int, int)? onProgress,
+  }) async {
     try {
-      Response response =
-          await _dioDataApi.get("/matiere/$subjectId/$category");
+      Response response = await _dioDataApi.get(
+        "/matiere/$subjectId/$category",
+        onReceiveProgress: onProgress,
+      );
       List<dynamic> data = response.data['data'] as List<dynamic>;
       return data
           .map((item) => CourseModel.fromJson(item as Map<String, dynamic>))
@@ -70,12 +75,12 @@ class ApplicationRepository {
     }
   }
 
-  Future<List<Speciality>> allSpecialities(int schoolId) async {
+  Future<List<SpecialityModel>> allSpecialities(int schoolId) async {
     try {
       Response response = await _dioAccountApi.get("/filieres");
       List<dynamic> data = response.data['data'] as List<dynamic>;
       final a = data
-          .map((item) => Speciality.fromJson(item as Map<String, dynamic>))
+          .map((item) => SpecialityModel.fromJson(item as Map<String, dynamic>))
           .where((e) => e.collegeId == schoolId)
           .toList();
       return a;

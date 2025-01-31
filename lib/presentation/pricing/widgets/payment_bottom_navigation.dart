@@ -89,7 +89,7 @@ class PaymentBottomNavigation extends StatelessWidget {
                                 email: widget.email,
                                 phoneNumber:
                                     _phoneController.text.replaceAll(' ', ''),
-                                paymentService: _pm!,
+                                paymentService: _pm,
                                 amount: amount,
                                 sponsorCode: _sponsorCodeController.text
                                     .replaceAll(' ', ''),
@@ -120,7 +120,7 @@ class PaymentBottomNavigation extends StatelessWidget {
                                       int.parse(_discountCodeController.text));
                             } else {
                               _pageController.nextPage(
-                                  duration: Duration(milliseconds: 300),
+                                  duration: const Duration(milliseconds: 300),
                                   curve: Curves.linear);
                             }
                           },

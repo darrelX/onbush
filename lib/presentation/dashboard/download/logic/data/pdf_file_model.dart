@@ -2,12 +2,15 @@ import 'dart:io';
 
 class PdfFileModel {
   final String? name;
-  final int? date;
+  final String? date;
   final String? category;
   final File file;
 
   const PdfFileModel(
-      {required this.name, required this.file, required this.category, required this.date});
+      {required this.name,
+      required this.file,
+      required this.category,
+      required this.date});
 
   factory PdfFileModel.fromJson(Map<String, dynamic> json) {
     return PdfFileModel(

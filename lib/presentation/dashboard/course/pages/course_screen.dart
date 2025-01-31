@@ -4,10 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:onbush/presentation/pricing/pages/price_screen.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:onbush/core/application/cubit/data_state.dart';
-import 'package:onbush/core/application/data/models/course_model.dart';
 import 'package:onbush/core/application/data/models/subject_model.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
@@ -44,7 +42,7 @@ class _CourseScreenState extends State<CourseScreen> {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -58,16 +56,33 @@ class _CourseScreenState extends State<CourseScreen> {
               child: BlocBuilder<ApplicationCubit, ApplicationState>(
                 builder: (context, state) {
                   if (state.listCourseModel!.status == Status.failure) {
-                    return Center(
-                      child: AppButton(
-                        child: Icon(Icons.refresh,
-                            size: 60.r, color: Colors.black38),
-                        onPressed: () => context
-                            .read<ApplicationCubit>()
-                            .fetchCourseModel(
-                                subjectId: widget.subjectModel.id!,
-                                category: widget.category),
-                      ),
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset("assets/images/network_problem.svg"),
+                        Gap(50.h),
+                        Text(
+                          "Vous avez un probleme de connexion ressayer",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22.r,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        Gap(20.h),
+                        AppButton(
+                          text: "Recommencer",
+                          bgColor: AppColors.primary,
+                          width: context.width,
+                          onPressed: () => context
+                              .read<ApplicationCubit>()
+                              .fetchCourseModel(
+                                  subjectId: widget.subjectModel.id!,
+                                  category: widget.category),
+                        ),
+                        Gap(70.h),
+                      ],
                     );
                   }
                   if (state.listCourseModel!.status == Status.loading) {
@@ -79,6 +94,25 @@ class _CourseScreenState extends State<CourseScreen> {
                     );
                   }
                   if (state.listCourseModel!.status == Status.success) {
+                    if (state.listCourseModel!.data!.isEmpty) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset("assets/images/error_400.svg"),
+                          Gap(50.h),
+                          Text(
+                            "Le fichier que vous chercher n'est pas encore disponible",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22.r,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          Gap(70.h),
+                        ],
+                      );
+                    }
                     return ListView.separated(
                       separatorBuilder: (context, index) => Gap(20.h),
                       itemBuilder: (context, index) {
@@ -112,7 +146,7 @@ class _CourseScreenState extends State<CourseScreen> {
                       itemCount: state.listCourseModel!.data!.length,
                     );
                   }
-                  return SizedBox.shrink();
+                  return const SizedBox.shrink();
                 },
               ),
             )

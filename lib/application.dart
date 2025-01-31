@@ -7,10 +7,8 @@ import 'package:onbush/presentation/otp_screen/logic/otp_cubit/otp_bloc.dart';
 import 'package:onbush/presentation/dashboard/download/logic/cubit/download_cubit.dart';
 import 'package:onbush/l10n/l10n.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
-import 'package:onbush/my_bloc_observer.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:onbush/core/connectivity/bloc/network_cubit.dart';
-import 'package:onbush/core/routing/my_observer.dart';
 
 import 'service_locator.dart';
 import 'core/routing/app_router.dart';

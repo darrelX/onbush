@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:onbush/presentation/auth/data/models/college_model.dart';
@@ -18,10 +17,10 @@ class ApplicationCubit extends Cubit<ApplicationState> {
   final _repository = ApplicationRepository();
   final pref = getIt.get<LocalStorage>();
   final List<CollegeModel> _listAllColleges = [];
-  final List<Speciality> _listAllSpecialities = [];
+  final List<SpecialityModel> _listAllSpecialities = [];
   String? currentRequest;
   List<CollegeModel> get listAllColleges => _listAllColleges;
-  List<Speciality> get listAllSpecialities => _listAllSpecialities;
+  List<SpecialityModel> get listAllSpecialities => _listAllSpecialities;
   late UserModel _userModel;
   UserModel get userModel => _userModel;
 
@@ -114,7 +113,7 @@ class ApplicationCubit extends Cubit<ApplicationState> {
         user: _userModel,
         speciality: state.speciality.copyWith(status: Status.loading)));
     try {
-      Speciality speciality =
+      SpecialityModel speciality =
           (await _repository.fetchSpecialitie(id: _userModel.majorSchoolId!))!;
       emit(state.copyWith(
           user: _userModel,

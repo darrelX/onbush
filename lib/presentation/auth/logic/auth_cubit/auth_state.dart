@@ -95,7 +95,7 @@ final class SearchStateFailure extends AuthState {
 
 final class SearchStateSuccess extends AuthState {
   final List<CollegeModel> listCollegeModel;
-  final List<Speciality> listSpeciality;
+  final List<SpecialityModel> listSpeciality;
 
   const SearchStateSuccess(
       {required this.listCollegeModel, required this.listSpeciality});

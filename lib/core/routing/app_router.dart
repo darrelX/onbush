@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:onbush/presentation/auth/pages/new_password_screen.dart';
 import 'package:onbush/presentation/dashboard/course/pages/course_screen.dart';
 import 'package:onbush/presentation/dashboard/course/pages/course_selected_menu_screen.dart';
 import 'package:onbush/presentation/dashboard/course/pages/pdf_view_screen.dart';
@@ -24,7 +23,6 @@ import '../application/pages/application_screen.dart';
 import '../../presentation/dashboard/history/pages/history_screen.dart';
 import '../../presentation/dashboard/home/pages/home_screen.dart';
 import 'package:onbush/presentation/otp_screen/pages/otp_input_screen.dart';
-import 'package:onbush/presentation/auth/pages/forget_password_screen.dart';
 
 part 'app_router.gr.dart';
 
@@ -48,10 +46,7 @@ class AppRouter extends _$AppRouter {
               path: 'subject',
               page: SubjectRoute.page,
             ),
-            AutoRoute(
-              path: 'history',
-              page: HistoryRoute.page,
-            ),
+            AutoRoute(path: 'ammbassador', page: AmbassadorSpaceRoute.page),
             AutoRoute(
               path: 'profil',
               page: ProfilRoute.page,
@@ -77,7 +72,7 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: AuthRoute.page),
         AutoRoute(page: OTPInputRoute.page),
         AutoRoute(page: DownloadRoute.page),
-        AutoRoute(page: AmbassadorSpaceRoute.page),
+
         // AutoRoute(page: ForgetPasswordRoute.page),
         // AutoRoute(page: NewPasswordRoute.page),
         AutoRoute(page: OnboardingRoute.page),
@@ -89,5 +84,6 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: PdfViewRoute.page),
         AutoRoute(page: DownloadPdfViewRoute.page),
         AutoRoute(page: EditProfilRoute.page),
+        AutoRoute(page: EditAvatarRoute.page),
       ];
 }

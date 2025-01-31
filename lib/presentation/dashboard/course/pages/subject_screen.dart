@@ -5,18 +5,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:onbush/presentation/dashboard/course/pages/course_selected_menu_screen.dart';
 import 'package:onbush/presentation/dashboard/course/widgets/academic_semester_tab.dart';
 import 'package:onbush/presentation/dashboard/course/widgets/subject_tile_widget.dart';
-import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:onbush/core/application/cubit/data_state.dart';
 import 'package:onbush/core/application/data/models/subject_model.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
-import 'package:onbush/core/routing/app_router.dart';
 import 'package:onbush/core/theme/app_colors.dart';
-import 'package:onbush/core/shared/widget/buttons/app_button.dart';
-import 'package:onbush/core/shared/widget/carrousel/app_carousel_widget.dart';
 import 'package:onbush/core/shared/widget/app_input.dart';
 
 @RoutePage()

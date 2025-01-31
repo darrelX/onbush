@@ -21,4 +21,37 @@ class MenteeCubit extends Cubit<MenteeState> {
       emit(MenteeFailure(message: Utils.extractErrorMessage(e)));
     }
   }
+
+  Future<void> editProfil(
+      {required String device,
+      required String studentId,
+      required String name,
+      required String gender,
+      required String avatar,
+      required String phone,
+      required String level,
+      required String language,
+      required String email,
+      required String birthday,
+      required String role}) async {
+    emit(EditLoading());
+    try {
+      final result = await _menteeRepository.editProfil(
+        device: device,
+        studentId: studentId,
+        birthday: birthday,
+        name: name,
+        gender: gender,
+        phone: phone,
+        level: level,
+        language: language,
+        avatar: avatar,
+        email: email,
+        role: role,
+      );
+      emit(EditSuccess());
+    } catch (e) {
+      emit(EditFailure(message: Utils.extractErrorMessage(e)));
+    }
+  }
 }

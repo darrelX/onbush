@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,11 +6,9 @@ import 'package:gap/gap.dart';
 import 'package:onbush/presentation/dashboard/download/logic/cubit/download_cubit.dart';
 import 'package:onbush/presentation/dashboard/download/logic/data/pdf_file_model.dart';
 import 'package:onbush/presentation/dashboard/download/widgets/pdf_file_widget.dart';
-import 'package:onbush/presentation/dashboard/history/widgets/history_widget.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/theme/app_colors.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
-import 'package:onbush/core/shared/widget/carrousel/app_carousel_widget.dart';
 import 'package:onbush/core/shared/widget/app_input.dart';
 
 @RoutePage()
@@ -25,7 +22,7 @@ class DownloadScreen extends StatefulWidget {
 class _DownloadScreenState extends State<DownloadScreen> {
   int _currentIndex = 0;
   List<PdfFileModel> _filterListPdfFile = [];
-  List<String> _category = [
+  final List<String> _category = [
     "Tout",
   ];
   final TextEditingController _courseControler = TextEditingController();
@@ -69,12 +66,12 @@ class _DownloadScreenState extends State<DownloadScreen> {
               },
               builder: (context, state) {
                 if (state is DownloadFailure) {
-                  return AppButton(
+                  return const AppButton(
                     text: "retry",
                   );
                 }
                 if (state is DownloadLoading) {
-                  return CircularProgressIndicator();
+                  return const Center(child: CircularProgressIndicator());
                 }
                 if (state is DownloadSuccess) {
                   print(_category);
@@ -125,7 +122,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
                       Gap(30.h),
                       state.listPdfModel.isEmpty
                           ?  Container(
-                              child: Text("Empty"),
+                              child: const Text("Empty"),
                             )
                           : Expanded(
                               child: Padding(
@@ -165,7 +162,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
                     ],
                   );
                 }
-                return SizedBox.shrink();
+                return const SizedBox.shrink();
               },
             ),
           )

@@ -6,10 +6,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:onbush/presentation/auth/data/models/college_model.dart';
 import 'package:onbush/presentation/auth/logic/auth_cubit/auth_cubit.dart';
-import 'package:onbush/presentation/auth/pages/auth_screen.dart';
-import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/theme/app_colors.dart';
 import 'package:onbush/core/shared/widget/bottom_sheet/app_bottom_sheet.dart';
@@ -92,13 +89,13 @@ class RegisterWidgetState extends State<RegisterWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final _authCubit = context.read<AuthCubit>();
+    final authCubit = context.read<AuthCubit>();
 
     return BlocConsumer<AuthCubit, AuthState>(
       // bloc: _cubit,
       listener: (context, state) async {
         if (state is SearchStateSuccess) {
-          if (_authCubit.currentRequest == "colleges") {
+          if (authCubit.currentRequest == "colleges") {
             widget.listId['college'] = await _bottomSheetSelect(
               context,
               title: "Sélectionner l'école",
@@ -107,7 +104,7 @@ class RegisterWidgetState extends State<RegisterWidget> {
                   ),
               controller: widget.schoolController,
             );
-          } else if (_authCubit.currentRequest == "specialities") {
+          } else if (authCubit.currentRequest == "specialities") {
             widget.listId['specialitie'] = await _bottomSheetSelect(
               context,
               title: "Sélectionner la specialite",
