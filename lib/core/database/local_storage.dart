@@ -3,35 +3,35 @@ import 'package:onbush/core/hash/hash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
-  static LocalStorage? _instance;
-  SharedPreferences? _prefs;
+  late SharedPreferences? _prefs;
 
-  LocalStorage._internal();
-
-  factory LocalStorage() {
-    _instance ??= LocalStorage._internal();
-    return _instance!;
+  // Constructeur principal pour initialiser les SharedPreferences
+  LocalStorage({SharedPreferences? sharedPreferences}) {
+    _prefs = sharedPreferences;
   }
 
-  Future<void> _deviceInfo() async {
-    setString('device',
-        encryptToHex(await DeviceInfo.init().getInfoDevice("fingerprint")));
+  // Méthode pour récupérer ou initialiser les infos de l'appareil
+  Future<void> _initializeDeviceInfo() async {
+    final deviceInfo = await DeviceInfo.init().getInfoDevice("fingerprint");
+    await setString('device', encryptToHex(deviceInfo));
   }
 
-  // Méthode pour initialiser SharedPreferences
+  // Méthode pour initialiser les préférences locales
   Future<void> init() async {
-    _prefs = await SharedPreferences.getInstance();
-    final device = _prefs!.getString('device');
-    final avatar = _prefs!.getString('avatar');
+    _prefs ??= await SharedPreferences.getInstance();
+    final device = getString('device');
+    final avatar = getString('avatar');
+
+    // Initialisation de l'information de l'appareil si nécessaire
     if (device == null || device.isEmpty || device == "null") {
-      await _deviceInfo();
+      await _initializeDeviceInfo();
     }
+
+    // Définir un avatar par défaut si nécessaire
     if (avatar == null || avatar.isEmpty || avatar == "null") {
-      await _prefs!.setString('avatar',  "assets/avatars/avatar 1.png");
+      await setString('avatar', "assets/avatars/avatar 1.png");
     }
   }
-
-  // Méthodes pour différents types de données
 
   // Sauvegarder une chaîne de caractères
   Future<void> setString(String key, String value) async {
@@ -44,8 +44,8 @@ class LocalStorage {
   }
 
   // Sauvegarder un entier
-  Future<void> setInt(String key, int value) async {
-    await _prefs?.setInt(key, value);
+  Future<bool> setInt(String key, int value) async {
+    return await _prefs!.setInt(key, value);
   }
 
   // Récupérer un entier
@@ -54,16 +54,27 @@ class LocalStorage {
   }
 
   // Sauvegarder un booléen
-  Future<void> setBool(String key, bool value) async {
-    await _prefs?.setBool(key, value);
+  Future<bool> setBool(String key, bool value) async {
+    return await _prefs!.setBool(key, value);
   }
 
   // Récupérer un booléen
   bool? getBool(String key) {
-    return _prefs?.getBool(key);
+    return  _prefs?.getBool(key);
   }
 
+  // Supprimer une donnée
   Future<bool?> remove(String key) async {
     return await _prefs?.remove(key);
+  }
+
+  // Sauvegarder une liste de chaînes de caractères
+  Future<bool> setStringList(String key, List<String> value) async {
+    return await _prefs!.setStringList(key, value);
+  }
+
+  // Récupérer une liste de chaînes de caractères
+  List<String>? getStringList(String key) {
+    return _prefs?.getStringList(key);
   }
 }

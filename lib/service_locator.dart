@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
-import 'package:onbush/presentation/otp_screen/logic/repositories/otp_repository.dart';
-import 'package:onbush/presentation/auth/logic/auth_cubit/auth_cubit.dart';
-import 'package:onbush/presentation/otp_screen/logic/otp_cubit/otp_bloc.dart';
-import 'package:onbush/presentation/dashboard/download/logic/cubit/download_cubit.dart';
+import 'package:onbush/core/database/local_database.dart';
+import 'package:onbush/presentation/views/otp_screen/logic/repositories/otp_repository.dart';
+import 'package:onbush/presentation/views/auth/logic/auth_cubit/auth_cubit.dart';
+import 'package:onbush/presentation/views/otp_screen/logic/otp_cubit/otp_bloc.dart';
+import 'package:onbush/presentation/views/dashboard/download/logic/cubit/download_cubit.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:logger/logger.dart';
 import 'package:onbush/core/database/local_storage.dart';
@@ -20,6 +21,8 @@ Future<void> setupLocator() async {
 
     // SharedPreferences
     ..registerSingleton<LocalStorage>(LocalStorage())
+
+    // ..registerLazySingleton<LocalDatabase>(LocalDatabase.new)
 
     // Dio
     ..registerSingleton<Dio>(

@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:onbush/presentation/auth/data/models/college_model.dart';
-import 'package:onbush/presentation/auth/data/models/specialty_model.dart';
+import 'package:onbush/presentation/views/auth/data/models/college_model.dart';
+import 'package:onbush/presentation/views/auth/data/models/specialty_model.dart';
 import 'package:onbush/core/application/data/models/course_model.dart';
 import 'package:onbush/core/application/data/models/subject_model.dart';
-import 'package:onbush/presentation/auth/data/models/user_model.dart';
+import 'package:onbush/presentation/views/auth/data/models/user_model.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/application/cubit/data_state.dart';
 import 'package:onbush/core/application/data/repositories/application_repository.dart';

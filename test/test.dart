@@ -1,60 +1,166 @@
-// import 'package:flutter/material.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:onbush/core/database/local_storage.dart';
+import 'package:onbush/data/datasources/local/_collection/pdf/pdf_file_collection.dart';
+import 'package:onbush/data/datasources/local/pdf/pdf_local_data_source_impl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// // Singleton pour gérer différents types de données locales
-// class LocalStorage {
-//   static LocalStorage? _instance;
-//   static SharedPreferences? _prefs;
+class MockSharedPreferences extends Mock implements SharedPreferences {}
 
-//   LocalStorage._internal();
+void main() {
+  late PdfLocalDataSourceImpl pdfLocalDataSource;
+  late LocalStorage localStorage;
+  late MockSharedPreferences mockSharedPreferences;
 
-//   factory LocalStorage() {
-//     _instance ??= LocalStorage._internal();
-//     return _instance!;
-//   }
+  const String keyPdfFiles = "pdf_file";
 
-//   // Méthode pour initialiser SharedPreferences
-//    Future<void> init() async {
-//     _prefs = await SharedPreferences.getInstance();
-//   }
+  final PdfFileCollection testPdf = const PdfFileCollection(
+    id: 1,
+    name: "Test PDF",
+    filePath: "/documents/test.pdf",
+    category: "Education",
+    date: "2024-02-08",
+    isOpened: false,
+  );
 
-//   // Méthodes pour différents types de données
+  setUp(() {
+    mockSharedPreferences = MockSharedPreferences();
+    localStorage = LocalStorage(sharedPreferences: mockSharedPreferences);
+    pdfLocalDataSource = PdfLocalDataSourceImpl(localStorage);
+  });
 
-//   // Sauvegarder une chaîne de caractères
-//   static Future<void> setString(String key, String value) async {
-//     await _prefs?.setString(key, value);
-//   }
+  tearDown(() {
+    reset(mockSharedPreferences);
+  });
 
-//   // Récupérer une chaîne de caractères
-//   static String? getString(String key) {
-//     return _prefs?.getString(key);
-//   }
+  group("📂 savePdfFile", () {
+    test("Ajoute un fichier PDF s'il n'est pas déjà enregistré", () async {
+      when(() => mockSharedPreferences.getStringList(keyPdfFiles)).thenReturn(null);
+      when(() => mockSharedPreferences.setStringList(any(), any())).thenAnswer((_) async => true);
 
-//   // Sauvegarder un entier
-//   static Future<void> setInt(String key, int value) async {
-//     await _prefs?.setInt(key, value);
-//   }
+      expectLater(
+        () async => await pdfLocalDataSource.savePdfFile(testPdf),
+        returnsNormally,
+      );
 
-//   // Récupérer un entier
-//   static int? getInt(String key) {
-//     return _prefs?.getInt(key);
-//   }
+      verify(() => mockSharedPreferences.setStringList(
+            keyPdfFiles,
+            [jsonEncode(testPdf.toJson())],
+          )).called(1);
+    });
 
-//   // Sauvegarder un booléen
-//   static Future<void> setBool(String key, bool value) async {
-//     await _prefs?.setBool(key, value);
-//   }
+    test("Ne duplique pas un fichier PDF déjà enregistré", () async {
+      final existingPdfList = [jsonEncode(testPdf.toJson())];
 
-//   // Récupérer un booléen
-//   static bool? getBool(String key) {
-//     return _prefs?.getBool(key);
-//   }
-// }
+      when(() => mockSharedPreferences.getStringList(keyPdfFiles)).thenReturn(existingPdfList);
+      when(() => mockSharedPreferences.setStringList(any(), any())).thenAnswer((_) async => true);
 
-// Future<void> main() async {
-//   var a = LocalStorage();
-  
-//   await LocalStorage.init();
-//   LocalStorage.setBool('1', true);
-//   LocalStorage.getBool('1');
-// }
+      expectLater(
+        () async => await pdfLocalDataSource.savePdfFile(testPdf),
+        returnsNormally,
+      );
+
+      verifyNever(() => mockSharedPreferences.setStringList(any(), any()));
+    });
+
+    test("Gère les erreurs correctement", () async {
+      when(() => mockSharedPreferences.getStringList(keyPdfFiles)).thenThrow(Exception("Storage error"));
+
+      expectLater(
+        () async => await pdfLocalDataSource.savePdfFile(testPdf),
+        throwsException,
+      );
+    });
+  });
+
+  group("📂 getAllPdfFile", () {
+    test("Retourne une liste vide si aucun fichier n'est enregistré", () async {
+      when(() => mockSharedPreferences.getStringList(keyPdfFiles)).thenReturn(null);
+
+      final result = await pdfLocalDataSource.getAllPdfFile();
+
+      expect(result, isEmpty);
+    });
+
+    test("Retourne la liste des fichiers enregistrés", () async {
+      final storedPdfs = [jsonEncode(testPdf.toJson())];
+
+      when(() => mockSharedPreferences.getStringList(keyPdfFiles)).thenReturn(storedPdfs);
+
+      final result = await pdfLocalDataSource.getAllPdfFile();
+
+      expect(result, [testPdf]);
+    });
+  });
+
+  group("🗑 deletePdfFile", () {
+    test("Supprime un fichier existant", () async {
+      final existingPdfList = [jsonEncode(testPdf.toJson())];
+
+      when(() => mockSharedPreferences.getStringList(keyPdfFiles)).thenReturn(existingPdfList);
+      when(() => mockSharedPreferences.setStringList(any(), any())).thenAnswer((_) async => true);
+
+      expectLater(
+        () async => await pdfLocalDataSource.deletePdfFile(testPdf.filePath!),
+        returnsNormally,
+      );
+
+      verify(() => mockSharedPreferences.setStringList(keyPdfFiles, [])).called(1);
+    });
+
+    test("Ne fait rien si le fichier n'existe pas", () async {
+      when(() => mockSharedPreferences.getStringList(keyPdfFiles)).thenReturn(null);
+
+      expectLater(
+        () async => await pdfLocalDataSource.deletePdfFile(testPdf.filePath!),
+        returnsNormally,
+      );
+
+      verifyNever(() => mockSharedPreferences.setStringList(any(), any()));
+    });
+  });
+
+  group("🔎 isSavedPdfFile", () {
+    test("Retourne true si le fichier est enregistré", () async {
+      final storedPdfs = [jsonEncode(testPdf.toJson())];
+
+      when(() => mockSharedPreferences.getStringList(keyPdfFiles)).thenReturn(storedPdfs);
+
+      final result = await pdfLocalDataSource.isSavedPdfFile(testPdf.filePath!);
+
+      expect(result, isTrue);
+    });
+
+    test("Retourne false si le fichier n'est pas enregistré", () async {
+      when(() => mockSharedPreferences.getStringList(keyPdfFiles)).thenReturn(null);
+
+      final result = await pdfLocalDataSource.isSavedPdfFile(testPdf.filePath!);
+
+      expect(result, isFalse);
+    });
+  });
+
+  group("📖 isOpenedPdfFile", () {
+    test("Retourne true si le fichier a été ouvert", () async {
+      final openedPdf = testPdf.copyWith(isOpened: true);
+      final storedPdfs = [jsonEncode(openedPdf.toJson())];
+
+      when(() => mockSharedPreferences.getStringList(keyPdfFiles)).thenReturn(storedPdfs);
+
+      final result = await pdfLocalDataSource.isOpenedPdfFile(testPdf.filePath!);
+
+      expect(result, isTrue);
+    });
+
+    test("Retourne false si le fichier n'a pas été ouvert", () async {
+      final storedPdfs = [jsonEncode(testPdf.toJson())];
+
+      when(() => mockSharedPreferences.getStringList(keyPdfFiles)).thenReturn(storedPdfs);
+
+      final result = await pdfLocalDataSource.isOpenedPdfFile(testPdf.filePath!);
+
+      expect(result, isFalse);
+    });
+  });
+}

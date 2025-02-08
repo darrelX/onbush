@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'app_colors.dart';
+import '../constants/colors/app_colors.dart';
 import 'fade_through_transition.dart';
 import 'fonts.dart';
 

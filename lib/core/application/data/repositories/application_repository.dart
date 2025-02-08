@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:onbush/presentation/auth/data/models/college_model.dart';
-import 'package:onbush/presentation/auth/data/models/specialty_model.dart';
+import 'package:onbush/presentation/views/auth/data/models/college_model.dart';
+import 'package:onbush/presentation/views/auth/data/models/specialty_model.dart';
 import 'package:onbush/core/application/data/models/course_model.dart';
 import 'package:onbush/core/application/data/models/subject_model.dart';
 import 'package:onbush/service_locator.dart';

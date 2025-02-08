@@ -3,9 +3,10 @@ import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:onbush/core/bottom_navigation_bar/bottom_navigation_bar.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
-import 'package:onbush/core/theme/app_colors.dart';
+import 'package:onbush/core/constants/colors/app_colors.dart';
 import 'package:onbush/core/shared/widget/onbush_app_bar.dart';
 
 @RoutePage()
@@ -69,88 +70,12 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
         AmbassadorSpaceRoute(),
       ],
       bottomNavigationBuilder: (_, tabsRouter) {
-        return FlashyTabBar(
-          // height: 65.h,
+        return BottomNivagatorBar(
           selectedIndex: tabsRouter.activeIndex,
-          showElevation: true,
-          // onItemSelected: tabsRouter.setActiveIndex,
-          onItemSelected: tabsRouter.setActiveIndex,
-
-          backgroundColor: _.theme.scaffoldBackgroundColor,
-          items: [
-            FlashyTabBarItem(
-              icon: SvgPicture.asset('assets/icons/home.svg',
-                  height: 30,
-                  width: 30,
-                  colorFilter: const ColorFilter.mode(
-                    AppColors.sponsorButton,
-                    BlendMode.srcIn,
-                  )),
-              title: SvgPicture.asset(
-                'assets/icons/home-active.svg',
-                height: 30,
-                width: 30,
-              ),
-              activeColor: AppColors.primary,
-              inactiveColor: AppColors.icon,
-            ),
-            FlashyTabBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/course_inactive.svg',
-                height: 30,
-                width: 30,
-                // color: AppColors.icon,
-              ),
-              title: SvgPicture.asset(
-                'assets/icons/course_inactive.svg',
-                height: 30,
-                width: 30,
-                colorFilter: const ColorFilter.mode(
-                  AppColors.primary,
-                  BlendMode.srcIn,
-                ),
-                // color: AppColors.primary,
-              ),
-            ),
-            FlashyTabBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/user.svg',
-                height: 30,
-                width: 30,
-              ),
-              title: SvgPicture.asset(
-                'assets/icons/user.svg',
-                height: 30,
-                width: 30,
-                colorFilter: const ColorFilter.mode(
-                  AppColors.primary,
-                  BlendMode.srcIn,
-                ),
-              ),
-              activeColor: AppColors.primary,
-              inactiveColor: AppColors.icon,
-            ),
-            FlashyTabBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/ambassador.svg',
-                height: 30,
-                width: 30,
-              ),
-              title: SvgPicture.asset(
-                'assets/icons/ambassador_active.svg',
-                height: 30,
-                width: 30,
-                // colorFilter: const ColorFilter.mode(
-                //   AppColors.primary,
-                //   BlendMode.srcIn,
-                // ),
-              ),
-              activeColor: AppColors.primary,
-              inactiveColor: AppColors.icon,
-            ),
-          ],
+          onDestinationSelected: tabsRouter.setActiveIndex,
         );
       },
     );
   }
 }
+

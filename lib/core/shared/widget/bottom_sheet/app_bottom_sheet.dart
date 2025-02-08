@@ -7,7 +7,7 @@ import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
 import 'package:onbush/core/shared/widget/app_input.dart';
 
-import '../../../theme/app_colors.dart';
+import '../../../constants/colors/app_colors.dart';
 
 class AppBottomSheet {
   static showBottomSheet({

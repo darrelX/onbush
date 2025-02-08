@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 
-import '../../../theme/app_colors.dart';
+import '../../../constants/colors/app_colors.dart';
 
 class AppButton extends StatefulWidget {
   final Widget? child;

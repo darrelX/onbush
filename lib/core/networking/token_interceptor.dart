@@ -15,9 +15,6 @@ class TokenInterceptor extends QueuedInterceptor {
     var token = prefs.getString('token');
     if (token != null) {
       log("Current token $token", name: "TokenInterceptor+onRequest");
-    }
-
-    if (token != null) {
       options.headers["userKey"] = token;
     }
 
