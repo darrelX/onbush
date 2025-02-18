@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
+import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/core/database/local_storage.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/shared/widget/app_dialog.dart';
@@ -36,7 +37,7 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
   void initState() {
     super.initState();
     _cubit.getListMentee(
-        email: getIt.get<ApplicationCubit>().userModel.email!,
+        email: getIt.get<ApplicationCubit>().userEntity!.email!,
         appareil: getIt.get<LocalStorage>().getString("device")!);
   }
 
@@ -115,11 +116,11 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
                             child: SponsorPopupWidget(
                                 sponsorCode: getIt
                                     .get<ApplicationCubit>()
-                                    .userModel
+                                    .userEntity!
                                     .sponsorCode!));
                       },
                       leading: SvgPicture.asset(
-                        'assets/icons/copy.svg',
+                        AppImage.copy,
                         width: 30,
                         height: 30,
                       ),
@@ -180,7 +181,7 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
                             onPressed: () => _cubit.getListMentee(
                                 email: getIt
                                     .get<ApplicationCubit>()
-                                    .userModel
+                                    .userEntity!
                                     .email!,
                                 appareil: getIt
                                     .get<LocalStorage>()

@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:onbush/core/database/local_storage.dart';
-import 'package:onbush/data/datasources/local/_collection/pdf/pdf_file_collection.dart';
 import 'package:onbush/data/datasources/local/pdf/pdf_local_data_source_impl.dart';
+import 'package:onbush/data/models/pdf_file/pdf_file_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MockSharedPreferences extends Mock implements SharedPreferences {}
@@ -15,19 +15,19 @@ void main() {
 
   const String keyPdfFiles = "pdf_file";
 
-  const PdfFileCollection testPdf = PdfFileCollection(
-    id: 2,
+  PdfFileModel testPdf = PdfFileModel(
+    id: "2",
     name: "Test PDF1",
     filePath: "/documents/test.pdf",
     category: "Education",
-    date: "2024-02-08",
+    date: DateTime.now(),
     isOpened: false,
   );
 
   setUp(() {
     mockSharedPreferences = MockSharedPreferences();
     localStorage = LocalStorage(sharedPreferences: mockSharedPreferences);
-    pdfLocalDataSource = PdfLocalDataSourceImpl(localStorage);
+    pdfLocalDataSource = PdfLocalDataSourceImpl(localStorage : localStorage);
   });
 
   tearDown(() {

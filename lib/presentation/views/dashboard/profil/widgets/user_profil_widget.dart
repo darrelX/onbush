@@ -3,17 +3,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/core/database/local_storage.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
+import 'package:onbush/core/shared/widget/buttons/app_button.dart';
 import 'package:onbush/service_locator.dart';
 
 class UserProfileWidget extends StatelessWidget {
   const UserProfileWidget(
       {super.key,
       required this.filiere,
+      required this.onPressed,
       required this.level,
       required this.name,
       required this.sigle});
 
   final String filiere;
+  final Function() onPressed;
   final String name;
   final int level;
   final String sigle;
@@ -22,10 +25,13 @@ class UserProfileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Image.asset(
-          getIt.get<LocalStorage>().getString('avatar')!,
-          height: 105.h,
-          fit: BoxFit.fitHeight,
+        AppButton(
+          onPressed: onPressed,
+          child: Image.asset(
+            getIt.get<LocalStorage>().getString('avatar')!,
+            height: 105.h,
+            fit: BoxFit.fitHeight,
+          ),
         ),
         Gap(8.w),
         SizedBox(

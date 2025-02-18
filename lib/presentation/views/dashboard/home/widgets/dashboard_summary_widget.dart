@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
 
@@ -34,7 +35,7 @@ class DashboardSummaryWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  "assets/icons/course.png",
+                  AppImage.blueCourseIcon,
                   width: 27.w,
                   fit: BoxFit.fitWidth,
                 ),
@@ -113,7 +114,7 @@ class DashboardSummaryWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  "assets/icons/course.png",
+                  AppImage.blueCourseIcon,
                   width: 27.w,
                   fit: BoxFit.fitWidth,
                 ),

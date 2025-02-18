@@ -105,7 +105,7 @@ class AuthRepository {
     required String username,
     required String device,
     required String studentId,
-    required int academicLevel,
+    required int academyLevel,
     required int schoolId,
     required int majorStudy,
     required String role,
@@ -119,7 +119,7 @@ class AuthRepository {
         '/auth/register/user',
         data: {
           "appareil": device,
-          "niveau": academicLevel,
+          "niveau": academyLevel,
           "matricule": studentId,
           "nom": username,
           "sexe": gender,
@@ -132,13 +132,6 @@ class AuthRepository {
           "code_Parrain": 0,
         },
       );
-      // return user!;
-      // if (response.data != null && response.data['token'] != null) {
-      //   return _saveTokenAndFetchUser(response.data['token']);
-      // } else {
-      //   log("Registration failed: Token is missing from the response.");
-      //   return null;
-      // }
     } catch (e) {
       log("Registration error: ${e.toString()}");
       rethrow;

@@ -1,5 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:onbush/domain/entities/user/user_entity.dart';
+import 'package:onbush/domain/usecases/auth/auth_usecase.dart';
+import 'package:onbush/domain/usecases/payment/payment_usecase.dart';
 import 'package:onbush/presentation/views/auth/data/models/user_model.dart';
 import 'package:onbush/presentation/views/pricing/logic/repositories/payment_repository.dart';
 import 'package:onbush/core//utils/utils.dart';
@@ -8,7 +11,8 @@ part 'payment_state.dart';
 
 class PaymentCubit extends Cubit<PaymentState> {
   final PaymentRepository _paymentRepository;
-  PaymentCubit()
+  final PaymentUseCase _paymentUseCase;
+  PaymentCubit(this._paymentUseCase)
       : _paymentRepository = PaymentRepository(),
         super(const PaymentInitial());
 
@@ -23,7 +27,7 @@ class PaymentCubit extends Cubit<PaymentState> {
   }) async {
     emit(const PaymentLoading());
     try {
-      final result = (await _paymentRepository.initPayment(
+      final result = (await _paymentUseCase.initPayment(
           appareil: appareil,
           email: email,
           phoneNumber: phoneNumber,
@@ -31,10 +35,17 @@ class PaymentCubit extends Cubit<PaymentState> {
           amount: amount,
           sponsorCode: sponsorCode,
           discountCode: discountCode));
+
       result.fold((ifLeft) {
-        emit(PaymentSuccess(user: ifLeft));
+        emit(PaymentFailure(
+            message: Utils.extractErrorMessageFromMap(ifLeft.message,
+                {"0": "imapossible d'initier la transaction"})));
       }, (ifRight) {
-        emit(PaymentSuccess(transactionId: ifRight));
+        if (ifRight == UserEntity) {
+          emit(PaymentSuccess(user: ifRight));
+        } else if (ifRight == String) {
+          emit(PaymentSuccess(transactionId: ifRight));
+        }
       });
       // print("darrel $transactionId");
     } catch (e) {
@@ -60,8 +71,21 @@ class PaymentCubit extends Cubit<PaymentState> {
     emit(const VerifyingPaymentLoading());
     try {
       final user =
-          await _paymentRepository.verifying(transactionId: transactionId);
-      emit(VerifyingPaymentSuccess(user: user!));
+          await _paymentUseCase.verifying(transactionId: transactionId);
+      user.fold((ifLeft) {
+        emit(VerifyingPaymentFailure(
+          message: Utils.extractErrorMessageFromMap(ifLeft.message, {
+            "0": "Transaction introuvable",
+            "-1": "Transaction echouee",
+            "3": "Delai passe",
+            "1": "Transaction en cours",
+            "-2": "compte client introuvable",
+            "-3": "Infos etudiant introuvable"
+          }),
+        ));
+      }, (ifRight) {
+        emit(VerifyingPaymentSuccess(user: ifRight!));
+      });
     } catch (e) {
       emit(VerifyingPaymentFailure(
         message: Utils.extractErrorMessageFromMap(e, {

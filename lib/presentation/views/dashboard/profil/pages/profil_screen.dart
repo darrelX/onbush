@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/presentation/views/dashboard/profil/widgets/user_profil_widget.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
@@ -90,14 +91,19 @@ class _ProfilScreenState extends State<ProfilScreen> {
                         return UserProfileWidget(
                           filiere: getIt
                               .get<ApplicationCubit>()
-                              .userModel
+                              .userEntity!
                               .majorSchoolName!,
-                          name: getIt.get<ApplicationCubit>().userModel.name!,
+                          onPressed: () {
+                                               context.router.push(const EditProfilRoute());
+
+                          },
+                          name: getIt.get<ApplicationCubit>().userEntity!.name!,
                           level: getIt
                               .get<ApplicationCubit>()
-                              .userModel
-                              .academiclevel!,
-                          sigle: getIt.get<ApplicationCubit>().userModel.sigle!,
+                              .userEntity!
+                              .academyLevel!,
+                          sigle:
+                              getIt.get<ApplicationCubit>().userEntity!.sigle!,
                         );
                       }),
                     ),
@@ -123,7 +129,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                         onTap: () {
                           context.router.push(const LanguageRoute());
                         },
-                        leading: SvgPicture.asset("assets/icons/language.svg"),
+                        leading: SvgPicture.asset(AppImage.languageIcon),
                         title: Text(
                           'Langue',
                           style: context.textTheme.bodyLarge?.copyWith(
@@ -174,7 +180,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                         onTap: () {
                           // context.router.push(const TopUpRoute());
                         },
-                        leading: SvgPicture.asset("assets/icons/message.svg"),
+                        leading: SvgPicture.asset(AppImage.messageIcon),
                         title: Text(
                           'Faire une sugestion',
                           style: context.textTheme.bodyLarge?.copyWith(

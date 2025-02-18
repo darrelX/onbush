@@ -1,16 +1,15 @@
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_windowmanager_plus/flutter_windowmanager_plus.dart';
-import 'package:onbush/presentation/views/dashboard/download/logic/data/pdf_file_model.dart';
+import 'package:onbush/domain/entities/pdf_file/pdf_file_entity.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
 
 class PdfFileWidget extends StatefulWidget {
-  final PdfFileModel pdfFileModel;
-  const PdfFileWidget({super.key, required this.pdfFileModel});
+  final PdfFileEntity pdfFileEntity;
+  const PdfFileWidget({super.key, required this.pdfFileEntity});
 
   @override
   State<PdfFileWidget> createState() => _PdfFileWidgetState();
@@ -34,13 +33,13 @@ class _PdfFileWidgetState extends State<PdfFileWidget> {
     return InkWell(
       onTap: () {
         context.router
-            .push(DownloadPdfViewRoute(pdfFileModel: widget.pdfFileModel));
+            .push(DownloadPdfViewRoute(pdfFileEntity: widget.pdfFileEntity));
       },
       child: Container(
-        height: 90.h,
+        height: 80.h,
         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
         decoration: BoxDecoration(
-            color: AppColors.white, borderRadius: BorderRadius.circular(15.r)),
+            color: AppColors.white, borderRadius: BorderRadius.circular(12.r)),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -58,7 +57,7 @@ class _PdfFileWidgetState extends State<PdfFileWidget> {
                 SizedBox(
                   width: 200.w,
                   child: Text(
-                    widget.pdfFileModel.name!,
+                    widget.pdfFileEntity.name!,
                     style: context.textTheme.bodyLarge!
                         .copyWith(fontSize: 14.r, fontWeight: FontWeight.bold),
                     maxLines: 2,
@@ -73,12 +72,12 @@ class _PdfFileWidgetState extends State<PdfFileWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        widget.pdfFileModel.category!,
+                        widget.pdfFileEntity.category!,
                         style: context.textTheme.bodyLarge!.copyWith(
                             fontSize: 13.r, color: Colors.grey.shade600),
                       ),
                       Text(
-                        "Il y'a ${widget.pdfFileModel.date}",
+                        "Il y'a ${widget.pdfFileEntity.date?.timeAgoShort()}",
                         style: context.textTheme.bodyLarge!.copyWith(
                             fontSize: 13.r, color: Colors.grey.shade600),
                       ),

@@ -6,18 +6,20 @@ import 'package:onbush/domain/entities/course/course_entity.dart';
 part 'course_model.g.dart';
 
 @JsonSerializable()
-class CourseModel extends Equatable with EntityConvertible<CourseModel, CourseEntity> {
+class CourseModel extends Equatable
+    with EntityConvertible<CourseModel, CourseEntity> {
   final int? id;
   @JsonKey(name: 'nom')
   final String? name;
-  final String? pdf;
+  @JsonKey(name: 'pdf')
+  final String? pdfUrl;
   @JsonKey(name: 'matiere_id')
   final int? courseId;
 
   const CourseModel(
       {required this.id,
       required this.name,
-      required this.pdf,
+      required this.pdfUrl,
       required this.courseId});
 
   factory CourseModel.fromJson(Map<String, dynamic> json) {
@@ -25,16 +27,17 @@ class CourseModel extends Equatable with EntityConvertible<CourseModel, CourseEn
   }
 
   toJson() => _$CourseModelToJson(this);
+ 
   @override
-  List<Object?> get props => [id, name, pdf, courseId];
-  
+  List<Object?> get props => [id, name, pdfUrl, courseId];
+
   @override
   CourseEntity toEntity() {
-   return CourseEntity(
-     id: id,
-     name: name,
-     pdf: pdf,
-     courseId: courseId,
-   );
+    return CourseEntity(
+      id: id,
+      name: name,
+      pdfUrl: pdfUrl,
+      courseId: courseId,
+    );
   }
 }

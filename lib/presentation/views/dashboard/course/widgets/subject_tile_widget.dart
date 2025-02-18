@@ -1,17 +1,15 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:onbush/core/application/data/models/subject_model.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
+import 'package:onbush/domain/entities/subject/subject_entity.dart';
 
 class SubjectTileWidget extends StatelessWidget {
-  final List<String> listCourseName;
-  final List<SubjectModel> listSubjectModel;
+  final List<SubjectEntity> listSubjectEntity;
 
   const SubjectTileWidget({
-    required this.listCourseName,
     super.key,
-    required this.listSubjectModel,
+    required this.listSubjectEntity,
   });
 
   @override
@@ -20,12 +18,12 @@ class SubjectTileWidget extends StatelessWidget {
       itemBuilder: (context, item) {
         return ListTile(
           onTap: () => context.router.push(CourseSelectionMenuRoute(
-            subjectModel: listSubjectModel[item],
+            subjectEntity: listSubjectEntity[item],
           )),
 
           // leading: Icon(Icons.star),
           title: Text(
-            listCourseName[item],
+            listSubjectEntity[item].name!,
             style: context.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -37,7 +35,7 @@ class SubjectTileWidget extends StatelessWidget {
           ),
         );
       },
-      itemCount: listCourseName.length,
+      itemCount: listSubjectEntity.length,
     );
   }
 }

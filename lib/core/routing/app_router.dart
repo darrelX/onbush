@@ -1,5 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:onbush/domain/entities/course/course_entity.dart';
+import 'package:onbush/domain/entities/pdf_file/pdf_file_entity.dart';
+import 'package:onbush/domain/entities/subject/subject_entity.dart';
 import 'package:onbush/presentation/views/dashboard/course/pages/course_screen.dart';
 import 'package:onbush/presentation/views/dashboard/course/pages/course_selected_menu_screen.dart';
 import 'package:onbush/presentation/views/dashboard/course/pages/pdf_view_screen.dart';

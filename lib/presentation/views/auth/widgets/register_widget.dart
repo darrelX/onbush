@@ -18,7 +18,7 @@ class RegisterWidget extends StatefulWidget {
   final TextEditingController birthdayController;
   final TextEditingController genderController;
   final TextEditingController schoolController;
-  final TextEditingController academicLevelController;
+  final TextEditingController academyLevelController;
   final TextEditingController majorStudyController;
   final TextEditingController emailController;
   final TextEditingController userNameController;
@@ -31,7 +31,7 @@ class RegisterWidget extends StatefulWidget {
       required this.phoneController,
       required this.genderController,
       required this.schoolController,
-      required this.academicLevelController,
+      required this.academyLevelController,
       required this.majorStudyController,
       required this.studentIdController,
       required this.emailController,
@@ -292,7 +292,7 @@ class RegisterWidgetState extends State<RegisterWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppInput(
-                    controller: widget.academicLevelController,
+                    controller: widget.academyLevelController,
                     width: 150.w,
                     hint: 'Choisir votre niveau',
                     labelColors: AppColors.black.withOpacity(0.7),
@@ -300,7 +300,7 @@ class RegisterWidgetState extends State<RegisterWidget> {
                     onTap: () async {
                       widget.listId['level'] = await _bottomSheetSelect(context,
                           allItems: {1: "1", 2: "2", 3: "3", 4: "4", 5: "5"},
-                          controller: widget.academicLevelController,
+                          controller: widget.academyLevelController,
                           title: "Selectionner le niveau");
                     },
                     validators: [

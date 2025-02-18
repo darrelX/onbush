@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
 
@@ -35,7 +36,7 @@ class BottomNivagatorBar extends StatelessWidget {
         destinations: [
           NavigationDestination(
             icon: SvgPicture.asset(
-              'assets/icons/home.svg',
+              AppImage.home,
               height: 30,
               width: 30,
               colorFilter: const ColorFilter.mode(
@@ -44,7 +45,7 @@ class BottomNivagatorBar extends StatelessWidget {
               ),
             ),
             selectedIcon: SvgPicture.asset(
-              'assets/icons/home-active.svg',
+              AppImage.homeActive,
               height: 30,
               width: 30,
             ),
@@ -52,12 +53,12 @@ class BottomNivagatorBar extends StatelessWidget {
           ),
           NavigationDestination(
             icon: SvgPicture.asset(
-              'assets/icons/course_inactive.svg',
+              AppImage.courseInactive,
               height: 30,
               width: 30,
             ),
             selectedIcon: SvgPicture.asset(
-              'assets/icons/course_inactive.svg',
+              AppImage.courseInactive,
               height: 30,
               width: 30,
               colorFilter: const ColorFilter.mode(
@@ -69,12 +70,12 @@ class BottomNivagatorBar extends StatelessWidget {
           ),
           NavigationDestination(
             icon: SvgPicture.asset(
-              'assets/icons/user.svg',
+              AppImage.person,
               height: 30,
               width: 30,
             ),
             selectedIcon: SvgPicture.asset(
-              'assets/icons/user.svg',
+              AppImage.person,
               height: 30,
               width: 30,
               colorFilter: const ColorFilter.mode(
@@ -86,12 +87,12 @@ class BottomNivagatorBar extends StatelessWidget {
           ),
           NavigationDestination(
             icon: SvgPicture.asset(
-              'assets/icons/ambassador.svg',
+              AppImage.ambassador,
               height: 30,
               width: 30,
             ),
             selectedIcon: SvgPicture.asset(
-              'assets/icons/ambassador_active.svg',
+              AppImage.ambassadorActive,
               height: 30,
               width: 30,
             ),

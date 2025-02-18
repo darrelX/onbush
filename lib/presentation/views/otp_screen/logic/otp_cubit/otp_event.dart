@@ -15,7 +15,11 @@ class OtpSubmitted extends OtpEvent {
   final String? role;
 
   const OtpSubmitted(
-      {required this.otp, required this.type, required this.device, required this.email, this.role = "etudiant"});
+      {required this.otp,
+      required this.type,
+      required this.device,
+      required this.email,
+      this.role = "etudiant"});
 
   @override
   List<Object> get props => [otp, device, email];
@@ -26,10 +30,17 @@ class OtpReset extends OtpEvent {
   final String device;
   final String email;
 
-  const OtpReset(
-      {required this.type, required this.device, required this.email, });
+  const OtpReset({
+    required this.type,
+    required this.device,
+    required this.email,
+  });
   @override
-  List<Object> get props => [type, email, device,];
+  List<Object> get props => [
+        type,
+        email,
+        device,
+      ];
 }
 
 class _OtpTick extends OtpEvent {
@@ -41,9 +52,7 @@ class _OtpTick extends OtpEvent {
 }
 
 class OtpInitialized extends OtpEvent {
-
-  const OtpInitialized(
-      );
+  const OtpInitialized();
 
   @override
   List<Object> get props => [];

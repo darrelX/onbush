@@ -41,7 +41,7 @@ class UserInfoCardWidget extends StatelessWidget {
                 style: context.textTheme.titleSmall!.copyWith(),
               ),
               Text(
-                _cubit.userModel.name!,
+                _cubit.userEntity!.name!,
                 style: context.textTheme.titleMedium!
                     .copyWith(fontWeight: FontWeight.bold, shadows: [
                   const Shadow(
@@ -62,7 +62,7 @@ class UserInfoCardWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                "Niveau : ${_cubit.userModel.academiclevel}",
+                "Niveau : ${_cubit.userEntity!.academyLevel}",
                 style: context.textTheme.titleSmall!.copyWith(),
               ),
               Text(

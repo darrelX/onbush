@@ -3,8 +3,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:onbush/presentation/views/auth/data/models/user_model.dart';
-import 'package:onbush/presentation/views/otp_screen/logic/repositories/otp_repository.dart';
+import 'package:onbush/domain/entities/user/user_entity.dart';
+import 'package:onbush/domain/repositories/otp/otp_repository.dart';
+import 'package:onbush/domain/usecases/otp/otp_usecase.dart';
 import 'package:onbush/core//utils/utils.dart';
 
 part 'otp_state.dart';
@@ -16,9 +17,12 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
   final OtpRepository _repository;
   Timer? _timer;
   int _currentDuration = totalDuration;
+  final OtpUseCase _otpUseCase;
+  
 
-  OtpBloc({required OtpRepository repository})
+  OtpBloc({required OtpRepository repository, required OtpUseCase otpUseCase})
       : _repository = repository,
+      _otpUseCase = otpUseCase,
         super(const OtpInitial(countDown: totalDuration)) {
     on<OtpSubmitted>(_onSubmit);
     on<OtpReset>(_onReset);
@@ -33,7 +37,7 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
       emit(OtpVerifying(countDown: state.countDown));
     }
     try {
-      final result = await _repository.submit(
+      final result = await _otpUseCase.submit(
         type: event.type,
         email: event.email,
         code: event.otp,
@@ -41,7 +45,7 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
         role: event.role,
       );
       result.fold((ifLeft) {
-      emit( OtpVerificationSuccess(countDown: totalDuration, user: ifLeft!));
+      emit( OtpVerificationSuccess(countDown: totalDuration, user:  null));
 
       }, (ifRight) {
       emit( const OtpVerificationSuccess(countDown: totalDuration, user: null));

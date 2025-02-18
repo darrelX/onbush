@@ -17,6 +17,7 @@ import 'package:onbush/core/shared/widget/buttons/app_button.dart';
 import 'package:onbush/core/shared/widget/app_input.dart';
 import 'package:onbush/core/shared/widget/app_radio_list_tile.dart';
 import 'package:onbush/core/shared/widget/app_snackbar.dart';
+import 'package:onbush/service_locator.dart';
 
 @RoutePage()
 class PriceScreen extends StatelessWidget {
@@ -27,7 +28,7 @@ class PriceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (context) => PaymentCubit(),
+        create: (context) => getIt<PaymentCubit>(),
         child: PaymentWidget(
           email: email,
         ));

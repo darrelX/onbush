@@ -1,4 +1,3 @@
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,8 +34,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
   final TextEditingController _schoolController = TextEditingController();
-  final TextEditingController _academicLevelController =
-      TextEditingController();
+  final TextEditingController _academyLevelController = TextEditingController();
   final TextEditingController _majorStudyController = TextEditingController();
   final TextEditingController _studentIdController = TextEditingController();
   final TextEditingController _birthdayController = TextEditingController();
@@ -57,7 +55,7 @@ class _AuthScreenState extends State<AuthScreen> {
     _emailSignUpController.dispose();
     _passwordController.dispose();
     _userNameController.dispose();
-    _academicLevelController.dispose();
+    _academyLevelController.dispose();
     _genderController.dispose();
     _schoolController.dispose();
     _majorStudyController.dispose();
@@ -197,8 +195,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                   genderController: _genderController,
                                   schoolController: _schoolController,
                                   studentIdController: _studentIdController,
-                                  academicLevelController:
-                                      _academicLevelController,
+                                  academyLevelController:
+                                      _academyLevelController,
                                   majorStudyController: _majorStudyController,
                                 ),
                               ),
@@ -250,11 +248,9 @@ class _AuthScreenState extends State<AuthScreen> {
                                             device: getIt
                                                 .get<LocalStorage>()
                                                 .getString('device')!,
-                                            academiclevel:
-                                                _academicLevelController.text
-                                                    .trim(),
+                                    
                                             role: 'etudiant',
-                                            academicLevel: _listId["level"]!,
+                                            academyLevel: _listId["level"]!,
                                             majorStudy: _listId["specialitie"]!,
                                             schoolId: _listId["college"]!,
                                             studentId: _studentIdController.text

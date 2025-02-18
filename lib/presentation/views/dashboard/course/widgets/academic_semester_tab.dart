@@ -5,14 +5,14 @@ import 'package:onbush/core/constants/colors/app_colors.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
 import 'package:onbush/core/shared/widget/carrousel/app_carousel_widget.dart';
 
-class AcademicSemesterTab extends StatelessWidget {
+class AcademySemesterTab extends StatelessWidget {
   final CarouselSliderController carouselController;
   final List<String> listSemester;
   final void Function(int index) onPressed;
   final Color selectedColor;
   final Color selectedText;
   final int selectedIndex; // Index du semestre sélectionné
-  const AcademicSemesterTab({
+  const AcademySemesterTab({
     super.key,
     required this.selectedIndex,
     required this.onPressed,

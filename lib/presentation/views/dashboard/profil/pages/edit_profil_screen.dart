@@ -36,7 +36,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
   final TextEditingController birthdayController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
   final TextEditingController schoolController = TextEditingController();
-  final TextEditingController academicLevelController = TextEditingController();
+  final TextEditingController academyLevelController = TextEditingController();
   final TextEditingController majorStudyController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController userNameController = TextEditingController();
@@ -53,18 +53,21 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
   // final GlobalKey<StatelessWidget> f;
 
   Future<void> _initialValues() async {
-    emailController.text = getIt.get<ApplicationCubit>().userModel.email!;
-    userNameController.text = getIt.get<ApplicationCubit>().userModel.name!;
-    phoneController.text = getIt.get<ApplicationCubit>().userModel.phoneNumber!;
-    birthdayController.text = getIt.get<ApplicationCubit>().userModel.birthday!;
-    genderController.text = getIt.get<ApplicationCubit>().userModel.gender!;
-    schoolController.text = getIt.get<ApplicationCubit>().userModel.schoolName!;
+    emailController.text = getIt.get<ApplicationCubit>().userEntity!.email!;
+    userNameController.text = getIt.get<ApplicationCubit>().userEntity!.name!;
+    phoneController.text =
+        getIt.get<ApplicationCubit>().userEntity!.phoneNumber!;
+    birthdayController.text =
+        getIt.get<ApplicationCubit>().userEntity!.birthday!;
+    genderController.text = getIt.get<ApplicationCubit>().userEntity!.gender!;
+    schoolController.text =
+        getIt.get<ApplicationCubit>().userEntity!.schoolName!;
     majorStudyController.text =
-        getIt.get<ApplicationCubit>().userModel.majorSchoolName!;
-    academicLevelController.text =
-        getIt.get<ApplicationCubit>().userModel.academiclevel.toString();
+        getIt.get<ApplicationCubit>().userEntity!.majorSchoolName!;
+    academyLevelController.text =
+        getIt.get<ApplicationCubit>().userEntity!.academyLevel.toString();
     studentIdController.text =
-        getIt.get<ApplicationCubit>().userModel.studentId.toString();
+        getIt.get<ApplicationCubit>().userEntity!.studentId.toString();
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -112,7 +115,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
     schoolController.dispose();
     majorStudyController.dispose();
     userNameController.dispose();
-    academicLevelController.dispose();
+    academyLevelController.dispose();
     studentIdController.dispose();
     levelController.dispose();
 
@@ -360,7 +363,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AppInput(
-                            controller: academicLevelController,
+                            controller: academyLevelController,
                             width: 150.w,
                             hint: 'Choisir votre niveau',
                             labelColors: AppColors.black.withOpacity(0.7),
@@ -375,7 +378,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
                                     4: "4",
                                     5: "5"
                                   },
-                                  controller: academicLevelController,
+                                  controller: academyLevelController,
                                   title: "Selectionner le niveau");
                             },
                             validators: [
@@ -430,7 +433,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
                                 getIt.get<LocalStorage>().getString('device')!,
                             studentId: studentIdController.text,
                             name: userNameController.text,
-                            level: academicLevelController.text,
+                            level: academyLevelController.text,
                             gender: genderController.text,
                             email: emailController.text,
                             birthday: birthdayController.text,

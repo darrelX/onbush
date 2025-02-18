@@ -1,20 +1,23 @@
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_windowmanager_plus/flutter_windowmanager_plus.dart';
-import 'package:onbush/core/application/data/models/course_model.dart';
+import 'package:onbush/domain/entities/course/course_entity.dart';
+import 'package:onbush/presentation/blocs/pdf/pdf_file_cubit.dart';
+import 'package:onbush/service_locator.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 @RoutePage()
 class PdfViewScreen extends StatefulWidget {
-  final CourseModel courseModel;
+  final CourseEntity courseEntity;
   final String category;
+
   const PdfViewScreen({
     super.key,
-    required this.courseModel,
+    required this.courseEntity,
     required this.category,
   });
 
@@ -23,69 +26,13 @@ class PdfViewScreen extends StatefulWidget {
 }
 
 class _PdfViewScreenState extends State<PdfViewScreen> {
-  String _pdfUrl = '';
-  String? _pdfPath;
-  final Dio _dio = Dio();
-  double _progress = 0.0; // Variable pour suivre la progression
+  late final PdfFileCubit _pdfFileCubit = getIt<PdfFileCubit>();
 
-  // Bloque les captures d'écran
-  void _enableSecureMode() async {
-    await FlutterWindowManagerPlus.addFlags(
-        FlutterWindowManagerPlus.FLAG_SECURE);
-  }
-
-  // Charge un fichier PDF sécurisé
-  Future<void> _loadSecurePdf() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final pdfDirection = Directory("${directory.path}/${widget.category}");
-
-    // Vérifiez s'il existe, sinon créez-le
-    if (!await pdfDirection.exists()) {
-      await pdfDirection.create(recursive: true);
-      print('Dossier créé: $pdfDirection');
-      _createFile(pdfDirection);
-    } else {
-      _createFile(pdfDirection);
-      print('Le dossier existe déjà: $pdfDirection');
-    }
-  }
-
-  Future<void> _createFile(Directory pdfDirection) async {
-    try {
-      // Récupérer le répertoire où enregistrer le fichier PDF
-      final Directory pdfDirectory = await getApplicationDocumentsDirectory();
-      final String securePdfPath =
-          '${pdfDirectory.path}/${widget.courseModel.name}.pdf';
-      final file = File(securePdfPath);
-
-      // Utiliser Dio pour télécharger le fichier avec suivi de la progression
-      await _dio.download(
-        _pdfUrl,
-        securePdfPath,
-        onReceiveProgress: (received, total) {
-          if (total != -1) {
-            setState(() {
-              _progress = received / total;
-              print(_progress);
-            });
-          }
-        },
-      );
-
-      setState(() {
-        _pdfPath = securePdfPath;
-      });
-
-      // Affichage d'un message de succès une fois le téléchargement terminé
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Téléchargement du PDF terminé !")),
-      );
-    } catch (e) {
-      // Gérer les erreurs pendant le téléchargement
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erreur lors du téléchargement : $e")),
-      );
-    }
+  @override
+  void initState() {
+    super.initState();
+    _enableSecureMode();
+    _loadSecurePdf();
   }
 
   @override
@@ -94,22 +41,72 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _pdfUrl = widget.courseModel.pdf;
-    _enableSecureMode();
-    _loadSecurePdf();
+  /// Bloque les captures d'écran
+  Future<void> _enableSecureMode() async {
+    await FlutterWindowManagerPlus.addFlags(
+        FlutterWindowManagerPlus.FLAG_SECURE);
+  }
+
+  /// Charge un fichier PDF sécurisé avec gestion des erreurs
+  Future<void> _loadSecurePdf() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final pdfDirectory = Directory("${directory.path}/${widget.category}");
+      final String securePdfPath =
+          '${pdfDirectory.path}/${widget.courseEntity.name}.pdf';
+
+      await _pdfFileCubit.downloadAndSaveFile(
+        url: widget.courseEntity.pdfUrl!,
+        path: securePdfPath,
+        category: widget.category,
+        name: widget.courseEntity.name!,
+      );
+    } catch (e) {
+      debugPrint("Erreur lors du chargement du PDF : $e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    print(_pdfPath);
-    return Scaffold(
-      body: _pdfPath == null
-          // ? const Center(child: Center(child: CircularProgressIndicator()))
-          ? Center(child: Text("$_progress"))
-          : SfPdfViewer.file(File(_pdfPath!)),
+    return BlocProvider.value(
+      value: _pdfFileCubit,
+      child: Scaffold(
+        body: BlocListener<PdfFileCubit, PdfFileState>(
+          listener: (context, state) {
+            if (state is PdfFileFailed) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Erreur : ${state.message}")),
+              );
+            }
+          },
+          child: BlocBuilder<PdfFileCubit, PdfFileState>(
+            builder: (context, state) {
+              if (state is PdfFileLoading) {
+                return _buildLoadingIndicator(state.percent);
+              }
+              if (state is SavePdfFileSuccess) {
+                _pdfFileCubit.close();
+                return SfPdfViewer.file(File(state.pdfFileEntity.filePath!));
+              }
+              return const Center(child: Text("Aucun fichier disponible"));
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Indicateur de chargement avec pourcentage
+  Widget _buildLoadingIndicator(double percent) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircularProgressIndicator(),
+          const SizedBox(height: 16),
+          Text("Téléchargement : $percent%"),
+        ],
+      ),
     );
   }
 }

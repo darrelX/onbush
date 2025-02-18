@@ -1,15 +1,28 @@
-import 'package:onbush/core/application/data/models/course_model.dart';
+import 'package:dio/dio.dart';
+import 'package:onbush/data/datasources/remote/course/course_remote_data_source.dart';
+import 'package:onbush/data/models/course/course_model.dart';
 
-abstract class CourseRemoteDataSource {
-  /// get all availables courses
-  Future<List<CourseModel>> getCourses();
+class CourseRemoteDataSourceImpl implements CourseRemoteDataSource {
+  final Dio _dioDataApi;
 
-  /// returns the course with the given id
-  Future<CourseModel> getCourseById({required int courseId});
+  CourseRemoteDataSourceImpl({required Dio dioDataApi})
+      : _dioDataApi = dioDataApi;
 
-  /// returns the course with the given level's school
-  Future<List<CourseModel>> getCourseByLevel({required int courseId, required int level});
-
-  /// returns all the courses with the given speciality id
-  Future<List<CourseModel>> getCourseBySpeciality({required int specialityId});
+  @override
+  Future<List<CourseModel>> getAllCourses({
+    required int subjectId,
+    required String category,
+  }) async {
+    try {
+      Response response = await _dioDataApi.get(
+        "/matiere/$subjectId/$category",
+      );
+      List<dynamic> data = response.data['data'] as List<dynamic>;
+      return data
+          .map((item) => CourseModel.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

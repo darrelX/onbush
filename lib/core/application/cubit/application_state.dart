@@ -1,7 +1,7 @@
 part of 'application_cubit.dart';
 
 class ApplicationState extends Equatable {
-  final UserModel? user;
+  final UserEntity? user;
   final DataState<SpecialityModel> speciality;
   final DataState<List<SubjectModel>>? listSubjectModel;
   final DataState<List<CourseModel>>? listCourseModel;
@@ -19,7 +19,7 @@ class ApplicationState extends Equatable {
       [user, speciality, listSubjectModel, listCourseModel, loading];
 
   ApplicationState copyWith(
-      {UserModel? user,
+      {UserEntity? user,
       DataState<SpecialityModel>? speciality,
       DataState<void>? loading,
       DataState<List<CourseModel>>? listCourseModel,

@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/presentation/views/dashboard/notification/widgets/notification_widget.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
 
@@ -17,7 +18,7 @@ class NotificationScreen extends StatelessWidget {
         backgroundColor: AppColors.primary,
         actions: [
           Image.asset(
-            "assets/icons/trailing-icon.png",
+            AppImage.notificationWhite,
             color: AppColors.white,
           ),
           Gap(20.w),

@@ -1,13 +1,15 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager_plus/flutter_windowmanager_plus.dart';
-import 'package:onbush/presentation/views/dashboard/download/logic/data/pdf_file_model.dart';
+import 'package:onbush/domain/entities/pdf_file/pdf_file_entity.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 @RoutePage()
 class DownloadPdfViewScreen extends StatefulWidget {
-  final PdfFileModel pdfFileModel;
-  const DownloadPdfViewScreen({super.key, required this.pdfFileModel});
+  final PdfFileEntity pdfFileEntity;
+  const DownloadPdfViewScreen({super.key, required this.pdfFileEntity});
 
   @override
   State<DownloadPdfViewScreen> createState() => _DownloadPdfViewScreenState();
@@ -34,8 +36,9 @@ class _DownloadPdfViewScreenState extends State<DownloadPdfViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.pdfFileEntity.filePath!);
     return Scaffold(
-      body: SfPdfViewer.file(widget.pdfFileModel.file),
+      body: SfPdfViewer.file(File(widget.pdfFileEntity.filePath!)),
     );
   }
 }

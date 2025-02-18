@@ -26,7 +26,7 @@ final class OtpSentInProgress extends OtpState {
 
 // État lorsque le code OTP a été validé avec succès.
 final class OtpVerificationSuccess extends OtpState {
-  final UserModel? user;
+  final UserEntity? user;
   const OtpVerificationSuccess({required super.countDown, required this.user});
 
   @override

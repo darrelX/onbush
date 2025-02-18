@@ -24,3 +24,28 @@ extension MediaQueryX on BuildContext {
 extension AppLocalizationX on BuildContext {
   AppLocalizations get appLocalization => AppLocalizations.of(this)!;
 }
+
+extension DateTimeExtensions on DateTime {
+  /// Retourne la différence entre `this` et une autre [DateTime] sous forme de texte (ex: "2h", "5j", "1m").
+  String timeAgoShort({DateTime? compareTo}) {
+    final DateTime now = compareTo ?? DateTime.now();
+    final Duration diff = now.difference(this);
+
+    if (diff.inMinutes < 1) {
+      return "À l'instant";
+    } else if (diff.inHours < 1) {
+      return "${diff.inMinutes}m";
+    } else if (diff.inDays < 1) {
+      int hours = diff.inHours;
+      int minutes = diff.inMinutes % 60;
+      return minutes > 0 ? "${hours}h${minutes}m" : "${hours}h";
+    } else if (diff.inDays < 30) {
+      return "${diff.inDays}j";
+    } else if (diff.inDays < 365) {
+      return "${diff.inDays ~/ 30}m";
+    } else {
+      return "${diff.inDays ~/ 365}a";
+    }
+  }
+}
+

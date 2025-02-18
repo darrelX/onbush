@@ -1,13 +1,17 @@
-import 'package:onbush/data/datasources/local/_collection/pdf/pdf_file_collection.dart';
+import 'package:onbush/data/models/pdf_file/pdf_file_model.dart';
 
 abstract class PdfLocalDataSource {
   const PdfLocalDataSource();
 
   /// save pdf file
-  Future<void> savePdfFile(PdfFileCollection pdfFileId);
+  Future<void> savePdfFile(PdfFileModel pdfFileId);
+
+  Future<void> savePdfFileByPath(String filePath, String category, String name);
 
   /// get all availables pdfs
-  Future<List<PdfFileCollection>> getAllPdfFile();
+  Future<List<PdfFileModel>> getAllPdfFile({int maxResults =-1});
+
+  Future<PdfFileModel> getPdfFileByPath(String pdfPath);
 
   /// delete a pdf file
   Future<void> deletePdfFile(String pdfPath);
@@ -17,5 +21,4 @@ abstract class PdfLocalDataSource {
 
   /// Returns a boolean indicating whether the pdf file with the given [pdfFIle id] is already opened in the local data source.
   Future<bool> isOpenedPdfFile(String pdfPath);
-
 }

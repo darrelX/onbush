@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
 
@@ -32,7 +33,7 @@ class ReferralOverviewCardWidget extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SvgPicture.asset("assets/icons/Icon.svg"),
+                SvgPicture.asset(AppImage.base),
                 Gap(10.w),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -67,7 +68,7 @@ class ReferralOverviewCardWidget extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SvgPicture.asset("assets/icons/person_icon.svg"),
+              SvgPicture.asset(AppImage.personMark),
               Gap(10.w),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,

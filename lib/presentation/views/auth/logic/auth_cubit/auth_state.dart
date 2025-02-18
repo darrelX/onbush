@@ -28,7 +28,7 @@ final class LoginFailure extends AuthState {
 }
 
 final class LoginSuccess extends AuthState {
-  final UserModel user;
+  final UserEntity user;
   const LoginSuccess({required this.user});
   @override
   List<Object> get props => [user];
@@ -65,7 +65,7 @@ final class CheckAuthStateFailure extends AuthState {
 }
 
 final class CheckAuthStateSuccess extends AuthState {
-  final UserModel user;
+  final UserEntity user;
   const CheckAuthStateSuccess({required this.user});
   @override
   List<Object> get props => [user];

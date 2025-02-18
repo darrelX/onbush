@@ -1,31 +1,31 @@
-import 'dart:io';
-
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:onbush/data/datasources/_mappers/entity_convertible.dart';
 import 'package:onbush/domain/entities/pdf_file/pdf_file_entity.dart';
+import 'package:uuid/uuid.dart';
+// import 'package:uuid/uuid.dart';  // ✅ Import du package Uuid
 
 part 'pdf_file_model.g.dart';
 
 @JsonSerializable()
 class PdfFileModel extends Equatable
     with EntityConvertible<PdfFileModel, PdfFileEntity> {
-      final int? id;
+  final String? id; // ✅ Modification du type en String
   final String? name;
-  final String? date;
+  final DateTime? date;
   final String? category;
   final String? filePath;
   final bool isOpened;
 
-  const PdfFileModel(
-
-      {
-        required this.id,
-        required this.name,
-      required this.filePath,
-      this.isOpened = false,
-      required this.category,
-      required this.date});
+  PdfFileModel({
+    String? id, // ✅ Génération automatique d'un UUID si id est null
+    required this.name,
+    required this.filePath,
+    this.isOpened = false,
+    required this.category,
+    DateTime? date,
+  })  : date = date ?? DateTime.now(),
+        id = id ?? const Uuid().v4(); // ✅ Génération de l'UUID ici
 
   factory PdfFileModel.fromJson(Map<String, dynamic> json) {
     return _$PdfFileModelFromJson(json);
@@ -33,17 +33,47 @@ class PdfFileModel extends Equatable
   Map<String, dynamic> toJson() => _$PdfFileModelToJson(this);
 
   @override
-  List<Object?> get props => [name, date, category, filePath, isOpened];
+  List<Object?> get props => [id, name, date, category, filePath, isOpened];
 
   @override
   PdfFileEntity toEntity() {
     return PdfFileEntity(
       id: id,
       name: name,
-      isOpened :  isOpened,
+      isOpened: isOpened,
       filePath: filePath,
       date: date,
       category: category,
+    );
+  }
+
+  @override
+  PdfFileModel fromEntity(PdfFileEntity? model) {
+    return PdfFileModel(
+      id: model?.id,
+      name: model?.name,
+      filePath: model?.filePath,
+      date: model?.date,
+      category: model?.category,
+      isOpened: model?.isOpened ?? false,
+    );
+  }
+
+  PdfFileModel copyWith({
+    String? id,
+    String? name,
+    String? filePath,
+    DateTime? date,
+    String? category,
+    bool? isOpened,
+  }) {
+    return PdfFileModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      filePath: filePath ?? this.filePath,
+      date: date ?? this.date,
+      category: category ?? this.category,
+      isOpened: isOpened ?? this.isOpened,
     );
   }
 }

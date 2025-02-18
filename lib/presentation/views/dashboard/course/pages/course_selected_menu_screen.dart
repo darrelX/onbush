@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:onbush/core/application/data/models/subject_model.dart';
+import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
+import 'package:onbush/domain/entities/subject/subject_entity.dart';
 
 @RoutePage()
 class CourseSelectionMenuScreen extends StatefulWidget {
-  final SubjectModel subjectModel;
-  const CourseSelectionMenuScreen({super.key, required this.subjectModel});
+  final SubjectEntity subjectEntity;
+  const CourseSelectionMenuScreen({super.key, required this.subjectEntity});
 
   @override
   State<CourseSelectionMenuScreen> createState() =>
@@ -24,10 +25,10 @@ class _CourseSelectionMenuScreenState extends State<CourseSelectionMenuScreen> {
     return Scaffold(
       backgroundColor: AppColors.quaternaire,
       appBar: AppBar(
-        title: Text(widget.subjectModel.name!),
+        title: Text(widget.subjectEntity.name!),
         centerTitle: true,
         actions: [
-          Image.asset("assets/icons/leading-icon.png"),
+          Image.asset(AppImage.downloadIcon),
         ],
       ),
       body: Padding(
@@ -43,10 +44,10 @@ class _CourseSelectionMenuScreenState extends State<CourseSelectionMenuScreen> {
               child: ListTile(
                 onTap: () {
                   context.router.push(CourseRoute(
-                      subjectModel: widget.subjectModel, category: "cours"));
+                      subjectEntity: widget.subjectEntity, category: "cours"));
                 },
                 leading: SvgPicture.asset(
-                  "assets/icons/course_inactive.svg",
+                  AppImage.courseInactive,
                   // color: AppColors.primary,
                 ),
                 title: Text(
@@ -68,11 +69,11 @@ class _CourseSelectionMenuScreenState extends State<CourseSelectionMenuScreen> {
               child: ListTile(
                 onTap: () {
                   context.router.push(CourseRoute(
-                      subjectModel: widget.subjectModel,
+                      subjectEntity: widget.subjectEntity,
                       category: "travauxdiriges"));
                 },
                 leading: SvgPicture.asset(
-                  "assets/icons/pencil.svg",
+                  AppImage.pencil
                 ),
                 title: Text(
                   "Sujets d'examens",
@@ -93,11 +94,11 @@ class _CourseSelectionMenuScreenState extends State<CourseSelectionMenuScreen> {
               child: ListTile(
                 onTap: () {
                   context.router.push(CourseRoute(
-                      subjectModel: widget.subjectModel,
+                      subjectEntity: widget.subjectEntity,
                       category: "controlcontinus"));
                 },
                 leading: SvgPicture.asset(
-                  "assets/icons/course_mark.svg",
+                  AppImage.courseMark,
                   // color: AppColors.primary,
                 ),
                 title: Text(

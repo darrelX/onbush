@@ -8,7 +8,8 @@ part 'user_model.g.dart';
 
 @immutable
 @JsonSerializable()
-class UserModel extends Equatable with EntityConvertible<UserModel, UserEntity> {
+class UserModel extends Equatable
+    with EntityConvertible<UserModel, UserEntity> {
   @JsonKey(name: 'token')
   final String? id;
   @JsonKey(name: 'nom')
@@ -27,7 +28,7 @@ class UserModel extends Equatable with EntityConvertible<UserModel, UserEntity> 
   @JsonKey(name: 'code_parrain')
   final String? sponsorCode;
   @JsonKey(name: 'niveau')
-  final int? academiclevel;
+  final int? academyLevel;
   @JsonKey(name: 'naissance')
   final String? birthday;
   @JsonKey(name: 'sexe')
@@ -49,7 +50,7 @@ class UserModel extends Equatable with EntityConvertible<UserModel, UserEntity> 
       required this.majorSchoolId,
       required this.schoolId,
       required this.sponsorCode,
-      required this.academiclevel,
+      required this.academyLevel,
       required this.birthday,
       required this.id,
       required this.name,
@@ -78,24 +79,30 @@ class UserModel extends Equatable with EntityConvertible<UserModel, UserEntity> 
         majorSchoolId,
         schoolId,
         sponsorCode,
-        academiclevel,
+        academyLevel,
         birthday
       ];
 
   @override
   UserEntity toEntity() {
     return UserEntity(
-        id: id,
-        name: name,
-        email: email,
-        phoneNumber: phoneNumber,
-        studentId: studentId,
-        avatar: avatar,
-        role: role,
-        majorSchoolId: majorSchoolId,
-        schoolId: schoolId,
-        sponsorCode: sponsorCode,
-        academiclevel: academiclevel,
-        birthday: birthday);
+      id: id,
+      name: name,
+      email: email,
+      phoneNumber: phoneNumber,
+      studentId: studentId,
+      avatar: avatar,
+      role: role,
+      majorSchoolId: majorSchoolId,
+      schoolId: schoolId,
+      sponsorCode: sponsorCode,
+      academyLevel: academyLevel,
+      birthday: birthday,
+      gender: gender,
+      sigle: sigle,
+      language: language,
+      majorSchoolName: majorSchoolName,
+      schoolName: schoolName,
+    );
   }
 }

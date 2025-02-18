@@ -9,7 +9,7 @@ class UserModel {
   final int? majorSchoolId;
   final int? schoolId;
   final String? sponsorCode;
-  final int? academiclevel;
+  final int? academyLevel;
   final String? birthday;
   final String? gender;
   final String? language;
@@ -25,7 +25,7 @@ class UserModel {
       required this.majorSchoolId,
       required this.schoolId,
       required this.sponsorCode,
-      required this.academiclevel,
+      required this.academyLevel,
       required this.birthday,
       required this.id,
       required this.name,
@@ -53,7 +53,7 @@ class UserModel {
   //     majorSchoolId: null,
   //     schoolId: null,
   //     sponsorCode: '',
-  //     academiclevel: null,
+  //     Academylevel: null,
   //     birthday: '',
   //   );
   // }
@@ -72,7 +72,7 @@ class UserModel {
         majorSchoolId: json['filiere_id'] as int?,
         schoolId: json['etablissement_id'] as int?,
         sponsorCode: json['code_parrain'] as String?,
-        academiclevel: json['niveau'] as int?,
+        academyLevel: json['niveau'] as int?,
         birthday: json['naissance'] as String?,
         language: json['langue'] as String?,
         majorSchoolName: json['nom_filiere'] as String?,

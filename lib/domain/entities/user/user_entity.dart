@@ -11,22 +11,32 @@ class UserEntity extends Equatable {
   final int? majorSchoolId;
   final int? schoolId;
   final String? sponsorCode;
-  final int? academiclevel;
+  final int? academyLevel;
   final String? birthday;
+  final String? gender;
+  final String? language;
+  final String? sigle;
+  final String? schoolName;
+  final String? majorSchoolName;
 
   const UserEntity(
-      {this.id,
-      this.name,
-      this.email,
-      this.phoneNumber,
-      this.studentId,
-      this.avatar,
-      this.role,
-      this.majorSchoolId,
-      this.schoolId,
-      this.sponsorCode,
-      this.academiclevel,
-      this.birthday});
+      {required this.id,
+      required this.name,
+      required this.email,
+      required this.phoneNumber,
+      required this.studentId,
+      required this.avatar,
+      required this.role,
+      required this.majorSchoolId,
+      required this.schoolId,
+      required this.sponsorCode,
+      required this.academyLevel,
+      required this.birthday,
+      required this.gender,
+      required this.language,
+      required this.majorSchoolName,
+      required this.schoolName,
+      required this.sigle});
 
   @override
   List<Object?> get props => [
@@ -40,7 +50,7 @@ class UserEntity extends Equatable {
         majorSchoolId,
         schoolId,
         sponsorCode,
-        academiclevel,
+        academyLevel,
         birthday
       ];
 }

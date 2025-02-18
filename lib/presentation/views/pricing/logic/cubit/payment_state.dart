@@ -23,7 +23,7 @@ final class PaymentLoading extends PaymentState {
 
 final class PaymentSuccess extends PaymentState {
   final String? transactionId;
-  final UserModel? user;
+  final UserEntity? user;
   const PaymentSuccess({ this.transactionId, this.user});
   @override
   List<Object> get props => [];
@@ -45,7 +45,7 @@ final class VerifyingPaymentLoading extends PaymentState {
 }
 
 final class VerifyingPaymentSuccess extends PaymentState {
-  final UserModel user;
+  final UserEntity user;
   const VerifyingPaymentSuccess({required this.user});
   @override
   List<Object> get props => [user];

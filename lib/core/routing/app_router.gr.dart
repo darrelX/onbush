@@ -45,7 +45,7 @@ abstract class _$AppRouter extends RootStackRouter {
         routeData: routeData,
         child: CourseScreen(
           key: args.key,
-          subjectModel: args.subjectModel,
+          subjectEntity: args.subjectEntity,
           category: args.category,
         ),
       );
@@ -56,7 +56,7 @@ abstract class _$AppRouter extends RootStackRouter {
         routeData: routeData,
         child: CourseSelectionMenuScreen(
           key: args.key,
-          subjectModel: args.subjectModel,
+          subjectEntity: args.subjectEntity,
         ),
       );
     },
@@ -66,7 +66,7 @@ abstract class _$AppRouter extends RootStackRouter {
         routeData: routeData,
         child: DownloadPdfViewScreen(
           key: args.key,
-          pdfFileModel: args.pdfFileModel,
+          pdfFileEntity: args.pdfFileEntity,
         ),
       );
     },
@@ -139,7 +139,7 @@ abstract class _$AppRouter extends RootStackRouter {
         routeData: routeData,
         child: PdfViewScreen(
           key: args.key,
-          courseModel: args.courseModel,
+          courseEntity: args.courseEntity,
           category: args.category,
         ),
       );
@@ -230,14 +230,14 @@ class AuthRoute extends PageRouteInfo<void> {
 class CourseRoute extends PageRouteInfo<CourseRouteArgs> {
   CourseRoute({
     Key? key,
-    required SubjectModel subjectModel,
+    required SubjectEntity subjectEntity,
     required String category,
     List<PageRouteInfo>? children,
   }) : super(
           CourseRoute.name,
           args: CourseRouteArgs(
             key: key,
-            subjectModel: subjectModel,
+            subjectEntity: subjectEntity,
             category: category,
           ),
           initialChildren: children,
@@ -251,19 +251,19 @@ class CourseRoute extends PageRouteInfo<CourseRouteArgs> {
 class CourseRouteArgs {
   const CourseRouteArgs({
     this.key,
-    required this.subjectModel,
+    required this.subjectEntity,
     required this.category,
   });
 
   final Key? key;
 
-  final SubjectModel subjectModel;
+  final SubjectEntity subjectEntity;
 
   final String category;
 
   @override
   String toString() {
-    return 'CourseRouteArgs{key: $key, subjectModel: $subjectModel, category: $category}';
+    return 'CourseRouteArgs{key: $key, subjectEntity: $subjectEntity, category: $category}';
   }
 }
 
@@ -273,13 +273,13 @@ class CourseSelectionMenuRoute
     extends PageRouteInfo<CourseSelectionMenuRouteArgs> {
   CourseSelectionMenuRoute({
     Key? key,
-    required SubjectModel subjectModel,
+    required SubjectEntity subjectEntity,
     List<PageRouteInfo>? children,
   }) : super(
           CourseSelectionMenuRoute.name,
           args: CourseSelectionMenuRouteArgs(
             key: key,
-            subjectModel: subjectModel,
+            subjectEntity: subjectEntity,
           ),
           initialChildren: children,
         );
@@ -293,16 +293,16 @@ class CourseSelectionMenuRoute
 class CourseSelectionMenuRouteArgs {
   const CourseSelectionMenuRouteArgs({
     this.key,
-    required this.subjectModel,
+    required this.subjectEntity,
   });
 
   final Key? key;
 
-  final SubjectModel subjectModel;
+  final SubjectEntity subjectEntity;
 
   @override
   String toString() {
-    return 'CourseSelectionMenuRouteArgs{key: $key, subjectModel: $subjectModel}';
+    return 'CourseSelectionMenuRouteArgs{key: $key, subjectEntity: $subjectEntity}';
   }
 }
 
@@ -311,13 +311,13 @@ class CourseSelectionMenuRouteArgs {
 class DownloadPdfViewRoute extends PageRouteInfo<DownloadPdfViewRouteArgs> {
   DownloadPdfViewRoute({
     Key? key,
-    required PdfFileModel pdfFileModel,
+    required PdfFileEntity pdfFileEntity,
     List<PageRouteInfo>? children,
   }) : super(
           DownloadPdfViewRoute.name,
           args: DownloadPdfViewRouteArgs(
             key: key,
-            pdfFileModel: pdfFileModel,
+            pdfFileEntity: pdfFileEntity,
           ),
           initialChildren: children,
         );
@@ -331,16 +331,16 @@ class DownloadPdfViewRoute extends PageRouteInfo<DownloadPdfViewRouteArgs> {
 class DownloadPdfViewRouteArgs {
   const DownloadPdfViewRouteArgs({
     this.key,
-    required this.pdfFileModel,
+    required this.pdfFileEntity,
   });
 
   final Key? key;
 
-  final PdfFileModel pdfFileModel;
+  final PdfFileEntity pdfFileEntity;
 
   @override
   String toString() {
-    return 'DownloadPdfViewRouteArgs{key: $key, pdfFileModel: $pdfFileModel}';
+    return 'DownloadPdfViewRouteArgs{key: $key, pdfFileEntity: $pdfFileEntity}';
   }
 }
 
@@ -528,14 +528,14 @@ class OnboardingRoute extends PageRouteInfo<void> {
 class PdfViewRoute extends PageRouteInfo<PdfViewRouteArgs> {
   PdfViewRoute({
     Key? key,
-    required CourseModel courseModel,
+    required CourseEntity courseEntity,
     required String category,
     List<PageRouteInfo>? children,
   }) : super(
           PdfViewRoute.name,
           args: PdfViewRouteArgs(
             key: key,
-            courseModel: courseModel,
+            courseEntity: courseEntity,
             category: category,
           ),
           initialChildren: children,
@@ -550,19 +550,19 @@ class PdfViewRoute extends PageRouteInfo<PdfViewRouteArgs> {
 class PdfViewRouteArgs {
   const PdfViewRouteArgs({
     this.key,
-    required this.courseModel,
+    required this.courseEntity,
     required this.category,
   });
 
   final Key? key;
 
-  final CourseModel courseModel;
+  final CourseEntity courseEntity;
 
   final String category;
 
   @override
   String toString() {
-    return 'PdfViewRouteArgs{key: $key, courseModel: $courseModel, category: $category}';
+    return 'PdfViewRouteArgs{key: $key, courseEntity: $courseEntity, category: $category}';
   }
 }
 

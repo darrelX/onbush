@@ -8,6 +8,7 @@ class AppBaseIndicator {
     required String message,
     required Widget button,
   }) {
+    
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
