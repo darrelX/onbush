@@ -26,13 +26,12 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   }
 
   @override
-  Future<UserModel?> login(
-      {required String device, required String email}) async {
+  Future<dynamic> login({required String device, required String email}) async {
     try {
       final Response response = await _dioAccountApi.post(
         '/auth/login/user',
         data: {
-          "device": device,
+          "appareil": device,
           "email": email,
         },
       );
@@ -40,13 +39,11 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
       final Map<String, dynamic> data =
           response.data["data"] as Map<String, dynamic>;
       if (!data.containsKey("token")) {
-        log("L'utilisateur n'a pas finalisé son inscription.");
-        throw UserRegistrationIncompleteException();
+        return data["email"];
+      } else {
+        return UserModel.fromJson(data);
       }
-
-      return UserModel.fromJson(data);
     } catch (e) {
-      log("Login error: $e");
       rethrow;
     }
   }
@@ -69,7 +66,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
       final Response response = await _dioAccountApi.post(
         '/auth/register/user',
         data: {
-          "device": device,
+          "appareil": device,
           "niveau": academyLevel,
           "matricule": studentId,
           "nom": username,
@@ -84,7 +81,6 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
         },
       );
     } catch (e) {
-      log("Registration error: ${e.toString()}");
       rethrow;
     }
   }
@@ -95,6 +91,39 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
       Response response = await _dioAccountApi.post("/auth/logout", data: {
         "appareil": device,
         "email": email,
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> editProfil(
+      {required String device,
+      required String studentId,
+      required String name,
+      required String gender,
+      required String avatar,
+      required String phone,
+      required String level,
+      required String language,
+      required String email,
+      required String birthday,
+      required String role}) async {
+    try {
+      final Response response =
+          await _dioAccountApi.post("/auth/update/user", data: {
+        "appareil": device,
+        "matricule": studentId,
+        "nom": name,
+        "email": email,
+        "telephone": phone,
+        "sexe": gender,
+        "naissance": birthday,
+        "niveau": level,
+        "avatar": avatar,
+        "lang": language,
+        "role": role
       });
     } catch (e) {
       rethrow;

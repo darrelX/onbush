@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:onbush/data/datasources/remote/otp/otp_remote_data_source.dart';
 import 'package:onbush/data/models/user/user_model.dart';

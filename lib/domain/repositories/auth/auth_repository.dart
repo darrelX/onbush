@@ -9,7 +9,7 @@ abstract class AuthRepository {
   });
 
   /// login user with the given device id
-  Future<Either<NetworkException, UserEntity?>> login(
+  Future<Either<NetworkException, dynamic>> login(
       {required String device, required String email});
 
   /// register user with the given informations
@@ -32,4 +32,17 @@ abstract class AuthRepository {
 
   Future<Either<NetworkException, List<MenteeEntity>>> getAllMentees(
       {required String device, required String email});
+      
+  Future<Either<NetworkException, void>> editProfil(
+      {required String device,
+      required String studentId,
+      required String name,
+      required String gender,
+      required String avatar,
+      required String phone,
+      required String level,
+      required String language,
+      required String email,
+      required String birthday,
+      required String role});
 }

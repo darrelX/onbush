@@ -1,11 +1,15 @@
+import 'dart:developer';
+
 import 'package:equatable/equatable.dart';
+import 'package:onbush/core/application/cubit/application_cubit.dart';
+import 'package:onbush/core/database/key_storage.dart';
 import 'package:onbush/domain/entities/college/college_entity.dart';
+import 'package:onbush/domain/entities/mentee/mentee_entity.dart';
 import 'package:onbush/domain/entities/speciality/speciality_entity.dart';
 import 'package:onbush/domain/entities/user/user_entity.dart';
 import 'package:onbush/domain/usecases/academic/academic_usecase.dart';
 import 'package:onbush/domain/usecases/auth/auth_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:onbush/presentation/views/auth/data/repositories/auth_repository.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/database/local_storage.dart';
 import 'package:onbush/core//utils/utils.dart';
@@ -13,10 +17,9 @@ import 'package:onbush/core//utils/utils.dart';
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  final AuthRepository _repository;
   final LocalStorage _prefs;
   final AuthUseCase _authUseCase;
-  final AcademyUsecase _AcademyUsecase;
+  final AcademyUsecase _academyUsecase;
   final List<CollegeEntity> _listAllColleges = [];
   final List<SpecialityEntity> _listAllSpecialities = [];
   String? currentRequest;
@@ -24,9 +27,10 @@ class AuthCubit extends Cubit<AuthState> {
   List<CollegeEntity> get listAllColleges => _listAllColleges;
   List<SpecialityEntity> get listAllSpecialities => _listAllSpecialities;
 
-  AuthCubit(this._authUseCase, this._AcademyUsecase)
-      : _repository = AuthRepository(),
-        _prefs = getIt.get<LocalStorage>(),
+  final ApplicationCubit _applicationCubit = getIt<ApplicationCubit>();
+
+  AuthCubit(this._authUseCase, this._academyUsecase)
+      : _prefs = getIt.get<LocalStorage>(),
         super(const AuthInitial());
 
   Future<void> login({
@@ -39,10 +43,17 @@ class AuthCubit extends Cubit<AuthState> {
         device: appareil,
         email: email,
       );
-      result.fold((ifLeft) {
-        emit(OTpStateSuccess(email: email, type: 'login'));
-      }, (ifRight) {
-        emit(LoginSuccess(user: ifRight!));
+      result.fold((failure) {
+        emit(LoginFailure(
+            message: Utils.extractErrorMessageFromMap(failure,
+                {"0": "telephone ou pass incorrect", "-1": "compte bloque"})));
+      }, (success) {
+        if (success is String) {
+          print("success");
+          emit(OTpStateSuccess(email: email, type: 'login'));
+        } else {
+          emit(LoginSuccess(user: success!));
+        }
       });
     } catch (e) {
       emit(LoginFailure(
@@ -76,25 +87,24 @@ class AuthCubit extends Cubit<AuthState> {
         phone: phone,
         device: device,
         studentId: studentId,
-      academyLevel :academyLevel,
+        academyLevel: academyLevel,
         schoolId: schoolId,
         majorStudy: majorStudy,
         role: role,
       );
 
-      result.fold((ifLeft) {
+      result.fold((failure) {
         emit(RegisterFailure(
-            message: Utils.extractErrorMessageFromMap(ifLeft, {
+            message: Utils.extractErrorMessageFromMap(failure, {
           "0": "Un probleme est survenu",
           "-1": "Email deja utilise",
           "-2": "Telephone deja utilise",
           "-3": "Utilisateur non reconnu"
         })));
-      }, (ifRight) {
+      }, (success) {
         emit(const RegisterSuccess());
       });
     } catch (e) {
-      // print(e);
       emit(RegisterFailure(
           message: Utils.extractErrorMessageFromMap(e, {
         "0": "Un probleme est survenu",
@@ -133,11 +143,11 @@ class AuthCubit extends Cubit<AuthState> {
       } else {
         final user = (await _authUseCase.connexion(
             device: getIt.get<LocalStorage>().getString('device')!));
-        user.fold((ifLeft) {
+        user.fold((failure) {
           emit(CheckAuthStateFailure(
-              message: Utils.extractErrorMessage(ifLeft.message)));
-        }, (ifRight) {
-          emit(CheckAuthStateSuccess(user: ifRight!));
+              message: Utils.extractErrorMessage(failure.message)));
+        }, (success) {
+          emit(CheckAuthStateSuccess(user: success!));
         });
       }
     } catch (e) {
@@ -151,11 +161,12 @@ class AuthCubit extends Cubit<AuthState> {
     currentRequest = "colleges";
     emit(const SearchStateLoading());
     try {
-      final result = await _AcademyUsecase.getAllColleges();
-      result.fold((ifLeft) {
-        emit(SearchStateFailure(message: ifLeft.message));
-      }, (ifRight) {
-        _listAllColleges.addAll(List.from(ifRight));
+      final result = await _academyUsecase.getAllColleges();
+      result.fold((failure) {
+        emit(SearchStateFailure(message: failure.message));
+      }, (success) {
+        print(_listAllColleges);
+        _listAllColleges.addAll(List.from(success));
         emit(SearchStateSuccess(
             listCollegeModel: _listAllColleges,
             listSpeciality: _listAllSpecialities));
@@ -172,17 +183,101 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const SearchStateLoading());
     try {
       final result =
-          await _AcademyUsecase.getAllSpecialities(schoolId: schoolId);
-      result.fold((ifLeft) {
-        emit(SearchStateFailure(message: ifLeft.message));
-      }, (ifRight) {
-        _listAllSpecialities.addAll(List.from(ifRight));
+          await _academyUsecase.getAllSpecialities(schoolId: schoolId);
+      result.fold((failure) {
+        emit(SearchStateFailure(message: failure.message));
+      }, (success) {
+        _listAllSpecialities.addAll(List.from(success));
         emit(SearchStateSuccess(
             listCollegeModel: _listAllColleges,
             listSpeciality: _listAllSpecialities));
       });
     } catch (e) {
       emit(SearchStateFailure(message: e.toString()));
+    }
+  }
+
+  Future<void> editProfil(
+      {required String device,
+      required String studentId,
+      required String name,
+      required String gender,
+      required String avatar,
+      required String phone,
+      required String level,
+      required String language,
+      required String email,
+      required String birthday,
+      required String role}) async {
+    emit(EditLoading());
+    try {
+      final result = await _authUseCase.editProfil(
+        device: device,
+        studentId: studentId,
+        birthday: birthday,
+        name: name,
+        gender: gender,
+        phone: phone,
+        level: level,
+        language: language,
+        avatar: avatar,
+        email: email,
+        role: role,
+      );
+      result.fold((failure) {
+        emit(EditFailure(message: Utils.extractErrorMessage(failure)));
+      }, (sucess) {
+        _applicationCubit.userEntity = _applicationCubit.userEntity?.copyFrom(
+          id: device,
+          studentId: studentId,
+          birthday: birthday,
+          name: name,
+          gender: gender,
+          phoneNumber: phone,
+          academyLevel: int.parse(level),
+          language: language,
+          avatar: avatar,
+          email: email,
+          role: role,
+        );
+        emit(EditSuccess());
+      });
+    } catch (e) {
+      emit(EditFailure(message: Utils.extractErrorMessage(e)));
+    }
+  }
+
+  Future<void> getListMentee(
+      {required String email, required String device}) async {
+    emit(MenteePending());
+    try {
+      final result =
+          await _authUseCase.getAllMentees(device: device, email: email);
+      result.fold((failure) {
+        emit(MenteeFailure(message: Utils.extractErrorMessage(failure)));
+      }, (success) {
+        emit(MenteeSuccess(listMentees: success));
+      });
+    } catch (e) {
+      emit(MenteeFailure(message: Utils.extractErrorMessage(e)));
+    }
+  }
+
+  Future<void> logout() async {
+    emit(LogoutPending());
+    try {
+      final result = await _authUseCase.logout(
+          device: getIt.get<LocalStorage>().getString('device')!,
+          email: _applicationCubit.userEntity!.email!);
+      result.fold((failure) {
+        emit(LogoutFailure(message: failure.message));
+      }, (success) async {
+        await _prefs.remove(StorageKeys.authToken);
+        await _prefs.remove(StorageKeys.pdfFile);
+        emit(LogoutSuccess());
+      });
+    } catch (e) {
+      emit(LogoutFailure(message: e.toString()));
     }
   }
 }

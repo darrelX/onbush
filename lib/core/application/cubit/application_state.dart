@@ -1,54 +1,21 @@
 part of 'application_cubit.dart';
 
-class ApplicationState extends Equatable {
+sealed class ApplicationState extends Equatable {
   final UserEntity? user;
-  final DataState<SpecialityModel> speciality;
-  final DataState<List<SubjectModel>>? listSubjectModel;
-  final DataState<List<CourseModel>>? listCourseModel;
-  final DataState<void>? loading;
+
   // final DataState? speciality;
-  const ApplicationState(
-      {this.user,
-      required this.loading,
-      required this.speciality,
-      required this.listSubjectModel,
-      required this.listCourseModel});
+  const ApplicationState({this.user});
 
   @override
-  List<Object?> get props =>
-      [user, speciality, listSubjectModel, listCourseModel, loading];
-
-  ApplicationState copyWith(
-      {UserEntity? user,
-      DataState<SpecialityModel>? speciality,
-      DataState<void>? loading,
-      DataState<List<CourseModel>>? listCourseModel,
-      DataState<List<SubjectModel>>? listSubjectModel}) {
-    return ApplicationState(
-      loading: loading ?? this.loading,
-        listSubjectModel: listSubjectModel ?? this.listSubjectModel,
-        user: user ?? this.user,
-        listCourseModel: listCourseModel ?? this.listCourseModel,
-        speciality: speciality ?? this.speciality);
-  }
-
-  static ApplicationState initial() {
-    return ApplicationState
-    (
-      loading: DataState<void>(),
-        listCourseModel: DataState<List<CourseModel>>(),
-        user: null,
-        speciality: DataState<SpecialityModel>(),
-        listSubjectModel: DataState<List<SubjectModel>>());
-  }
+  List<Object?> get props => [user];
 }
 
-// final class ApplicationStateInitial extends ApplicationState {
-//   const ApplicationStateInitial({super.user, super.speciality});
+final class ApplicationStateInitial extends ApplicationState {
+  const ApplicationStateInitial({super.user, });
 
-//   @override
-//   List<Object?> get props => [super.user, super.speciality];
-// }
+  @override
+  List<Object?> get props => [super.user, ];
+}
 
 // final class ApplicationStateSuccess extends ApplicationState {
 //   const ApplicationStateSuccess({super.user, super.speciality});
@@ -70,8 +37,6 @@ class ApplicationState extends Equatable {
 //   @override
 //   List<Object?> get props => [super.user, super.speciality];
 // }
-
-
 
 // final class SpecialityLoading extends ApplicationState {
 //   const SpecialityLoading();

@@ -52,4 +52,6 @@ abstract class AcademyRepository {
   Future<Either<DatabaseException, void>> deleteAllSubjectCache();
 
   Future<Either<DatabaseException, void>> deleteSubjectId(int subjectId);
+
+
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:onbush/core/exceptions/network/network_exception.dart';
 import 'package:onbush/data/datasources/remote/mentee/mentee_remote_data_source.dart';
@@ -24,20 +26,24 @@ class AuthRepositoryImpl implements AuthRepository {
       final result = await _userRemoteDataSource.connexion(device: device);
       return Right(result?.toEntity());
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
   /// login user with the given device id
   @override
-  Future<Either<NetworkException, UserEntity?>> login(
+  Future<Either<NetworkException, dynamic>> login(
       {required String device, required String email}) async {
     try {
       final result =
           await _userRemoteDataSource.login(device: device, email: email);
-      return Right(result?.toEntity());
+      if (result is String) {
+        return Right(result);
+      } else {
+        return Right(result?.toEntity());
+      }
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
@@ -71,7 +77,8 @@ class AuthRepositoryImpl implements AuthRepository {
           birthDate: birthDate);
       return Right(result);
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      print(e);
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
@@ -83,7 +90,7 @@ class AuthRepositoryImpl implements AuthRepository {
           await _userRemoteDataSource.logout(device: device, email: email);
       return Right(result);
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
@@ -95,7 +102,39 @@ class AuthRepositoryImpl implements AuthRepository {
           device: device, email: email);
       return Right(result.map((e) => e.toEntity()).toList());
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkException, void>> editProfil(
+      {required String device,
+      required String studentId,
+      required String name,
+      required String gender,
+      required String avatar,
+      required String phone,
+      required String level,
+      required String language,
+      required String email,
+      required String birthday,
+      required String role}) async {
+    try {
+      final result = await _userRemoteDataSource.editProfil(
+          device: device,
+          studentId: studentId,
+          name: name,
+          gender: gender,
+          avatar: avatar,
+          phone: phone,
+          level: level,
+          language: language,
+          email: email,
+          birthday: birthday,
+          role: role);
+      return Right(result);
+    } catch (e) {
+      return Left(NetworkException.errorFrom(e));
     }
   }
 }

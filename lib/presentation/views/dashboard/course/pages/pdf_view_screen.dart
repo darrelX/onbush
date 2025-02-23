@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_windowmanager_plus/flutter_windowmanager_plus.dart';
 import 'package:onbush/domain/entities/course/course_entity.dart';
-import 'package:onbush/presentation/blocs/pdf/pdf_file_cubit.dart';
+import 'package:onbush/presentation/blocs/pdf/pdf_file/pdf_file_cubit.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -26,11 +26,13 @@ class PdfViewScreen extends StatefulWidget {
 }
 
 class _PdfViewScreenState extends State<PdfViewScreen> {
-  late final PdfFileCubit _pdfFileCubit = getIt<PdfFileCubit>();
+  late final PdfFileCubit _pdfFileCubit;
+  final PdfViewerController _pdfViewerController = PdfViewerController();
 
   @override
   void initState() {
     super.initState();
+    _pdfFileCubit = getIt<PdfFileCubit>();
     _enableSecureMode();
     _loadSecurePdf();
   }
@@ -50,14 +52,7 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
   /// Charge un fichier PDF sécurisé avec gestion des erreurs
   Future<void> _loadSecurePdf() async {
     try {
-      final directory = await getApplicationDocumentsDirectory();
-      final pdfDirectory = Directory("${directory.path}/${widget.category}");
-      final String securePdfPath =
-          '${pdfDirectory.path}/${widget.courseEntity.name}.pdf';
-
-      await _pdfFileCubit.downloadAndSaveFile(
-        url: widget.courseEntity.pdfUrl!,
-        path: securePdfPath,
+      await _pdfFileCubit.readPdfFile(
         category: widget.category,
         name: widget.courseEntity.name!,
       );
@@ -71,7 +66,7 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
     return BlocProvider.value(
       value: _pdfFileCubit,
       child: Scaffold(
-        body: BlocListener<PdfFileCubit, PdfFileState>(
+        body: BlocConsumer<PdfFileCubit, PdfFileState>(
           listener: (context, state) {
             if (state is PdfFileFailed) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -79,18 +74,18 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
               );
             }
           },
-          child: BlocBuilder<PdfFileCubit, PdfFileState>(
-            builder: (context, state) {
-              if (state is PdfFileLoading) {
-                return _buildLoadingIndicator(state.percent);
-              }
-              if (state is SavePdfFileSuccess) {
-                _pdfFileCubit.close();
-                return SfPdfViewer.file(File(state.pdfFileEntity.filePath!));
-              }
-              return const Center(child: Text("Aucun fichier disponible"));
-            },
-          ),
+          builder: (context, state) {
+            if (state is PdfFileLoading) {
+              return _buildLoadingIndicator(state.percent);
+            }
+            if (state is ReadPdfFileSuccess) {
+              return SfPdfViewer.file(
+                File(state.pdfFileEntity.filePath!),
+                controller: _pdfViewerController,
+              );
+            }
+            return const Center(child: Text("Aucun fichier disponible"));
+          },
         ),
       ),
     );

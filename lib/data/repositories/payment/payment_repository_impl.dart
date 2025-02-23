@@ -8,7 +8,7 @@ class PaymentRepositoryImpl extends PaymentRepository {
   final PaymentRemoteDataSource _paymentRemoteDataSource;
 
   PaymentRepositoryImpl(this._paymentRemoteDataSource);
-  
+
   @override
   Future<Either<NetworkException, dynamic>> initPayment({
     required String appareil,
@@ -30,7 +30,7 @@ class PaymentRepositoryImpl extends PaymentRepository {
           discountCode: discountCode);
       return Right(result);
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
@@ -42,7 +42,7 @@ class PaymentRepositoryImpl extends PaymentRepository {
           transactionId: transactionId);
       return Right(result?.toEntity());
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
@@ -54,7 +54,7 @@ class PaymentRepositoryImpl extends PaymentRepository {
           sponsorCode: sponsorCode);
       return Right(result);
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
@@ -66,7 +66,7 @@ class PaymentRepositoryImpl extends PaymentRepository {
           reduceCode: reduceCode);
       return Right(result);
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 }

@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_windowmanager_plus/flutter_windowmanager_plus.dart';
+import 'package:gap/gap.dart';
 import 'package:onbush/domain/entities/pdf_file/pdf_file_entity.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
@@ -36,13 +37,13 @@ class _PdfFileWidgetState extends State<PdfFileWidget> {
             .push(DownloadPdfViewRoute(pdfFileEntity: widget.pdfFileEntity));
       },
       child: Container(
-        height: 80.h,
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+        height: 65.h,
+        padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 10.h),
         decoration: BoxDecoration(
             color: AppColors.white, borderRadius: BorderRadius.circular(12.r)),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Image.asset(
               "assets/icons/leading-icon.png",
@@ -50,42 +51,52 @@ class _PdfFileWidgetState extends State<PdfFileWidget> {
               height: 60.h,
               color: AppColors.black,
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 200.w,
-                  child: Text(
-                    widget.pdfFileEntity.name!,
-                    style: context.textTheme.bodyLarge!
-                        .copyWith(fontSize: 14.r, fontWeight: FontWeight.bold),
-                    maxLines: 2,
-                    textAlign: TextAlign.left,
-                    overflow: TextOverflow.clip,
-                  ),
+            Gap(20.w),
+            Flexible(
+              child: Container(
+                // color: AppColors.red,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 200.w,
+                      child: Text(
+                        widget.pdfFileEntity.name!,
+                        style: context.textTheme.bodyLarge!.copyWith(
+                            fontSize: 14.r, fontWeight: FontWeight.bold),
+                        maxLines: 2,
+                        textAlign: TextAlign.left,
+                        overflow: TextOverflow.clip,
+                      ),
+                    ),
+                    // Spacer(),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: SizedBox(
+                        // width: 220.w,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              widget.pdfFileEntity.category!,
+                              style: context.textTheme.bodyLarge!.copyWith(
+                                  fontSize: 13.r, color: Colors.grey.shade600),
+                            ),
+                            Text(
+                              "Il y'a ${widget.pdfFileEntity.date?.timeAgoShort()}",
+                              style: context.textTheme.bodyLarge!.copyWith(
+                                  fontSize: 13.r, color: Colors.grey.shade600),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-                // Spacer(),
-                SizedBox(
-                  width: 220.w,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        widget.pdfFileEntity.category!,
-                        style: context.textTheme.bodyLarge!.copyWith(
-                            fontSize: 13.r, color: Colors.grey.shade600),
-                      ),
-                      Text(
-                        "Il y'a ${widget.pdfFileEntity.date?.timeAgoShort()}",
-                        style: context.textTheme.bodyLarge!.copyWith(
-                            fontSize: 13.r, color: Colors.grey.shade600),
-                      ),
-                    ],
-                  ),
-                )
-              ],
+              ),
             ),
+            Gap(15.w),
             Icon(
               Icons.arrow_forward_ios_outlined,
               size: 16.r,

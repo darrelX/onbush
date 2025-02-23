@@ -17,10 +17,10 @@ class OtpRepositoryImpl implements OtpRepository {
   }) async {
     try {
       final result = await _otpRemoteDataSource.submit(
-          code: code, email: email, device: device, role: role);
+          code: code, email: email, device: device, role: role, type: type);
       return Right(result);
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
@@ -32,10 +32,10 @@ class OtpRepositoryImpl implements OtpRepository {
       String type = 'register'}) async {
     try {
       final result =
-          await _otpRemoteDataSource.reSendOtp(email: email, device: device);
+          await _otpRemoteDataSource.reSendOtp(email: email, device: device, type:type);
       return Right(result);
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 }

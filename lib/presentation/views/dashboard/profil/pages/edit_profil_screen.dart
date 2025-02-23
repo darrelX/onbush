@@ -9,6 +9,7 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
+import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/core/database/local_storage.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
@@ -17,8 +18,7 @@ import 'package:onbush/core/shared/widget/app_snackbar.dart';
 import 'package:onbush/core/shared/widget/bottom_sheet/app_bottom_sheet.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
-import 'package:onbush/presentation/views/auth/logic/auth_cubit/auth_cubit.dart';
-import 'package:onbush/presentation/views/dashboard/profil/cubit/mentee_cubit.dart';
+import 'package:onbush/presentation/blocs/auth/auth/auth_cubit.dart';
 import 'package:onbush/presentation/views/dashboard/profil/pages/edit_avatar_screen.dart';
 import 'package:onbush/presentation/views/dashboard/profil/widgets/editable_avatar_widget.dart';
 import 'package:onbush/service_locator.dart';
@@ -46,13 +46,18 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
   DateTime? _selectedDate;
   int gender = 1;
   PhoneNumber? _number = PhoneNumber(isoCode: "CM");
-  final MenteeCubit _menteeCubit = MenteeCubit();
+  late final AuthCubit _authCubit;
   final GlobalKey<EditAvatarScreenState> _avatarGlobalKey =
       GlobalKey<EditAvatarScreenState>();
+    // listId['college'] = getIt.get<ApplicationCubit>().userEntity!.schoolId!;
+
 
   // final GlobalKey<StatelessWidget> f;
 
   Future<void> _initialValues() async {
+    _authCubit = getIt<AuthCubit>();
+    listId['college'] = getIt.get<ApplicationCubit>().userEntity!.schoolId!;
+    // print(getIt.get<ApplicationCubit>().userEntity!.schoolId!);
     emailController.text = getIt.get<ApplicationCubit>().userEntity!.email!;
     userNameController.text = getIt.get<ApplicationCubit>().userEntity!.name!;
     phoneController.text =
@@ -125,11 +130,11 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
   @override
   Widget build(BuildContext context) {
     final List<String> listAavatar = [
-      "assets/avatars/avatar 1.png",
-      "assets/avatars/avatar 2.png",
-      "assets/avatars/avatar 3.png",
-      "assets/avatars/avatar 4.png",
-      "assets/avatars/avatar 5.png",
+      AppImage.avatar1,
+      AppImage.avatar2,
+      AppImage.avatar3,
+      AppImage.avatar4,
+      AppImage.avatar5,
     ];
 
     // _avatarGlobalKey.currentState.
@@ -144,9 +149,38 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
           backgroundColor: AppColors.primary,
         ),
         backgroundColor: AppColors.quaternaire,
-        body: BlocConsumer<MenteeCubit, MenteeState>(
-          listener: (context, state) {
+        body: BlocConsumer<AuthCubit, AuthState>(
+          listener: (context, state) async {
+            if (state is SearchStateSuccess) {
+              if (_authCubit.currentRequest == "colleges") {
+                listId['college'] = await _bottomSheetSelect(
+                  context,
+                  title: "Sélectionner l'école",
+                  allItems: state.listCollegeModel.asMap().map(
+                        (key, value) => MapEntry(value.id!, value.name!),
+                      ),
+                  controller: schoolController,
+                );
+              } else if (_authCubit.currentRequest == "specialities") {
+                listId['specialitie'] = await _bottomSheetSelect(
+                  context,
+                  title: "Sélectionner la specialite",
+                  allItems: state.listSpeciality.asMap().map(
+                        (key, value) => MapEntry(value.id!, value.name!),
+                      ),
+                  controller: majorStudyController,
+                );
+              }
+            }
+            if (state is SearchStateFailure) {
+              if (!context.mounted) return;
+              AppSnackBar.showError(
+                  message: "Probleme de connexion", context: context);
+            }
+
             if (state is EditSuccess) {
+              if (!context.mounted) return;
+
               AppSnackBar.showConfig(
                   context: context,
                   backgroundColor: AppColors.white,
@@ -161,13 +195,15 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
                   flushbarPosition: FlushbarPosition.BOTTOM);
             }
             if (state is EditFailure) {
+              if (!context.mounted) return;
+
               AppSnackBar.showConfig(
                   context: context,
                   child: const Text("Erreur de sauvegarde"),
                   backgroundColor: AppColors.red);
             }
           },
-          bloc: _menteeCubit,
+          bloc: _authCubit,
           builder: (context, state) {
             return SingleChildScrollView(
               child: Container(
@@ -428,19 +464,22 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
                         textColor: AppColors.white,
                         width: context.width,
                         bgColor: AppColors.secondary,
-                        onPressed: () => _menteeCubit.editProfil(
-                            device:
-                                getIt.get<LocalStorage>().getString('device')!,
-                            studentId: studentIdController.text,
-                            name: userNameController.text,
-                            level: academyLevelController.text,
-                            gender: genderController.text,
-                            email: emailController.text,
-                            birthday: birthdayController.text,
-                            role: 'etudiant',
-                            phone: phoneController.text,
-                            avatar: "",
-                            language: "fr"),
+                        onPressed: () {
+                          _authCubit.editProfil(
+                              device: getIt
+                                  .get<LocalStorage>()
+                                  .getString('device')!,
+                              studentId: studentIdController.text,
+                              name: userNameController.text,
+                              level: academyLevelController.text,
+                              gender: genderController.text,
+                              email: emailController.text,
+                              birthday: birthdayController.text,
+                              role: 'etudiant',
+                              phone: phoneController.text,
+                              avatar: "",
+                              language: "fr");
+                        },
                       )
                     ],
                   )),

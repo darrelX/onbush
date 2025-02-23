@@ -14,7 +14,7 @@ class OtpUseCase {
     String type = 'register',
   }) async {
     return _otpRepository.submit(
-        code: code, email: email, device: device, role: role);
+        code: code, email: email, device: device, role: role, type: type);
   }
 
   Future<Either<NetworkException, void>> reSendOtp(
@@ -22,6 +22,6 @@ class OtpUseCase {
       required String device,
       String role = "etudiant",
       String type = 'register'}) {
-    return _otpRepository.reSendOtp(email: email, device: device);
+    return _otpRepository.reSendOtp(email: email, device: device, type: type);
   }
 }

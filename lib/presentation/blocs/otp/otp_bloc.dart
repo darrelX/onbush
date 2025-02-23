@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:onbush/domain/entities/user/user_entity.dart';
-import 'package:onbush/domain/repositories/otp/otp_repository.dart';
 import 'package:onbush/domain/usecases/otp/otp_usecase.dart';
 import 'package:onbush/core//utils/utils.dart';
 
@@ -14,16 +14,12 @@ part 'otp_event.dart';
 class OtpBloc extends Bloc<OtpEvent, OtpState> {
   static const int totalDuration = 90;
 
-  final OtpRepository _repository;
   Timer? _timer;
   int _currentDuration = totalDuration;
   final OtpUseCase _otpUseCase;
-  
 
-  OtpBloc({required OtpRepository repository, required OtpUseCase otpUseCase})
-      : _repository = repository,
-      _otpUseCase = otpUseCase,
-        super(const OtpInitial(countDown: totalDuration)) {
+  OtpBloc(this._otpUseCase)
+      : super(const OtpInitial(countDown: totalDuration)) {
     on<OtpSubmitted>(_onSubmit);
     on<OtpReset>(_onReset);
     on<OtpInitialized>(_onInitialized);
@@ -44,14 +40,23 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
         device: event.device,
         role: event.role,
       );
-      result.fold((ifLeft) {
-      emit( OtpVerificationSuccess(countDown: totalDuration, user:  null));
-
-      }, (ifRight) {
-      emit( const OtpVerificationSuccess(countDown: totalDuration, user: null));
-
+      result.fold((failure) {
+        emit(OtpSendFailure(
+          errorMessage: _mapErrorToMessage(failure, {
+            "0": "Confirmation introuvable",
+            "-1": "Problème d'enregistrement",
+          }),
+          countDown: totalDuration,
+        ));
+      }, (success) {
+        if (success is UserEntity) {
+          emit(OtpVerificationSuccess(countDown: totalDuration, user: success));
+          _cancelTimer();
+        } else {
+          emit(const OtpVerificationSuccess(
+              countDown: totalDuration, user: null));
+        }
       });
-      _cancelTimer();
     } catch (e) {
       emit(OtpSendFailure(
         errorMessage: _mapErrorToMessage(e, {
@@ -91,16 +96,28 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
   /// Réinitialisation de l'OTP
   Future<void> _onReset(OtpReset event, Emitter<OtpState> emit) async {
     _cancelTimer();
+    log(event.type);
 
-    if (state is OtpExpired || state is OtpVerificationFailure) {
+    if (state is OtpExpired || state is OtpVerificationFailure || state is OtpSendFailure) {
       // emit(const OtpVerifying(countDown: 0));
       try {
-        await _repository.reSendOtp(
+        log(event.type);
+        final result = await _otpUseCase.reSendOtp(
           type: event.type,
           device: event.device,
           email: event.email,
         );
-        add(const OtpInitialized());
+        result.fold((failure) {
+          emit(OtpSendFailure(
+            errorMessage: _mapErrorToMessage(failure.message, {
+              "0": "Enregistrement introuvable ou code expiré",
+              "-1": "Problème d'enregistrement",
+            }),
+            countDown: totalDuration,
+          ));
+        }, (success) {
+          add(const OtpInitialized());
+        });
         // emit(OtpSentInProgress(countDown: _currentDuration));
       } catch (e) {
         emit(OtpSendFailure(

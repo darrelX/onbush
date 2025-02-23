@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:onbush/core/exceptions/local/database_exception.dart';
+import 'package:onbush/core/exceptions/network/network_exception.dart';
 import 'package:onbush/data/datasources/local/pdf/pdf_local_data_source.dart';
 import 'package:onbush/data/datasources/remote/pdf/pdf_remote_data_source.dart';
 import 'package:onbush/domain/entities/pdf_file/pdf_file_entity.dart';
@@ -18,7 +19,7 @@ class PdfRepositoryImpl implements PdfRepository {
   /// download pdf file from an external server
 
   @override
-  Future<Either<DatabaseException, Stream<double>>> downloadPdf({
+  Future<Either<NetworkException, Stream<double>>> downloadPdf({
     required String url,
     required String path,
   }) async {
@@ -26,7 +27,7 @@ class PdfRepositoryImpl implements PdfRepository {
       final result = _pdfRemoteDataSource.downloadPdf(url: url, path: path);
       return Right(result);
     } catch (e) {
-      return Left(DatabaseException.fromError(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
@@ -45,9 +46,11 @@ class PdfRepositoryImpl implements PdfRepository {
 
   /// get all availables pdfs
   @override
-  Future<Either<DatabaseException, List<PdfFileEntity>>> getAllPdfFile({int maxResults = -1}) async {
+  Future<Either<DatabaseException, List<PdfFileEntity>>> getAllPdfFile(
+      {int maxResults = -1}) async {
     try {
-      final result = await _pdfLocalDataSource.getAllPdfFile();
+      final result =
+          await _pdfLocalDataSource.getAllPdfFile(maxResults: maxResults);
       return Right(result.map((e) => e.toEntity()).toList());
     } catch (e) {
       return Left(DatabaseException.fromError(e));
@@ -104,13 +107,24 @@ class PdfRepositoryImpl implements PdfRepository {
 
   @override
   Future<Either<DatabaseException, PdfFileEntity>> getPdfFileByPath(
-      {required String pdfPath}) async {
+      {required String pdfPath, bool isOpened = false}) async {
     try {
-      final result = await _pdfLocalDataSource.getPdfFileByPath(pdfPath);
+      final result = await _pdfLocalDataSource.getPdfFileByPath(pdfPath,
+          isOpened: isOpened);
       return Right(result.toEntity());
     } catch (e) {
       return Left(DatabaseException.fromError(e));
+    }
+  }
 
+  Future<Either<DatabaseException, void>> updatePdfFile(
+      PdfFileEntity updatedPdfFile) async {
+    try {
+      final result = await _pdfLocalDataSource
+          .updatePdfFile(updatedPdfFile.toPdfFileModel());
+      return Right(result);
+    } catch (e) {
+      return Left(DatabaseException.fromError(e));
     }
   }
 }

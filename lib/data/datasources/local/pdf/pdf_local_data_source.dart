@@ -6,12 +6,14 @@ abstract class PdfLocalDataSource {
   /// save pdf file
   Future<void> savePdfFile(PdfFileModel pdfFileId);
 
+  Future<void> updatePdfFile(PdfFileModel updatedPdfFile);
+
   Future<void> savePdfFileByPath(String filePath, String category, String name);
 
   /// get all availables pdfs
-  Future<List<PdfFileModel>> getAllPdfFile({int maxResults =-1});
+  Future<List<PdfFileModel>> getAllPdfFile({int maxResults = -1});
 
-  Future<PdfFileModel> getPdfFileByPath(String pdfPath);
+  Future<PdfFileModel> getPdfFileByPath(String pdfPath, {bool isOpened = false});
 
   /// delete a pdf file
   Future<void> deletePdfFile(String pdfPath);
@@ -21,4 +23,5 @@ abstract class PdfLocalDataSource {
 
   /// Returns a boolean indicating whether the pdf file with the given [pdfFIle id] is already opened in the local data source.
   Future<bool> isOpenedPdfFile(String pdfPath);
+
 }

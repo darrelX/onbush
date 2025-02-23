@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:onbush/data/models/pdf_file/pdf_file_model.dart';
 import 'package:uuid/uuid.dart';
 
+
 class PdfFileEntity extends Equatable {
   final String? id;
   final String? name;
@@ -11,13 +12,14 @@ class PdfFileEntity extends Equatable {
   final bool isOpened;
 
   PdfFileEntity(
-      { String? id,
+      {String? id,
       required this.name,
-    
       required this.filePath,
       this.isOpened = false,
       required this.category,
-        DateTime? date}) : id = id  ?? const Uuid().v4(), date = date ?? DateTime.now();
+      DateTime? date})
+      : id = id ?? const Uuid().v4(),
+        date = date ?? DateTime.now();
 
   PdfFileEntity copyWith({
     String? id,

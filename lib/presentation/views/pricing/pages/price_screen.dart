@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:onbush/presentation/views/pricing/logic/cubit/payment_cubit.dart';
+import 'package:onbush/presentation/blocs/payment/payment_cubit.dart';
 import 'package:onbush/presentation/views/pricing/widgets/payment_bottom_navigation.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
@@ -88,6 +89,7 @@ class _PaymentWidgetState extends State<PaymentWidget> {
     return BlocConsumer<PaymentCubit, PaymentState>(
       listener: (context, state) async {
         int verificationAttempts = 0; // Compteur pour les tentatives
+        bool isVerifying = false; // Empêcher d'autres exécutions
 
         if (state is PaymentSuccess) {
           if (state.user != null) {
@@ -106,40 +108,62 @@ class _PaymentWidgetState extends State<PaymentWidget> {
 
             context.router.push(const ApplicationRoute());
           }
+
           if (state.transactionId == null) {
             AppSnackBar.showSuccess(
               message: "Transaction réussie",
               context: context,
             );
-            Future.delayed(const Duration(milliseconds: 1300));
+
+            await Future.delayed(const Duration(milliseconds: 1300));
             context.router.popAndPush(const ApplicationRoute());
           } else {
+            isVerifying = true;
+
             setState(() {
               _isLoading = true;
               hasShownError = false;
             });
+
+            log("Début de la vérification...");
+            Completer<void> verificationCompleter = Completer<void>();
+            log("message 1");
+
             await paymentCubit.verifying(transactionId: state.transactionId!);
+            log("message 2");
 
             _timer = Timer.periodic(const Duration(seconds: 15), (timer) async {
+              setState(() {});
+              log("message 3");
+
               verificationAttempts++;
 
-              // Vérification de l'état
+              log("Tentative de vérification #$verificationAttempts");
+
               await paymentCubit.verifying(transactionId: state.transactionId!);
 
               if (verificationAttempts == 2) {
-                // Dernière tentative, annule le timer
+                timer.cancel();
+                log("Coooooooool");
                 setState(() {
                   _isLoading = false;
                 });
-                timer.cancel();
+
+                verificationCompleter.complete();
               }
             });
+            log("message 4");
+
+            await verificationCompleter
+                .future; // Bloque les prochaines exécutions tant que c'est en cours
+            isVerifying = false;
+            log("Vérification terminée.");
           }
         }
 
         if (state is PercentStateFailure) {
           AppSnackBar.showError(
-              message: "Code de reduction incorrect", context: context);
+              message: "Code de réduction incorrect", context: context);
         }
 
         if (state is PaymentFailure) {
@@ -161,13 +185,16 @@ class _PaymentWidgetState extends State<PaymentWidget> {
 
         if (state is VerifyingPaymentFailure) {
           if (state.message != "Transaction en cours") {
-            _timer!.cancel();
+            if (verificationAttempts == 2) {
+              setState(() {
+                _isLoading = false;
+              });
+            }
             setState(() {
-              _isLoading = false;
-              // hasShownError = false;
+              _isLoading = true;
             });
-            if (_timer!.isActive == false) {
-              // Montre une erreur après la dernière tentative si le timer est terminé
+
+            if (!(_timer?.isActive ?? false)) {
               AppSnackBar.showError(
                 message: state.message,
                 context: context,
@@ -183,8 +210,8 @@ class _PaymentWidgetState extends State<PaymentWidget> {
             setState(() {
               hasShownError = true;
             });
-            if (_timer!.isActive == false) {
-              // Montre une erreur après la dernière tentative si le timer est terminé
+
+            if (!(_timer?.isActive ?? false)) {
               AppSnackBar.showError(
                 message: state.message,
                 context: context,
@@ -209,7 +236,8 @@ class _PaymentWidgetState extends State<PaymentWidget> {
         }
       },
       builder: (context, state) {
-        print(state);
+        print("state $state");
+        // _isLoading = false;
         return Scaffold(
           body: Form(
             key: _formKey,
@@ -304,11 +332,11 @@ class _PaymentWidgetState extends State<PaymentWidget> {
                                         title:
                                             "Visualisez vos progrès académiques grâce à notre tableau de bord interactif."),
                                     Gap(25.h),
-                                    Text(
-                                      "à seulement 5.000 Fcfa / an.",
-                                      style: context.textTheme.titleLarge!
-                                          .copyWith(color: AppColors.secondary),
-                                    ),
+                                    // Text(
+                                    //   "à seulement 5.000 Fcfa / an.",
+                                    //   style: context.textTheme.titleLarge!
+                                    //       .copyWith(color: AppColors.secondary),
+                                    // ),
                                     // Gap(20.h),
                                   ],
                                 ),

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
-import 'package:onbush/presentation/views/auth/logic/auth_cubit/auth_cubit.dart';
+import 'package:onbush/presentation/blocs/auth/auth/auth_cubit.dart';
 import 'package:onbush/presentation/views/auth/widgets/auh_switcher_widget.dart';
 import 'package:onbush/presentation/views/auth/widgets/register_widget.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';

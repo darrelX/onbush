@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:onbush/core/exceptions/local/database_exception.dart';
 import 'package:onbush/core/exceptions/network/network_exception.dart';
@@ -39,7 +41,7 @@ class AcademyRepositoryImpl implements AcademyRepository {
       final result = await _collegeRemoteDataSource.getAllColleges();
       return Right(result.map((e) => e.toEntity()).toList());
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
@@ -52,7 +54,7 @@ class AcademyRepositoryImpl implements AcademyRepository {
           await _collegeRemoteDataSource.getCollegeById(collegeId: collegeId);
       return Right(result.toEntity());
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
@@ -66,7 +68,7 @@ class AcademyRepositoryImpl implements AcademyRepository {
           specialityId: specialityId);
       return Right(result.toEntity());
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
@@ -77,9 +79,10 @@ class AcademyRepositoryImpl implements AcademyRepository {
     try {
       final result =
           await _specialityRemoteDataSource.getAllSpecialities(schoolId);
+      print("object");
       return Right(result.map((elt) => elt.toEntity()).toList());
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
@@ -95,7 +98,7 @@ class AcademyRepositoryImpl implements AcademyRepository {
           subjectId: subjectId, category: category);
       return Right(result.map((elt) => elt.toEntity()).toList());
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
@@ -109,7 +112,7 @@ class AcademyRepositoryImpl implements AcademyRepository {
           specialityId: specialityId);
       return Right(result.map((elt) => elt.toEntity()).toList());
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 
@@ -122,7 +125,7 @@ class AcademyRepositoryImpl implements AcademyRepository {
           subjectId: subjectId, level: level);
       return Right(result.map((elt) => elt.toEntity()).toList());
     } catch (e) {
-      return Left(NetworkException.extractErrorMessage(e));
+      return Left(NetworkException.errorFrom(e));
     }
   }
 

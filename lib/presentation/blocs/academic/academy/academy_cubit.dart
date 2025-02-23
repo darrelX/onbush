@@ -1,19 +1,28 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
+import 'package:onbush/core/exceptions/local/database_exception.dart';
+import 'package:onbush/core/exceptions/network/network_exception.dart';
 import 'package:onbush/domain/entities/college/college_entity.dart';
 import 'package:onbush/domain/entities/course/course_entity.dart';
+import 'package:onbush/domain/entities/pdf_file/pdf_file_entity.dart';
 import 'package:onbush/domain/entities/speciality/speciality_entity.dart';
 import 'package:onbush/domain/entities/subject/subject_entity.dart';
 import 'package:onbush/domain/entities/user/user_entity.dart';
 import 'package:onbush/domain/usecases/academic/academic_usecase.dart';
+import 'package:onbush/domain/usecases/pdf/pdf_usecase.dart';
 import 'package:onbush/service_locator.dart';
 
 part 'academy_state.dart';
 
 class AcademyCubit extends Cubit<AcademyState> {
   final AcademyUsecase _academyUsecase;
-  AcademyCubit(this._academyUsecase) : super(AcademyInitial());
+  final PdfUseCase _pdfUseCase;
+  AcademyCubit(this._academyUsecase, this._pdfUseCase)
+      : super(AcademyInitial());
 
   final List<CollegeEntity> _listAllColleges = [];
   final List<SpecialityEntity> _listAllSpecialities = [];
@@ -93,24 +102,87 @@ class AcademyCubit extends Cubit<AcademyState> {
     }
   }
 
-  Future<void> fetchCourseEntity(
-      {required int subjectId, required String category}) async {
-    listCourseEntity.clear();
-    emit(const CourseStateLoading());
+  Future<void> fetchCourseEntity({
+    required int subjectId,
+    required String category,
+    bool fullRefresh = true, // Ajout du paramètre
+  }) async {
+    if (fullRefresh) {
+      listCourseEntity
+          .clear(); // On vide la liste uniquement si on refait un appel à l'API
+      emit(const CourseStateLoading());
+    }
 
     try {
-      final result = await _academyUsecase.getAllCourses(
-          subjectId: subjectId, category: category);
-      result.fold(
-        (failure) => emit(CourseStateFailure(message: failure.message)),
-        (courses) {
-          listCourseEntity.addAll(courses);
-          emit(CourseStateSuccess(listCourseEntity: _listCourseEntity));
-        },
-      );
+      // Récupération des fichiers PDF stockés en local (base de données)
+      final Either<DatabaseException, List<PdfFileEntity>> savePdfFileResult =
+          await _pdfUseCase.getAllPdfFile();
+
+      List<CourseEntity> updatedCourses = [];
+
+      if (fullRefresh) {
+        // Récupération des cours depuis l'API uniquement si `fullRefresh` est vrai
+        final Either<NetworkException, List<CourseEntity>> result =
+            await _academyUsecase.getAllCourses(
+          subjectId: subjectId,
+          category: category,
+        );
+
+        result.fold(
+          (failure) => emit(CourseStateFailure(message: failure.message)),
+          (courses) {
+            updatedCourses = _updateCourseStatus(courses, savePdfFileResult);
+            listCourseEntity.addAll(updatedCourses);
+            emit(CourseStateSuccess(listCourseEntity: listCourseEntity));
+          },
+        );
+      } else {
+        // Mise à jour des statuts des cours déjà chargés avec la base de données locale
+        updatedCourses =
+            _updateCourseStatus(listCourseEntity, savePdfFileResult);
+        listCourseEntity
+          ..clear()
+          ..addAll(updatedCourses);
+        emit(CourseStateSuccess(listCourseEntity: listCourseEntity));
+      }
     } catch (e) {
       emit(CourseStateFailure(message: e.toString()));
     }
+  }
+
+  /// **Méthode privée pour mettre à jour le statut des cours à partir des fichiers enregistrés en local**
+  List<CourseEntity> _updateCourseStatus(
+    List<CourseEntity> courses,
+    Either<DatabaseException, List<PdfFileEntity>> savePdfFileResult,
+  ) {
+    return courses.map((course) {
+      Status status = Status.notDownloaded;
+
+      savePdfFileResult.fold(
+        (error) =>
+            null, // Si la base de données échoue, on garde le statut par défaut
+        (savedFiles) {
+          final matchingFile = savedFiles.firstWhere(
+            (file) => file.name == course.name,
+            orElse: () => PdfFileEntity(name: '', filePath: '', category: ''),
+          );
+
+          if (matchingFile.name!.isNotEmpty) {
+            log(matchingFile.isOpened.toString());
+            status =
+                matchingFile.isOpened ? Status.isOpened : Status.downloaded;
+          }
+        },
+      );
+
+      return CourseEntity(
+        id: course.id,
+        name: course.name,
+        pdfUrl: course.pdfUrl,
+        courseId: course.courseId,
+        status: status,
+      );
+    }).toList();
   }
 
   Future<void> addSpecialty({required int majorSchoolId}) async {
@@ -133,5 +205,4 @@ class AcademyCubit extends Cubit<AcademyState> {
       emit(SearchStateFailure(message: e.toString()));
     }
   }
-
 }

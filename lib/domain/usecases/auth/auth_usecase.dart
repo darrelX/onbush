@@ -15,7 +15,7 @@ class AuthUseCase {
   }
 
   /// login user with the given device id
-  Future<Either<NetworkException, UserEntity?>> login(
+  Future<Either<NetworkException, dynamic>> login(
       {required String device, required String email}) async {
     return _authRepository.login(device: device, email: email);
   }
@@ -56,5 +56,31 @@ class AuthUseCase {
   Future<Either<NetworkException, List<MenteeEntity>>> getAllMentees(
       {required String device, required String email}) async {
     return _authRepository.getAllMentees(device: device, email: email);
+  }
+
+  Future<Either<NetworkException, void>> editProfil(
+      {required String device,
+      required String studentId,
+      required String name,
+      required String gender,
+      required String avatar,
+      required String phone,
+      required String level,
+      required String language,
+      required String email,
+      required String birthday,
+      required String role}) async {
+    return _authRepository.editProfil(
+        device: device,
+        studentId: studentId,
+        name: name,
+        gender: gender,
+        avatar: avatar,
+        phone: phone,
+        level: level,
+        language: language,
+        email: email,
+        birthday: birthday,
+        role: role);
   }
 }

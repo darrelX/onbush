@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:onbush/core/exceptions/network/network_exception.dart';
 
 class Utils {
   static String extractErrorMessage(
@@ -30,13 +31,14 @@ class Utils {
   ) {
     try {
       String? code;
+      print(error.runtimeType);
 
       // Vérifie si l'erreur est une exception Dio
       if (error is DioException) {
         if (error.type == DioExceptionType.connectionTimeout ||
             error.type == DioExceptionType.receiveTimeout ||
             error.type == DioExceptionType.sendTimeout) {
-          return 'La requête a expiré. Veuillez vérifier votre connexion ou réessayer plus tard.';
+          return error.message!;
         }
 
         Response? response = error.response;
@@ -47,6 +49,9 @@ class Utils {
         }
       } else if (error is Map<String, dynamic> && error.containsKey('data')) {
         code = error['data'].toString(); // Si erreur est un Map directement
+      } else if (error is NetworkException) {
+        code = error.message;
+        print("code $code");
       }
 
       // Associe le code d'erreur à un message

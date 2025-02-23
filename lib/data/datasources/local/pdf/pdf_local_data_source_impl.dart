@@ -46,11 +46,50 @@ class PdfLocalDataSourceImpl implements PdfLocalDataSource {
         files.add(newPdfFile);
         List<String> jsonList =
             files.map((pdf) => jsonEncode(pdf.toJson())).toList();
+
         await _localStorage.setStringList(
             _keyPdfFiles, List<String>.from(jsonList));
       }
     } catch (e) {
       print("Erreur lors de la sauvegarde du fichier PDF : ${e.toString()}");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> updatePdfFile(PdfFileModel updatedPdfFile) async {
+    try {
+      List<PdfFileModel> files = await getAllPdfFile();
+
+      // Trouver le fichier à mettre à jour
+      int fileIndex =
+          files.indexWhere((f) => f.filePath == updatedPdfFile.filePath);
+
+      if (fileIndex != -1) {
+        PdfFileModel existingFile = files[fileIndex];
+        // Utiliser copyWith pour créer un nouveau modèle avec les valeurs mises à jour
+        PdfFileModel updatedFile = existingFile.copyWith(
+            category: updatedPdfFile.category,
+            name: updatedPdfFile.name,
+            date: updatedPdfFile.date,
+            isOpened: updatedPdfFile.isOpened,
+            id: updatedPdfFile.id);
+
+        // Remplacer l'ancien fichier par le nouveau dans la liste
+        files[files.indexOf(existingFile)] = updatedFile;
+
+        // Reconvertir la liste des fichiers en JSON
+        List<String> jsonList =
+            files.map((pdf) => jsonEncode(pdf.toJson())).toList();
+
+        // Réenregistrer la liste des fichiers mis à jour
+        await _localStorage.setStringList(
+            _keyPdfFiles, List<String>.from(jsonList));
+      } else {
+        print("Fichier PDF non trouvé pour la mise à jour.");
+      }
+    } catch (e) {
+      print("Erreur lors de la mise à jour du fichier PDF : ${e.toString()}");
       rethrow;
     }
   }
@@ -125,12 +164,23 @@ class PdfLocalDataSourceImpl implements PdfLocalDataSource {
   }
 
   @override
-  Future<PdfFileModel> getPdfFileByPath(String pdfPath) async {
+  Future<PdfFileModel> getPdfFileByPath(String pdfPath,
+      {bool isOpened = false}) async {
     try {
+      // Récupère tous les fichiers PDF
       List<PdfFileModel> files = await getAllPdfFile();
+
+      // Recherche le fichier PDF correspondant au chemin spécifié
       PdfFileModel pdfFile = files.firstWhere((pdf) => pdf.filePath == pdfPath);
+
+      // Si isOpened est true, on définit l'état de pdfFile.isOpened
+      if (isOpened) {
+        await updatePdfFile(pdfFile.copyWith(isOpened: true));
+      }
+
       return pdfFile;
     } catch (e) {
+      // Gestion des erreurs, on relance l'exception si une erreur survient
       rethrow;
     }
   }

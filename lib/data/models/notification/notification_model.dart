@@ -9,7 +9,7 @@ part 'notification_model.g.dart';
 class NotificationModel extends Equatable
     with EntityConvertible<NotificationModel, NotificationEntity> {
   final String? title;
-  final String? date;
+  final DateTime? date;
   final String? description;
   final bool? isRead;
 

@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gap/gap.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
+import 'package:onbush/core/constants/colors/app_colors.dart';
 import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/core/database/local_storage.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/shared/widget/app_dialog.dart';
-import 'package:onbush/core/constants/colors/app_colors.dart';
+import 'package:onbush/core/shared/widget/base_indicator/app_base_indicator.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
-import 'package:onbush/presentation/views/dashboard/profil/cubit/mentee_cubit.dart';
+import 'package:onbush/presentation/blocs/auth/auth/auth_cubit.dart';
 import 'package:onbush/presentation/views/dashboard/profil/widgets/empty_referral_widget.dart';
 import 'package:onbush/presentation/views/dashboard/profil/widgets/referral_overview_card_widget.dart';
 import 'package:onbush/presentation/views/dashboard/profil/widgets/sponsor_child_widget.dart';
@@ -29,195 +29,190 @@ class AmbassadorSpaceScreen extends StatefulWidget {
 }
 
 class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
-  final MenteeCubit _cubit = MenteeCubit();
   int _numberOfMentees = 0;
   double _total = 0;
 
   @override
   void initState() {
     super.initState();
-    _cubit.getListMentee(
-        email: getIt.get<ApplicationCubit>().userEntity!.email!,
-        appareil: getIt.get<LocalStorage>().getString("device")!);
+    getIt<AuthCubit>()
+      .getListMentee(
+          email: getIt.get<ApplicationCubit>().userEntity!.email!,
+          device: getIt.get<LocalStorage>().getString("device")!);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<MenteeCubit, MenteeState>(
+    return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
-        print(state);
-        if (state is MenteeSuccess) {
-          if (state.listMentees.isNotEmpty) {
-            setState(() {
-              _total = state.listMentees
-                  .map((element) => element.amount!)
-                  .toList()
-                  .reduce((value, element) => value + element);
-              _numberOfMentees = state.listMentees.length;
-            });
-          }
+        if (state is MenteeSuccess && state.listMentees.isNotEmpty) {
+          setState(() {
+            _total = state.listMentees
+                .map((e) => e.amount ?? 0)
+                .reduce((value, element) => value + element);
+            _numberOfMentees = state.listMentees.length;
+          });
         }
       },
-      bloc: _cubit,
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.quaternaire,
-          body: Container(
-              width: context.width,
-              padding: EdgeInsets.symmetric(horizontal: 15.w),
-              child: Column(
-                children: [
-                  Gap(15.h),
-                  Row(
-                    children: [
-                      Image.asset(
-                        getIt.get<LocalStorage>().getString('avatar')!,
-                        height: 60.h,
-                      ),
-                      const Spacer(),
-                      ReferralOverviewCardWidget(
-                        amount: _total,
-                        numberOfMentees: _numberOfMentees,
-                      ),
-                    ],
-                  ),
-                  Gap(20.h),
-                  AppButton(
-                    text: "Faire un retrait",
-                    textColor: _numberOfMentees > 0
-                        ? const Color(0xFF07BD56)
-                        : AppColors.textGrey,
-                    width: context.width,
-                    // bgColor: Color(0xFFECEEF0),
-                    bgColor: _numberOfMentees > 0
-                        ? const Color(0xFF9EFFC8)
-                        : const Color(0xFFECEEF0),
-                    onPressed: () => _numberOfMentees > 0
-                        ? AppDialog.showDialog(
-                            height: 190.h,
-                            width: 360.w,
-                            child: const WithdrawalNoticeWidget(),
-                            context: context)
-                        : null,
-                    // textColor: ,
-                  ),
-                  Gap(10.h),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.r),
-                      color: AppColors.white,
-                    ),
-                    child: ListTile(
-                      onTap: () {
-                        AppDialog.showDialog(
-                            context: context,
-                            width: context.width - 30.w,
-                            height: 380.h,
-                            child: SponsorPopupWidget(
-                                sponsorCode: getIt
-                                    .get<ApplicationCubit>()
-                                    .userEntity!
-                                    .sponsorCode!));
-                      },
-                      leading: SvgPicture.asset(
-                        AppImage.copy,
-                        width: 30,
-                        height: 30,
-                      ),
-                      title: Text(
-                        'Partager mon code Parrain',
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16,
-                        color: Color(0xffA7A7AB),
-                      ),
-                    ),
-                  ),
-                  Gap(40.h),
-                  Row(
-                    children: [
-                      const Text(
-                        "filleul(s)",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const Spacer(),
-                      Text(
-                        "$_numberOfMentees",
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
-                  Gap(40.h),
-                  Expanded(
-                    child: Builder(builder: (context) {
-                      if (state is MenteePending) {
-                        return Shimmer.fromColors(
-                          baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.grey[100]!,
-                          child: Column(children: [
-                            Expanded(
-                              child: ListView.separated(
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      width: context.width,
-                                      height: 60.h,
-                                      color: Colors.white,
-                                    );
-                                  },
-                                  separatorBuilder: (context, index) =>
-                                      Gap(10.h),
-                                  itemCount: 10),
-                            )
-                          ]),
-                        );
-                      }
-                      if (state is MenteeFailure) {
-                        return AppButton(
-                            child: const Icon(Icons.refresh),
-                            onPressed: () => _cubit.getListMentee(
-                                email: getIt
-                                    .get<ApplicationCubit>()
-                                    .userEntity!
-                                    .email!,
-                                appareil: getIt
-                                    .get<LocalStorage>()
-                                    .getString("device")!));
-                      }
-                      if (state is MenteeSuccess) {
-                        if (state.listMentees.isEmpty) {
-                          return const EmptyReferralWidget();
-                        }
-                        return ListView.separated(
-                          separatorBuilder: (context, index) => Gap(20.h),
-                          itemBuilder: (context, index) {
-                            return const SponsoredChildWidget(
-                              name: "Darrel Tcho",
-                              date: "4h",
-                            );
-                          },
-                          itemCount: state.listMentees.length,
-                        );
-                      }
-                      return Column(
-                        children: [
-                          Gap(30.h),
-                          const EmptyReferralWidget(),
-                          // const SponsoredChildWidget(
-                          //   name: "Darrel Tcho",
-                          //   date: "4h",
-                          // )
-                        ],
-                      );
-                    }),
-                  ),
-                ],
-              )),
+          body: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15.w),
+            child: Column(
+              children: [
+                SizedBox(height: 15.h),
+                _buildHeader(),
+                SizedBox(height: 20.h),
+                _buildWithdrawButton(),
+                SizedBox(height: 10.h),
+                _buildReferralCodeCard(),
+                SizedBox(height: 25.h),
+                _buildMenteesCount(),
+                SizedBox(height: 5.h),
+                Expanded(child: _buildMenteesList(state)),
+              ],
+            ),
+          ),
         );
       },
+    );
+  }
+
+  /// Header avec l'avatar et les statistiques des filleuls
+  Widget _buildHeader() {
+    final localStorage = getIt<LocalStorage>();
+    return Row(
+      children: [
+        Image.asset(
+          localStorage.getString('avatar') ?? '',
+          height: 60.h,
+        ),
+        const Spacer(),
+        ReferralOverviewCardWidget(
+            amount: _total, numberOfMentees: _numberOfMentees),
+      ],
+    );
+  }
+
+  /// Bouton de retrait
+  Widget _buildWithdrawButton() {
+    bool canWithdraw = _numberOfMentees > 0;
+    return AppButton(
+      text: "Faire un retrait",
+      textColor: canWithdraw ? const Color(0xFF07BD56) : AppColors.textGrey,
+      bgColor: canWithdraw ? const Color(0xFF9EFFC8) : const Color(0xFFECEEF0),
+      width: context.width,
+      onPressed: canWithdraw
+          ? () => AppDialog.showDialog(
+                context: context,
+                height: 190.h,
+                width: 360.w,
+                child: const WithdrawalNoticeWidget(),
+              )
+          : null,
+    );
+  }
+
+  /// Carte pour partager le code de parrainage
+  Widget _buildReferralCodeCard() {
+    final sponsorCode =
+        getIt<ApplicationCubit>().userEntity?.sponsorCode ?? '';
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.r),
+        color: AppColors.white,
+      ),
+      child: ListTile(
+        onTap: () {
+          AppDialog.showDialog(
+            context: context,
+            width: context.width - 30.w,
+            height: 380.h,
+            child: SponsorPopupWidget(sponsorCode: sponsorCode),
+          );
+        },
+        leading: SvgPicture.asset(AppImage.copy, width: 30, height: 30),
+        title: Text(
+          'Partager mon code Parrain',
+          style: context.textTheme.bodyLarge
+              ?.copyWith(fontWeight: FontWeight.w600),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios,
+            size: 16, color: Color(0xffA7A7AB)),
+      ),
+    );
+  }
+
+  /// Indicateur du nombre de filleuls
+  Widget _buildMenteesCount() {
+    return Row(
+      children: [
+        const Text("Filleul(s)", style: TextStyle(fontWeight: FontWeight.bold)),
+        const Spacer(),
+        Text("$_numberOfMentees",
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
+
+  /// Liste des filleuls avec gestion des états
+  Widget _buildMenteesList(AuthState state) {
+    if (state is MenteePending) {
+      return _buildLoadingIndicator();
+    }
+    if (state is MenteeFailure) {
+      return _buildErrorIndicator();
+    }
+    if (state is MenteeSuccess && state.listMentees.isEmpty) {
+      return const EmptyReferralWidget();
+    }
+    if (state is MenteeSuccess) {
+      return _buildMentees(state.listMentees.length);
+    }
+    return const EmptyReferralWidget();
+  }
+
+  /// Affichage de la liste des filleuls
+  Widget _buildMentees(int count) {
+    return ListView.separated(
+      separatorBuilder: (_, __) => SizedBox(height: 20.h),
+      itemCount: count,
+      itemBuilder: (_, index) =>
+          const SponsoredChildWidget(name: "Darrel Tcho", date: "4h"),
+    );
+  }
+
+  /// Indicateur de chargement avec effet `Shimmer`
+  Widget _buildLoadingIndicator() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: ListView.separated(
+        itemCount: 10,
+        separatorBuilder: (_, __) => SizedBox(height: 10.h),
+        itemBuilder: (_, __) => Container(
+          width: context.width,
+          height: 60.h,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  /// Affichage en cas d'erreur
+  Widget _buildErrorIndicator() {
+    return AppBaseIndicator.error400(
+      message: "Problème de connexion, veuillez réessayer",
+      button: AppButton(
+        text: "Recommencer",
+        bgColor: AppColors.primary,
+        width: context.width,
+        onPressed: () => getIt<AuthCubit>().getListMentee(
+              email: getIt<ApplicationCubit>().userEntity?.email ?? '',
+              device: getIt<LocalStorage>().getString("device") ?? '',
+            ),
+      ),
     );
   }
 }

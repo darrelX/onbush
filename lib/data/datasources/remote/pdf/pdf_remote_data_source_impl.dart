@@ -12,29 +12,32 @@ class PdfRemoteDataSourceImpl implements PdfRemoteDataSource {
     final StreamController<double> progressController =
         StreamController<double>();
 
-    try {
-      _dioApiData.download(
-        url,
-        path,
-        onReceiveProgress: (received, total) {
-          if (total > 0) {
-            final progress =
-                double.parse(((received / total) * 100).toStringAsFixed(2));
-            progressController.add(progress);
-          }
-        },
-      ).then((_) {
-        progressController.add(100.0); // Signale la fin du téléchargement
-        progressController.close();
-      }).catchError((e) {
-        progressController.addError("Erreur lors du téléchargement: $e");
-        progressController.close();
-      });
-    } catch (e) {
-      progressController.addError("Erreur inattendue: $e");
-      progressController.close();
-    }
+    _download(url, path, progressController);
 
     return progressController.stream;
+  }
+
+  Future<void> _download(
+      String url, String path, StreamController<double> controller) async {
+    try {
+      await _dioApiData.download(
+        url,
+        path,
+        options: Options(receiveTimeout: const Duration(milliseconds: 50000)),
+        onReceiveProgress: (received, total) {
+          if (total > 0) {
+            final progress = (received / total) * 100;
+            controller.add(progress);
+          }
+        },
+      );
+
+      // Signalement de la fin du téléchargement
+      controller.add(100.0);
+    } catch (e) {
+      controller.addError(e);
+    } finally {
+      controller.close();
+    }
   }
 }

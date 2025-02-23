@@ -15,6 +15,7 @@ class CourseModel extends Equatable
   final String? pdfUrl;
   @JsonKey(name: 'matiere_id')
   final int? courseId;
+  
 
   const CourseModel(
       {required this.id,

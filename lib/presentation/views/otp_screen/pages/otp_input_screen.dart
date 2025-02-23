@@ -7,7 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
-import 'package:onbush/presentation/views/otp_screen/logic/otp_cubit/otp_bloc.dart';
+import 'package:onbush/presentation/blocs/otp/otp_bloc.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/database/local_storage.dart';
@@ -37,7 +37,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
   final TextEditingController _codeController = TextEditingController();
   bool _isExpired = false;
   String? _error;
-  String? _currentText;
+  // String? _currentText;
   late final OtpBloc _bloc = context.read<OtpBloc>();
 
   String _formatSeconds(int totalSeconds) {
@@ -120,33 +120,6 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
               ),
             );
           }
-          // if (state is OtpSendFailure && _isExpired) {
-          //   return Container(
-          //     decoration: const BoxDecoration(
-          //         borderRadius: BorderRadius.vertical(
-          //           top: Radius.circular(30),
-          //         ),
-          //         color: Colors.white),
-          //     child: Center(
-          //       child: Column(
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         children: [
-          //           const Text("Échec du chargement. Veuillez réessayer."),
-          //           const SizedBox(height: 16),
-          //           ElevatedButton(
-          //             onPressed: _reFresh,
-          //             child: Text(
-          //               "Réessayer",
-          //               style: context.textTheme.bodyMedium?.copyWith(
-          //                 color: AppColors.black,
-          //               ),
-          //             ),
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   );
-          // }
 
           return SafeArea(
             child: Form(
@@ -276,7 +249,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                               }),
                         ),
                       ),
-                      Gap(140.h),
+                      Gap(100.h),
                       Image.asset(
                         "assets/images/onbush.png",
                         height: 50.h,

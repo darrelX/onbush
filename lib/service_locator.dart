@@ -39,14 +39,14 @@ import 'package:onbush/domain/usecases/otp/otp_usecase.dart';
 import 'package:onbush/domain/usecases/payment/payment_usecase.dart';
 import 'package:onbush/domain/usecases/pdf/pdf_usecase.dart';
 import 'package:onbush/presentation/blocs/academic/academy/academy_cubit.dart';
-import 'package:onbush/presentation/blocs/pdf/pdf_file_cubit.dart';
-import 'package:onbush/presentation/views/auth/logic/auth_cubit/auth_cubit.dart';
-import 'package:onbush/presentation/views/otp_screen/logic/otp_cubit/otp_bloc.dart';
+import 'package:onbush/presentation/blocs/auth/auth/auth_cubit.dart';
+import 'package:onbush/presentation/blocs/otp/otp_bloc.dart';
+import 'package:onbush/presentation/blocs/payment/payment_cubit.dart';
+import 'package:onbush/presentation/blocs/pdf/pdf_file/pdf_file_cubit.dart';
 import 'package:onbush/presentation/views/dashboard/download/logic/cubit/download_cubit.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:logger/logger.dart';
 import 'package:onbush/core/database/local_storage.dart';
-import 'package:onbush/presentation/views/pricing/logic/cubit/payment_cubit.dart';
 
 import 'core/networking/http_logger_interceptor.dart';
 import 'core/networking/token_interceptor.dart';
@@ -171,17 +171,16 @@ Future<void> setupLocator() async {
     ..registerLazySingleton<PaymentUseCase>(() => PaymentUseCase(getIt()))
 
     //* Bloccs
-    ..registerLazySingleton<AuthCubit>(
-      () => AuthCubit(getIt()),
-    )
     ..registerLazySingleton<ApplicationCubit>(() => ApplicationCubit())
-    ..registerSingleton<OtpBloc>(
-        OtpBloc(otpUseCase: getIt<OtpUseCase>(), repository: getIt()))
+    ..registerLazySingleton<AuthCubit>(
+      () => AuthCubit(getIt<AuthUseCase>(), getIt<AcademyUsecase>()),
+    )
+    ..registerLazySingleton<OtpBloc>(() => OtpBloc(getIt()))
     ..registerSingleton<DownloadCubit>(DownloadCubit())
-    ..registerSingleton<PaymentCubit>(PaymentCubit(getIt()))
-    ..registerLazySingleton<AcademyCubit>(() => AcademyCubit(getIt()))
-    ..registerLazySingleton<PdfFileCubit>(() => PdfFileCubit(getIt()));
-
+    ..registerLazySingleton<PaymentCubit>(() => PaymentCubit(getIt()))
+    ..registerLazySingleton<AcademyCubit>(() => AcademyCubit(getIt(), getIt()))
+    // ..registerLazySingleton<PdfFileManagerCubit>(() => AcademyCubit(getIt(), getIt()))
+    ..registerFactory<PdfFileCubit>(() => PdfFileCubit(getIt<PdfUseCase>()));
 
   // ..registerSingleton<NetworkCubit>(NetworkCubit());
 }

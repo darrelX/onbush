@@ -1,67 +1,87 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 
 class NetworkException extends Equatable implements Exception {
-  late final String message;
-  late final int? statusCode;
-  NetworkException.extractErrorMessage(
-    dynamic error,
-  ) {
-    try {
-      if (error is String) {
-        message =  error;
-      }
+  final String message;
+  final int statusCode;
 
-      if (error is DioException) {
+  const NetworkException({required this.message, required this.statusCode});
+
+  factory NetworkException.errorFrom(dynamic error) {
+    String message = "Une erreur inconnue s'est produite.";
+    int statusCode = 500; // Valeur par défaut
+
+    if (error is DioException) {
+      // Vérifier d'abord le type d'erreur Dio
+
+      // Ensuite, si le serveur a répondu, on met à jour message et statusCode
+      if (error.response != null) {
         Response response = error.response!;
-        final Map<String, dynamic> data = response.data as Map<String, dynamic>;
-        if (data is String) {
-          message = data.toString();
-        }
-        message = data['message'].toString();
-      }
+        final dynamic data = response.data;
 
-      message = error.toString();
-    } catch (e) {
-      message = 'Impossible de traiter l\'erreur';
+        if (data is Map<String, dynamic> && data.containsKey("data")) {
+          message = data["data"].toString();
+        } else if (data is String) {
+          
+          message = data; 
+        } else {
+          message = _handleDioError(error);
+
+          statusCode = _getStatusCodeFromErrorType(error.type);
+        }
+
+        statusCode = response.statusCode ?? statusCode;
+      } else {
+        message = _handleDioError(error);
+
+        statusCode = _getStatusCodeFromErrorType(error.type);
+      }
+    }
+
+    return NetworkException(message: message, statusCode: statusCode);
+  }
+
+  /// Méthode pour récupérer le message d'erreur en fonction du type d'erreur Dio
+  static String _handleDioError(DioException error) {
+    switch (error.type) {
+      case DioExceptionType.connectionTimeout:
+        return "Délai d'attente de la connexion dépassé.";
+      case DioExceptionType.sendTimeout:
+        return "Délai d'envoi dépassé.";
+      case DioExceptionType.receiveTimeout:
+        return "Délai de réception dépassé.";
+      case DioExceptionType.badCertificate:
+        return "Certificat de sécurité invalide.";
+      case DioExceptionType.badResponse:
+        return "Réponse invalide du serveur.";
+      case DioExceptionType.cancel:
+        return "Requête annulée.";
+      case DioExceptionType.connectionError:
+        return "Problème de connexion au réseau.";
+      case DioExceptionType.unknown:
+        return "Une erreur réseau inconnue s'est produite.";
     }
   }
 
-  NetworkException.extractErrorMessageFromMap(
-    dynamic error,
-    Map<String, String> errorDocumentation,
-  ) {
-    try {
-      String? code;
-
-      // Vérifie si l'erreur est une exception Dio
-      if (error is DioException) {
-           statusCode = error.response!.statusCode!;
-        if (error.type == DioExceptionType.connectionTimeout ||
-            error.type == DioExceptionType.receiveTimeout ||
-            error.type == DioExceptionType.sendTimeout) {
-          message = 'La requête a expiré. Veuillez vérifier votre connexion ou réessayer plus tard.';
-        }
-
-        Response? response = error.response;
-        final Map<String, dynamic> data =
-            response!.data as Map<String, dynamic>;
-        if (data.containsKey('data')) {
-          code = data['data'].toString(); // Récupère le code d'erreur
-        }
-      } else if (error is Map<String, dynamic> && error.containsKey('data')) {
-        code = error['data'].toString(); // Si erreur est un Map directement
-      }
-
-      // Associe le code d'erreur à un message
-      if (code != null && errorDocumentation.containsKey(code)) {
-        message =  errorDocumentation[code]!;
-      }
-
-      // Message par défaut si aucun code n'est trouvé
-      message =  'Une erreur inconnue s\'est produite';
-    } catch (e) {
-      message =  'Impossible de traiter l\'erreur';
+  /// Méthode pour récupérer le code HTTP en fonction du type d'erreur
+  static int _getStatusCodeFromErrorType(DioExceptionType type) {
+    switch (type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        return 408;
+      case DioExceptionType.badCertificate:
+        return 495;
+      case DioExceptionType.badResponse:
+        return 500;
+      case DioExceptionType.cancel:
+        return 499;
+      case DioExceptionType.connectionError:
+        return 503;
+      case DioExceptionType.unknown:
+        return 520;
     }
   }
 

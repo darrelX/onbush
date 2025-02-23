@@ -1,20 +1,17 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:onbush/core/utils/utils.dart';
 import 'package:onbush/domain/entities/user/user_entity.dart';
-import 'package:onbush/domain/usecases/auth/auth_usecase.dart';
 import 'package:onbush/domain/usecases/payment/payment_usecase.dart';
-import 'package:onbush/presentation/views/auth/data/models/user_model.dart';
-import 'package:onbush/presentation/views/pricing/logic/repositories/payment_repository.dart';
-import 'package:onbush/core//utils/utils.dart';
 
 part 'payment_state.dart';
 
 class PaymentCubit extends Cubit<PaymentState> {
-  final PaymentRepository _paymentRepository;
+  // PaymentCubit() : super(PaymentInitial());
   final PaymentUseCase _paymentUseCase;
-  PaymentCubit(this._paymentUseCase)
-      : _paymentRepository = PaymentRepository(),
-        super(const PaymentInitial());
+  PaymentCubit(this._paymentUseCase) : super(const PaymentInitial());
 
   Future<void> initPayment({
     required String appareil,
@@ -36,15 +33,15 @@ class PaymentCubit extends Cubit<PaymentState> {
           sponsorCode: sponsorCode,
           discountCode: discountCode));
 
-      result.fold((ifLeft) {
+      result.fold((failure) {
         emit(PaymentFailure(
-            message: Utils.extractErrorMessageFromMap(ifLeft.message,
+            message: Utils.extractErrorMessageFromMap(failure.message,
                 {"0": "imapossible d'initier la transaction"})));
-      }, (ifRight) {
-        if (ifRight == UserEntity) {
-          emit(PaymentSuccess(user: ifRight));
-        } else if (ifRight == String) {
-          emit(PaymentSuccess(transactionId: ifRight));
+      }, (success) {
+        if (success is UserEntity) {
+          emit(PaymentSuccess(user: success));
+        } else if (success is String) {
+          emit(PaymentSuccess(transactionId: success));
         }
       });
       // print("darrel $transactionId");
@@ -55,13 +52,35 @@ class PaymentCubit extends Cubit<PaymentState> {
     }
   }
 
-  Future<void> percent({required int code}) async {
+  Future<void> applyDiscountCode({required String reduceCode}) async {
+    emit(const PercentStateLoading());
+    log("srtange");
+    try {
+      final result =
+          await _paymentUseCase.applyDiscountCode(reduceCode: reduceCode);
+      result.fold((failure) {
+        emit(PercentStateFailure(message: Utils.extractErrorMessage(failure)));
+      }, (success) {
+        print(success);
+        emit(PercentStateSucess(percent: success));
+      });
+    } catch (e) {
+      emit(PercentStateFailure(message: Utils.extractErrorMessage(e)));
+    }
+  }
+
+  Future<void> validateSponsorCode({required String reduceCode}) async {
     emit(const PercentStateLoading());
     try {
-      int total =
-          (5000 * (1 - (await _paymentRepository.percent(code: code))! / 100))
-              .toInt();
-      emit(PercentStateSucess(percent: total));
+      final result =
+          await _paymentUseCase.validateSponsorCode(sponsorCode: reduceCode);
+      result.fold((failure) {
+        emit(PercentStateFailure(message: Utils.extractErrorMessage(failure)));
+      }, (success) {
+        print(success);
+
+        emit(PercentStateSucess(percent: success));
+      });
     } catch (e) {
       emit(PercentStateFailure(message: Utils.extractErrorMessage(e)));
     }
@@ -72,9 +91,10 @@ class PaymentCubit extends Cubit<PaymentState> {
     try {
       final user =
           await _paymentUseCase.verifying(transactionId: transactionId);
-      user.fold((ifLeft) {
+      user.fold((failure) {
+
         emit(VerifyingPaymentFailure(
-          message: Utils.extractErrorMessageFromMap(ifLeft.message, {
+          message: Utils.extractErrorMessageFromMap(failure, {
             "0": "Transaction introuvable",
             "-1": "Transaction echouee",
             "3": "Delai passe",
@@ -83,8 +103,8 @@ class PaymentCubit extends Cubit<PaymentState> {
             "-3": "Infos etudiant introuvable"
           }),
         ));
-      }, (ifRight) {
-        emit(VerifyingPaymentSuccess(user: ifRight!));
+      }, (success) {
+        emit(VerifyingPaymentSuccess(user: success!));
       });
     } catch (e) {
       emit(VerifyingPaymentFailure(

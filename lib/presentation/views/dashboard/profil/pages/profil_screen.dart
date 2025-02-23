@@ -5,10 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/core/constants/images/app_image.dart';
+import 'package:onbush/presentation/blocs/auth/auth/auth_cubit.dart';
 import 'package:onbush/presentation/views/dashboard/profil/widgets/user_profil_widget.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
-import 'package:onbush/core/application/cubit/data_state.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
@@ -25,13 +25,13 @@ class ProfilScreen extends StatefulWidget {
 }
 
 class _ProfilScreenState extends State<ProfilScreen> {
-  late final ApplicationCubit _cubit;
+  late final AuthCubit _authCubit;
   late final WebViewController _controller;
 
   @override
   void initState() {
     super.initState();
-    _cubit = context.read<ApplicationCubit>();
+    _authCubit = context.read<AuthCubit>();
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..addJavaScriptChannel(
@@ -72,7 +72,13 @@ class _ProfilScreenState extends State<ProfilScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ApplicationCubit, ApplicationState>(
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is LogoutSuccess) {
+          print("object");
+          context.router.push(const AuthRoute());
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.quaternaire,
@@ -94,8 +100,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                               .userEntity!
                               .majorSchoolName!,
                           onPressed: () {
-                                               context.router.push(const EditProfilRoute());
-
+                            context.router.push(const EditProfilRoute());
                           },
                           name: getIt.get<ApplicationCubit>().userEntity!.name!,
                           level: getIt
@@ -221,13 +226,11 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     Gap(50.h),
                     AppButton(
                       width: double.infinity,
-                      loading: state.loading!.status == Status.loading,
+                      loading: state is LogoutPending,
                       text: "Deconnexion",
-                      onPressed: () async {
+                      onPressed: () {
                         // getIt.get<LocalStorage>().remove('device');
-                        await context.read<ApplicationCubit>().logout();
-
-                        context.router.popAndPush(const AuthRoute());
+                        _authCubit.logout();
                       },
                       textColor: Colors.redAccent,
                       borderColor: Colors.redAccent,

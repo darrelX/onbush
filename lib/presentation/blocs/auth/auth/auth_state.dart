@@ -112,3 +112,59 @@ final class OTpStateSuccess extends AuthState {
   @override
   List<Object> get props => [type, email];
 }
+
+final class EditSuccess extends AuthState {
+  @override
+  List<Object> get props => [];
+}
+
+final class EditLoading extends AuthState {
+  @override
+  List<Object> get props => [];
+}
+
+final class EditFailure extends AuthState {
+  final String message;
+  const EditFailure({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+final class MenteeFailure extends AuthState {
+  final String message;
+  const MenteeFailure({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+final class MenteeSuccess extends AuthState {
+  final List<MenteeEntity> listMentees;
+  const MenteeSuccess({required this.listMentees});
+
+  @override
+  List<Object> get props => [listMentees];
+}
+
+final class MenteePending extends AuthState {
+  @override
+  List<Object> get props => [];
+}
+
+final class LogoutFailure extends AuthState {
+  final String message;
+  const LogoutFailure({required this.message});
+  @override
+  List<Object> get props => [message];
+}
+
+final class LogoutPending extends AuthState {
+  @override
+  List<Object> get props => [];
+}
+
+final class LogoutSuccess extends AuthState {
+  @override
+  List<Object> get props => [];
+}

@@ -6,16 +6,14 @@ import 'package:onbush/data/models/speciality/speciality_model.dart';
 
 class SpecialityRemoteDataSourceImpl implements SpecialityRemoteDataSource {
   final Dio _dioDataApi;
-  final Dio _dioAccountApi;
   SpecialityRemoteDataSourceImpl(
       {required Dio dioDataApi, required Dio dioAccountApi})
-      : _dioDataApi = dioDataApi,
-        _dioAccountApi = dioAccountApi;
+      : _dioDataApi = dioDataApi;
 
   @override
-    Future<List<SpecialityModel>> getAllSpecialities(int schoolId) async {
+  Future<List<SpecialityModel>> getAllSpecialities(int schoolId) async {
     try {
-      Response response = await _dioAccountApi.get("/filieres");
+      Response response = await _dioDataApi.get("/filieres");
       List<dynamic> data = response.data['data'] as List<dynamic>;
       final a = data
           .map((item) => SpecialityModel.fromJson(item as Map<String, dynamic>))

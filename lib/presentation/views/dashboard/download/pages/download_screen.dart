@@ -6,9 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/core/shared/widget/base_indicator/app_base_indicator.dart';
 import 'package:onbush/domain/entities/pdf_file/pdf_file_entity.dart';
-import 'package:onbush/presentation/blocs/pdf/pdf_file_cubit.dart';
-import 'package:onbush/presentation/views/dashboard/download/logic/cubit/download_cubit.dart';
-import 'package:onbush/presentation/views/dashboard/download/logic/data/pdf_file_model.dart';
+import 'package:onbush/presentation/blocs/pdf/pdf_file/pdf_file_cubit.dart';
 import 'package:onbush/presentation/views/dashboard/download/widgets/pdf_file_widget.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
@@ -95,12 +93,13 @@ class _DownloadScreenState extends State<DownloadScreen> {
             ),
           ),
           Gap(30.h),
-          BlocProvider(
-            create: (context) => _pdfFileCubit..getPdfFile(),
+          BlocProvider.value(
+            value: _pdfFileCubit..getPdfFile(maxResults: -1),
             child: Expanded(
               child: BlocConsumer<PdfFileCubit, PdfFileState>(
                 listener: (context, state) async {},
                 builder: (context, state) {
+                  print(state);
                   if (state is FetchPdfFileFailure) {
                     return AppBaseIndicator.error400(
                       message: "Vous avez un probleme de connexion ressayer",
@@ -117,10 +116,10 @@ class _DownloadScreenState extends State<DownloadScreen> {
                   }
                   if (state is FetchPdfFileSuccess) {
                     _filterListPdfFile =
-                        state.listPdfFileEntity.where((pdfFileModel) {
+                        state.listPdfFileEntity.where((pdfFileEntity) {
                       final matcheCourse = _currentIndex == 0 ||
-                          pdfFileModel.category == _category[_currentIndex];
-                      final matchesSearch = pdfFileModel.name!
+                          pdfFileEntity.category == _category[_currentIndex];
+                      final matchesSearch = pdfFileEntity.name!
                           .toLowerCase()
                           .contains(_searchQuery.toLowerCase());
                       return matcheCourse && matchesSearch;
@@ -129,8 +128,13 @@ class _DownloadScreenState extends State<DownloadScreen> {
                     return Column(
                       children: [
                         state.listPdfFileEntity.isEmpty
-                            ? AppBaseIndicator.unavailableFileDisplay(
-                                message: "Aucun fichier disponible")
+                            ? Expanded(
+                                child: Center(
+                                  child:
+                                      AppBaseIndicator.unavailableFileDisplay(
+                                          message: "Aucun fichier disponible"),
+                                ),
+                              )
                             : Expanded(
                                 child: Padding(
                                   padding:

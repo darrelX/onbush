@@ -8,7 +8,7 @@ abstract class UserRemoteDataSource {
   });
 
   /// login user with the given device id
-  Future<UserModel?> login({required String device, required String email});
+  Future<dynamic> login({required String device, required String email});
 
   /// register user with the given informations
   Future<void> registerUser({
@@ -26,4 +26,17 @@ abstract class UserRemoteDataSource {
   });
 
   Future<void> logout({required String device, required String email});
+
+  Future<void> editProfil(
+      {required String device,
+      required String studentId,
+      required String name,
+      required String gender,
+      required String avatar,
+      required String phone,
+      required String level,
+      required String language,
+      required String email,
+      required String birthday,
+      required String role});
 }

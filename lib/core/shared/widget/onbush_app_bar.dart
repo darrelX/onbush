@@ -2,9 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/core/routing/app_router.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
-
 
 class OnbushAppBar extends StatefulWidget {
   const OnbushAppBar({
@@ -32,7 +32,7 @@ class _OnbushAppBarState extends State<OnbushAppBar> {
           onPressed: () => context.router
               .pushAndPopUntil(const HomeRoute(), predicate: (route) => true),
           child: Image.asset(
-            'assets/images/logo.png',
+            AppImage.logo,
             width: 100.w,
           ),
         ),
@@ -50,14 +50,15 @@ class _OnbushAppBarState extends State<OnbushAppBar> {
         // ),
         const Spacer(),
         AppButton(
-          child: Image.asset("assets/icons/leading-icon.png"),
+          child: Image.asset(AppImage.downloadIcon),
           onPressed: () => context.router.push(const DownloadRoute()),
         ),
         Gap(10.w),
         AppButton(
-          child: Image.asset(
-            "assets/icons/trailing-icon.png",
-          ),
+          child: const Icon(Icons.notifications_none_rounded),
+          // Image.asset(
+          //   AppImage.notificationWhite,
+          // ),
           onPressed: () => context.router.push(const NotificationRoute()),
         ),
       ],

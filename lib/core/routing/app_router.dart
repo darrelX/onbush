@@ -6,7 +6,6 @@ import 'package:onbush/domain/entities/subject/subject_entity.dart';
 import 'package:onbush/presentation/views/dashboard/course/pages/course_screen.dart';
 import 'package:onbush/presentation/views/dashboard/course/pages/course_selected_menu_screen.dart';
 import 'package:onbush/presentation/views/dashboard/course/pages/pdf_view_screen.dart';
-import 'package:onbush/presentation/views/dashboard/download/logic/data/pdf_file_model.dart';
 import 'package:onbush/presentation/views/dashboard/download/pages/download_pdf_view_screen.dart';
 import 'package:onbush/presentation/views/dashboard/profil/pages/edit_avatar_screen.dart';
 import 'package:onbush/presentation/views/dashboard/profil/pages/edit_profil_screen.dart';
@@ -18,8 +17,6 @@ import 'package:onbush/presentation/views/onboarding/pages/onboarding_screen.dar
 import 'package:onbush/presentation/views/dashboard/profil/pages/ambassador_space_screen.dart';
 import 'package:onbush/presentation/views/dashboard/profil/pages/language_screen.dart';
 import 'package:onbush/presentation/views/dashboard/profil/pages/profil_screen.dart';
-import 'package:onbush/core/application/data/models/course_model.dart';
-import 'package:onbush/core/application/data/models/subject_model.dart';
 import '../../presentation/views/splash_screen/app_init_screen.dart';
 import '../../presentation/views/auth/pages/auth_screen.dart';
 import '../application/pages/application_screen.dart';

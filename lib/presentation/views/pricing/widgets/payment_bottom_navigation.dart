@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:onbush/presentation/views/pricing/logic/cubit/payment_cubit.dart';
+import 'package:onbush/presentation/blocs/payment/payment_cubit.dart';
 import 'package:onbush/presentation/views/pricing/pages/price_screen.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
@@ -115,9 +115,8 @@ class PaymentBottomNavigation extends StatelessWidget {
                           loading: state is PercentStateLoading,
                           onPressed: () {
                             if (_discountCodeController.text.isNotEmpty) {
-                              _paymentCubit.percent(
-                                  code:
-                                      int.parse(_discountCodeController.text));
+                              _paymentCubit.applyDiscountCode(
+                                  reduceCode: _discountCodeController.text);
                             } else {
                               _pageController.nextPage(
                                   duration: const Duration(milliseconds: 300),

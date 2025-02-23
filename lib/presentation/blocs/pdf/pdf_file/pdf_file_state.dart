@@ -18,8 +18,16 @@ final class PdfFileLoading extends PdfFileState {
 }
 
 final class SavePdfFileSuccess extends PdfFileState {
+  // final PdfFileEntity pdfFileEntity;
+  const SavePdfFileSuccess();
+
+  @override
+  List<Object> get props => [];
+}
+
+final class ReadPdfFileSuccess extends PdfFileState {
   final PdfFileEntity pdfFileEntity;
-  const SavePdfFileSuccess({required this.pdfFileEntity});
+  const ReadPdfFileSuccess({required this.pdfFileEntity});
 
   @override
   List<Object> get props => [pdfFileEntity];
