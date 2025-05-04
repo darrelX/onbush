@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gap/gap.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
 import 'package:onbush/core/constants/images/app_image.dart';
@@ -35,10 +38,9 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
   @override
   void initState() {
     super.initState();
-    getIt<AuthCubit>()
-      .getListMentee(
-          email: getIt.get<ApplicationCubit>().userEntity!.email!,
-          device: getIt.get<LocalStorage>().getString("device")!);
+    getIt<AuthCubit>().getListMentee(
+        email: getIt.get<ApplicationCubit>().userEntity!.email!,
+        device: getIt.get<LocalStorage>().getString("device")!);
   }
 
   @override
@@ -70,7 +72,9 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
                 SizedBox(height: 25.h),
                 _buildMenteesCount(),
                 SizedBox(height: 5.h),
-                Expanded(child: _buildMenteesList(state)),
+                Gap(10.h),
+                Expanded(child: _buildMenteesList(state))
+                // _buildMenteesList(state)
               ],
             ),
           ),
@@ -116,8 +120,7 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
 
   /// Carte pour partager le code de parrainage
   Widget _buildReferralCodeCard() {
-    final sponsorCode =
-        getIt<ApplicationCubit>().userEntity?.sponsorCode ?? '';
+    final sponsorCode = getIt<ApplicationCubit>().userEntity?.sponsorCode ?? '';
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.r),
@@ -164,10 +167,12 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
     if (state is MenteeFailure) {
       return _buildErrorIndicator();
     }
-    if (state is MenteeSuccess && state.listMentees.isEmpty) {
-      return const EmptyReferralWidget();
-    }
     if (state is MenteeSuccess) {
+      if (state.listMentees.isEmpty) {
+        log("MenteeSuccess 2");
+
+        return const EmptyReferralWidget();
+      }
       return _buildMentees(state.listMentees.length);
     }
     return const EmptyReferralWidget();
@@ -203,15 +208,17 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
   /// Affichage en cas d'erreur
   Widget _buildErrorIndicator() {
     return AppBaseIndicator.error400(
-      message: "Problème de connexion, veuillez réessayer",
+      message: "Aucun filleul pour le moment",
+      size: 170.r,
       button: AppButton(
         text: "Recommencer",
+        height: 50.h,
         bgColor: AppColors.primary,
-        width: context.width,
+        width: context.width - 90.w,
         onPressed: () => getIt<AuthCubit>().getListMentee(
-              email: getIt<ApplicationCubit>().userEntity?.email ?? '',
-              device: getIt<LocalStorage>().getString("device") ?? '',
-            ),
+          email: getIt<ApplicationCubit>().userEntity?.email ?? '',
+          device: getIt<LocalStorage>().getString("device") ?? '',
+        ),
       ),
     );
   }

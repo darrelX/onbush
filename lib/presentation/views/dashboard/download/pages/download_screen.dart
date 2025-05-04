@@ -102,7 +102,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
                   print(state);
                   if (state is FetchPdfFileFailure) {
                     return AppBaseIndicator.error400(
-                      message: "Vous avez un probleme de connexion ressayer",
+                      message: "Aucun fichier disponible",
                       button: AppButton(
                         text: "Recommencer",
                         bgColor: AppColors.primary,
@@ -132,7 +132,16 @@ class _DownloadScreenState extends State<DownloadScreen> {
                                 child: Center(
                                   child:
                                       AppBaseIndicator.unavailableFileDisplay(
-                                          message: "Aucun fichier disponible"),
+                                    message:
+                                        "Vous avez un probleme de connexion ressayer",
+                                    button: AppButton(
+                                      text: "Recommencer",
+                                      bgColor: AppColors.primary,
+                                      width: context.width,
+                                      onPressed: () =>
+                                          _pdfFileCubit..getPdfFile(),
+                                    ),
+                                  ),
                                 ),
                               )
                             : Expanded(

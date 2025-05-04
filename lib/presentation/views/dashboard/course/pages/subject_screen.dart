@@ -63,48 +63,48 @@ class _SubjectScreenState extends State<SubjectScreen> {
       value: _academyCubit,
       child: Scaffold(
         backgroundColor: AppColors.quaternaire,
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Gap(20.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.w),
-              child: Text(
-                "Mes cours",
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Gap(20.h),
+              Text(
+                "Mes matieres",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
               ),
-            ),
-            Gap(20.h),
-            Expanded(
-              child: BlocBuilder<AcademyCubit, AcademyState>(
-                builder: (context, state) {
-                  if (state is SubjectStateFailure) {
-                    return _buildErrorState();
-                  }
+              Gap(20.h),
+              Expanded(
+                child: BlocBuilder<AcademyCubit, AcademyState>(
+                  builder: (context, state) {
+                    if (state is SubjectStateFailure) {
+                      return _buildErrorState();
+                    }
 
-                  if (state is SubjectStateLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+                    if (state is SubjectStateLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                  if (_academyCubit.listSubjectEntity.isNotEmpty) {
-                    _filteredSubjects = _getFilteredSubjects();
+                    if (_academyCubit.listSubjectEntity.isNotEmpty) {
+                      _filteredSubjects = _getFilteredSubjects();
 
-                    return Column(
-                      children: [
-                        _buildSemesterTabs(),
-                        Gap(20.h),
-                        _buildSearchInput(),
-                        Gap(20.h),
-                        _buildSubjectList(),
-                      ],
-                    );
-                  }
+                      return Column(
+                        children: [
+                          _buildSemesterTabs(),
+                          Gap(20.h),
+                          _buildSearchInput(),
+                          Gap(20.h),
+                          _buildSubjectList(),
+                        ],
+                      );
+                    }
 
-                  return const SizedBox.shrink();
-                },
+                    return const SizedBox.shrink();
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -141,31 +141,24 @@ class _SubjectScreenState extends State<SubjectScreen> {
   }
 
   Widget _buildSearchInput() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15.w),
-      child: AppInput(
-        hint: "Chercher un cours",
-        hintStyle: const TextStyle(color: AppColors.textGrey),
-        width: context.width,
-        colorBorder: AppColors.transparent,
-        contentPadding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.w),
-        onChange: _onSearchChanged,
-        prefix: Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.h),
-          child: SvgPicture.asset(AppImage.searchIcon),
-        ),
+    return AppInput(
+      hint: "Chercher un cours",
+      hintStyle: const TextStyle(color: AppColors.textGrey),
+      width: context.width,
+      colorBorder: AppColors.transparent,
+      contentPadding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),
+      onChange: _onSearchChanged,
+      prefix: Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.h),
+        child: SvgPicture.asset(AppImage.searchIcon),
       ),
     );
   }
 
   Widget _buildSubjectList() {
     return Expanded(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15.w),
-        child: SubjectTileWidget(
-          listSubjectEntity: _filteredSubjects,
-
-        ),
+      child: SubjectTileWidget(
+        listSubjectEntity: _filteredSubjects,
       ),
     );
   }

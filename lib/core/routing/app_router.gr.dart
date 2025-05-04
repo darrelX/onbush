@@ -110,6 +110,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const LanguageScreen(),
       );
     },
+    LoaderRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const LoaderScreen(),
+      );
+    },
     NotificationRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -158,6 +164,12 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const ProfilScreen(),
+      );
+    },
+    ReminderRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ReminderScreen(),
       );
     },
     SubjectRoute.name: (routeData) {
@@ -231,7 +243,7 @@ class CourseRoute extends PageRouteInfo<CourseRouteArgs> {
   CourseRoute({
     Key? key,
     required SubjectEntity subjectEntity,
-    required String category,
+    required CategoryEnum category,
     List<PageRouteInfo>? children,
   }) : super(
           CourseRoute.name,
@@ -259,7 +271,7 @@ class CourseRouteArgs {
 
   final SubjectEntity subjectEntity;
 
-  final String category;
+  final CategoryEnum category;
 
   @override
   String toString() {
@@ -453,6 +465,20 @@ class LanguageRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [LoaderScreen]
+class LoaderRoute extends PageRouteInfo<void> {
+  const LoaderRoute({List<PageRouteInfo>? children})
+      : super(
+          LoaderRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'LoaderRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [NotificationScreen]
 class NotificationRoute extends PageRouteInfo<void> {
   const NotificationRoute({List<PageRouteInfo>? children})
@@ -613,6 +639,20 @@ class ProfilRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'ProfilRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ReminderScreen]
+class ReminderRoute extends PageRouteInfo<void> {
+  const ReminderRoute({List<PageRouteInfo>? children})
+      : super(
+          ReminderRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ReminderRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

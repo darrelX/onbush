@@ -21,7 +21,7 @@ class CarouselWidget extends StatefulWidget {
 class _CarouselWidgetState extends State<CarouselWidget> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       height: 800.h,
       width: context.width,
       child: PageView(
@@ -35,30 +35,16 @@ class _CarouselWidgetState extends State<CarouselWidget> {
                   SizedBox(
                     child: Image.asset(
                       elt["image"],
-                      height: 320.h,
+                      // height: 320.h,
                       fit: BoxFit.fitWidth,
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      height: 50.h,
-                      width: context.width,
-                      decoration: const BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(20)),
-                      ),
                     ),
                   ),
                 ],
               ),
-              // Gap(10.h),
+              Gap(20.h),
               Text(
                 elt["text1"],
-                style: context.textTheme.displaySmall!
+                style: context.textTheme.displayMedium!
                     .copyWith(color: AppColors.secondary),
                 textAlign: TextAlign.center,
               ),

@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/presentation/views/onboarding/widgets/carousel_widget.dart';
 import 'package:onbush/core/routing/app_router.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
@@ -54,6 +55,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     "text2": "Parraine des amis et accumule\ndes recompenses",
                   },
                 ]),
+            Positioned(
+              top: 310.h,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 50.h,
+                width: context.width,
+                decoration: const BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+              ),
+            ),
             Column(
               children: [
                 Gap(640.h),
@@ -91,7 +105,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         setState(() {
                           _currentIndex == 0
                               ? context.router
-                                  .popAndPushAll([const AuthRoute()])
+                                  .popAndPushAll([const ReminderRoute()])
                               : _pageController.previousPage(
                                   duration: const Duration(milliseconds: 200),
                                   curve: Curves.linear);
@@ -108,7 +122,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             ? _pageController.nextPage(
                                 duration: const Duration(milliseconds: 200),
                                 curve: Curves.linear)
-                            : context.router.replaceAll([const AuthRoute()]);
+                            : context.router
+                                .replaceAll([const ReminderRoute()]);
                         // : context.router.replaceAll([const ProfilRoute()]);
                       },
                     ),

@@ -78,4 +78,3 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
     );
   }
 }
-

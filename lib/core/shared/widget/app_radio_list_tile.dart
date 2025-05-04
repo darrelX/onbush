@@ -3,43 +3,48 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
 
-class AppRadioListTile extends StatefulWidget {
-  final String? groupeValue;
+class AppRadioListTile<T> extends StatefulWidget {
+  final T? groupeValue;
   final Widget? suffixIcon;
-  final String value;
+  final T value;
   final Color? selectedColor;
   final Color? activeColor;
-  final void Function(String? value) onChanged;
+  final void Function(T? value)? onChanged;
   final Color? unSelectedColor;
   final String title;
-  const AppRadioListTile(
-      {super.key,
-      required this.groupeValue,
-      this.suffixIcon,
-      this.selectedColor,
-      this.unSelectedColor,
-      required this.onChanged,
-      required this.value,
-      this.activeColor = Colors.blue,
-      required this.title});
+
+  const AppRadioListTile({
+    super.key,
+    required this.groupeValue,
+    this.suffixIcon,
+    this.selectedColor,
+    this.unSelectedColor,
+    required this.onChanged,
+    required this.value,
+    this.activeColor = Colors.blue,
+    required this.title,
+  });
 
   @override
-  State<AppRadioListTile> createState() => _AppRadioListTileState();
+  State<AppRadioListTile<T>> createState() => _AppRadioListTileState<T>();
 }
 
-class _AppRadioListTileState extends State<AppRadioListTile> {
+class _AppRadioListTileState<T> extends State<AppRadioListTile<T>> {
   @override
   Widget build(BuildContext context) {
+    final isSelected = widget.groupeValue == widget.value;
+
     return Container(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.r),
-          border: widget.groupeValue != widget.value
-              ? Border.all(
-                  color: widget.unSelectedColor ?? Colors.black, width: 1.3.r)
-              : Border.all(
-                  color: widget.selectedColor ?? AppColors.primary,
-                  width: 1.3.r)),
-      child: RadioListTile<String>(
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(
+          color: isSelected
+              ? widget.selectedColor ?? AppColors.primary
+              : widget.unSelectedColor ?? Colors.black,
+          width: 1.3.r,
+        ),
+      ),
+      child: RadioListTile<T>(
         value: widget.value,
         groupValue: widget.groupeValue,
         onChanged: widget.onChanged,
@@ -51,12 +56,12 @@ class _AppRadioListTileState extends State<AppRadioListTile> {
               widget.title,
               style: context.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: widget.groupeValue != widget.value
-                    ? widget.unSelectedColor ?? AppColors.black
-                    : widget.selectedColor ?? AppColors.primary,
+                color: isSelected
+                    ? widget.selectedColor ?? AppColors.primary
+                    : widget.unSelectedColor ?? AppColors.black,
               ),
             ),
-            widget.suffixIcon ?? const SizedBox()
+            widget.suffixIcon ?? const SizedBox(),
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:onbush/domain/entities/course/course_entity.dart';
 import 'package:onbush/domain/entities/pdf_file/pdf_file_entity.dart';
 import 'package:onbush/domain/entities/subject/subject_entity.dart';
+import 'package:onbush/presentation/views/dashboard/course/enums/category.dart';
 import 'package:onbush/presentation/views/dashboard/course/pages/course_screen.dart';
 import 'package:onbush/presentation/views/dashboard/course/pages/course_selected_menu_screen.dart';
 import 'package:onbush/presentation/views/dashboard/course/pages/pdf_view_screen.dart';
@@ -17,6 +18,8 @@ import 'package:onbush/presentation/views/onboarding/pages/onboarding_screen.dar
 import 'package:onbush/presentation/views/dashboard/profil/pages/ambassador_space_screen.dart';
 import 'package:onbush/presentation/views/dashboard/profil/pages/language_screen.dart';
 import 'package:onbush/presentation/views/dashboard/profil/pages/profil_screen.dart';
+import 'package:onbush/presentation/views/reminder/pages/loader_screen.dart';
+import 'package:onbush/presentation/views/reminder/pages/reminder_screen.dart';
 import '../../presentation/views/splash_screen/app_init_screen.dart';
 import '../../presentation/views/auth/pages/auth_screen.dart';
 import '../application/pages/application_screen.dart';
@@ -72,6 +75,8 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: AuthRoute.page),
         AutoRoute(page: OTPInputRoute.page),
         AutoRoute(page: DownloadRoute.page),
+        AutoRoute(page: ReminderRoute.page),
+        AutoRoute(page: LoaderRoute.page),
 
         // AutoRoute(page: ForgetPasswordRoute.page),
         // AutoRoute(page: NewPasswordRoute.page),

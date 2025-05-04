@@ -5,21 +5,24 @@ import 'package:gap/gap.dart';
 import 'package:onbush/core/constants/images/app_image.dart';
 
 class AppBaseIndicator {
-  static Widget error400({
-    required String message,
-    required Widget button,
-  }) {
+  static Widget error400(
+      {required String message, required Widget button, double? size}) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SvgPicture.asset(AppImage.error400),
+        SvgPicture.asset(
+          AppImage.error400,
+          width: size,
+          height: size,
+        ),
         Gap(30.h),
         Text(
           message,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 22.r,
+            fontSize: 18.r,
           ),
           textAlign: TextAlign.center,
         ),
@@ -31,12 +34,14 @@ class AppBaseIndicator {
 
   static Widget unavailableFileDisplay({
     required String message,
+    double? size,
+    required Widget button
   }) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SvgPicture.asset(AppImage.netwoekProblem),
+        SvgPicture.asset(AppImage.netwoekProblem, width: size, height: size),
         Gap(30.h),
         Center(
           child: Text(
@@ -49,6 +54,7 @@ class AppBaseIndicator {
           ),
         ),
         Gap(70.h),
+        button
       ],
     );
   }

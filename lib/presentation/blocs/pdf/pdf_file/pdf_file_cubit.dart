@@ -95,7 +95,6 @@ class PdfFileCubit extends Cubit<PdfFileState> {
       // Vérifier si le PDF existe déjà
       final existingFile =
           await _pdfUseCase.getPdfFileByPath(path, isOpened: true);
-      print("object");
       existingFile.fold((failure) {
         emit(PdfFileFailed(message: failure.toString()));
       }, (pdfFileEntity) {

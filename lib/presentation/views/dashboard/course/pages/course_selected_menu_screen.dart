@@ -8,6 +8,9 @@ import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
 import 'package:onbush/domain/entities/subject/subject_entity.dart';
+import 'package:onbush/presentation/views/dashboard/course/enums/category.dart';
+
+enum Category { cours, td, examen, other }
 
 @RoutePage()
 class CourseSelectionMenuScreen extends StatefulWidget {
@@ -36,83 +39,79 @@ class _CourseSelectionMenuScreenState extends State<CourseSelectionMenuScreen> {
         child: Column(
           children: [
             Gap(30.h),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(9.r),
-                color: AppColors.white,
-              ),
-              child: ListTile(
-                onTap: () {
-                  context.router.push(CourseRoute(
-                      subjectEntity: widget.subjectEntity, category: "cours"));
-                },
-                leading: SvgPicture.asset(
-                  AppImage.courseInactive,
-                  // color: AppColors.primary,
-                ),
-                title: Text(
-                  'Resumes de cours',
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                trailing: const Icon(Icons.arrow_forward_ios,
-                    size: 16, color: AppColors.sponsorButton),
-              ),
+            _buildCourseItem(
+              title: 'Resumes de cours',
+              iconPath: AppImage.courseInactive,
+              category: CategoryEnum.cours,
+              onTap: () {
+                context.router.push(CourseRoute(
+                  subjectEntity: widget.subjectEntity,
+                  category: CategoryEnum.cours,
+                ));
+              },
             ),
             Gap(20.h),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(9.r),
-                color: AppColors.white,
-              ),
-              child: ListTile(
-                onTap: () {
-                  context.router.push(CourseRoute(
-                      subjectEntity: widget.subjectEntity,
-                      category: "travauxdiriges"));
-                },
-                leading: SvgPicture.asset(
-                  AppImage.pencil
-                ),
-                title: Text(
-                  "Sujets d'examens",
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                trailing: const Icon(Icons.arrow_forward_ios,
-                    size: 16, color: AppColors.sponsorButton),
-              ),
+            _buildCourseItem(
+              title: 'Epreuves',
+              iconPath: AppImage.pencil,
+              category: CategoryEnum.assessments,
+              onTap: () {
+                context.router.push(CourseRoute(
+                    subjectEntity: widget.subjectEntity,
+                    category: CategoryEnum.assessments));
+              },
             ),
             Gap(20.h),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(9.r),
-                color: AppColors.white,
-              ),
-              child: ListTile(
-                onTap: () {
-                  context.router.push(CourseRoute(
-                      subjectEntity: widget.subjectEntity,
-                      category: "controlcontinus"));
-                },
-                leading: SvgPicture.asset(
-                  AppImage.courseMark,
-                  // color: AppColors.primary,
-                ),
-                title: Text(
-                  ' Fiches de TD',
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                trailing: const Icon(Icons.arrow_forward_ios,
-                    size: 16, color: AppColors.sponsorButton),
-              ),
+            _buildCourseItem(
+              title: 'Fiches de TD',
+              iconPath: AppImage.courseMark,
+              category: CategoryEnum.td,
+              onTap: () {
+                context.router.push(CourseRoute(
+                    subjectEntity: widget.subjectEntity,
+                    category: CategoryEnum.td));
+              },
+            ),
+            Gap(20.h),
+            _buildCourseItem(
+              title: 'corriges',
+              iconPath: AppImage.courseMark,
+              category: CategoryEnum.solutions,
+              onTap: () {
+                context.router.push(CourseRoute(
+                    subjectEntity: widget.subjectEntity,
+                    category: CategoryEnum.solutions));
+              },
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildCourseItem({
+    required String title,
+    required String iconPath,
+    required CategoryEnum category,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(9.r),
+        color: AppColors.white,
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 5.w),
+        onTap: onTap,
+        leading: SvgPicture.asset(iconPath),
+        title: Text(
+          title,
+          style: context.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios,
+            size: 16, color: AppColors.sponsorButton),
       ),
     );
   }
