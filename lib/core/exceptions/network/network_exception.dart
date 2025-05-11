@@ -12,6 +12,7 @@ class NetworkException extends Equatable implements Exception {
   factory NetworkException.errorFrom(dynamic error) {
     String message = "Une erreur inconnue s'est produite.";
     int statusCode = 500; // Valeur par défaut
+    print("darrel 1: ${error.type}");
 
     if (error is DioException) {
       // Vérifier d'abord le type d'erreur Dio
@@ -24,8 +25,7 @@ class NetworkException extends Equatable implements Exception {
         if (data is Map<String, dynamic> && data.containsKey("data")) {
           message = data["data"].toString();
         } else if (data is String) {
-          
-          message = data; 
+          message = data;
         } else {
           message = _handleDioError(error);
 
@@ -34,17 +34,22 @@ class NetworkException extends Equatable implements Exception {
 
         statusCode = response.statusCode ?? statusCode;
       } else {
+        print("darrel 2: ${error.type}");
+
         message = _handleDioError(error);
 
         statusCode = _getStatusCodeFromErrorType(error.type);
       }
     }
+    print("darrel $message");
 
     return NetworkException(message: message, statusCode: statusCode);
   }
 
   /// Méthode pour récupérer le message d'erreur en fonction du type d'erreur Dio
   static String _handleDioError(DioException error) {
+    print("darrel 3: ${error.type}");
+
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
         return "Délai d'attente de la connexion dépassé.";

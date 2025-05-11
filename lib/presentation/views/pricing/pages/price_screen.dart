@@ -88,587 +88,533 @@ class _PaymentWidgetState extends State<PaymentWidget> {
   Widget build(BuildContext context) {
     return BlocConsumer<PaymentCubit, PaymentState>(
       listener: (context, state) async {
-        int verificationAttempts = 0; // Compteur pour les tentatives
-        bool isVerifying = false; // Empêcher d'autres exécutions
-
-        if (state is PaymentSuccess) {
-          if (state.user != null) {
-            setState(() {
-              _isLoading = false;
-            });
-
-            AppSnackBar.showSuccess(
-              message: "Transaction réussie",
-              context: context,
-            );
-
-            context.read<ApplicationCubit>().setUser(state.user);
-
-            await Future.delayed(const Duration(milliseconds: 1000));
-
-            context.router.push(const ApplicationRoute());
-          }
-
-          if (state.transactionId == null) {
-            AppSnackBar.showSuccess(
-              message: "Transaction réussie",
-              context: context,
-            );
-
-            await Future.delayed(const Duration(milliseconds: 1300));
-            context.router.popAndPush(const ApplicationRoute());
-          } else {
-            isVerifying = true;
-
-            setState(() {
-              _isLoading = true;
-              hasShownError = false;
-            });
-
-            log("Début de la vérification...");
-            Completer<void> verificationCompleter = Completer<void>();
-            log("message 1");
-
-            await paymentCubit.verifying(transactionId: state.transactionId!);
-            log("message 2");
-
-            _timer = Timer.periodic(const Duration(seconds: 15), (timer) async {
-              setState(() {});
-              log("message 3");
-
-              verificationAttempts++;
-
-              log("Tentative de vérification #$verificationAttempts");
-
-              await paymentCubit.verifying(transactionId: state.transactionId!);
-
-              if (verificationAttempts == 2) {
-                timer.cancel();
-                log("Coooooooool");
-                setState(() {
-                  _isLoading = false;
-                });
-
-                verificationCompleter.complete();
-              }
-            });
-            log("message 4");
-
-            await verificationCompleter
-                .future; // Bloque les prochaines exécutions tant que c'est en cours
-            isVerifying = false;
-            log("Vérification terminée.");
-          }
-        }
-
-        if (state is PercentStateFailure) {
-          AppSnackBar.showError(
-              message: "Code de réduction incorrect", context: context);
-        }
-
-        if (state is PaymentFailure) {
-          AppSnackBar.showError(
-            message: state.message,
-            context: context,
-          );
-        }
-
-        if (state is PercentStateSucess) {
-          setState(() {
-            _pageController.nextPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.linear);
-
-            _amount = state.percent;
-          });
-        }
-
-        if (state is VerifyingPaymentFailure) {
-          if (state.message != "Transaction en cours") {
-            if (verificationAttempts == 2) {
-              setState(() {
-                _isLoading = false;
-              });
-            }
-            setState(() {
-              _isLoading = true;
-            });
-
-            if (!(_timer?.isActive ?? false)) {
-              AppSnackBar.showError(
-                message: state.message,
-                context: context,
-              );
-            }
-          } else {
-            if (!hasShownError) {
-              AppSnackBar.showSuccess(
-                message: state.message,
-                context: context,
-              );
-            }
-            setState(() {
-              hasShownError = true;
-            });
-
-            if (!(_timer?.isActive ?? false)) {
-              AppSnackBar.showError(
-                message: state.message,
-                context: context,
-              );
-            }
-          }
-        }
-
-        if (state is VerifyingPaymentSuccess) {
-          if (!context.mounted) return;
-
-          AppSnackBar.showSuccess(
-            message: "Transaction réussie",
-            context: context,
-          );
-
-          context.read<ApplicationCubit>().setUser(state.user);
-
-          await Future.delayed(const Duration(milliseconds: 1000));
-
-          context.router.push(const ApplicationRoute());
-        }
+        await _handlePaymentState(context, state);
       },
       builder: (context, state) {
         print("state $state");
         // _isLoading = false;
         return Scaffold(
-          body: Form(
-            key: _formKey,
-            // autovalidateMode: AutovalidateMode.onUserInteraction,
-            child: IgnorePointer(
-              ignoring: _isLoading,
-              child: Stack(
-                children: [
-                  SingleChildScrollView(
-                    child: Stack(
-                      children: [
-                        Column(
-                          children: [
-                            Stack(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.only(bottom: 3),
-                                  child: Image.asset(
-                                    "assets/images/2.png",
-                                    fit: BoxFit.fitWidth,
-                                  ),
-                                ),
-                                Positioned(
-                                  left: 0,
-                                  right: 0,
-                                  bottom: 0,
-                                  child: Container(
-                                    height: 60.h,
-                                    decoration: const BoxDecoration(
-                                      color: AppColors.white,
-                                      borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(20)),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: context.height,
-                          child: PageView(
-                            allowImplicitScrolling: true,
-                            controller: _pageController,
-                            physics: const NeverScrollableScrollPhysics(),
-                            onPageChanged: (page) {
-                              setState(() {
-                                _currentIndex = page;
-                              });
-                            },
+          body: SafeArea(
+            child: Form(
+              key: _formKey,
+              // autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: IgnorePointer(
+                ignoring: _isLoading,
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      child: Stack(
+                        children: [
+                          Column(
                             children: [
-                              Container(
-                                width: context.width,
-                                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                                child: Column(
-                                  children: [
-                                    Gap(290.h),
-                                    Text(
-                                      "Apprends sans limites avec OnBush",
-                                      style: context.textTheme.headlineMedium!
-                                          .copyWith(
-                                              color: AppColors.primary,
-                                              shadows: [
-                                                const Shadow(
-                                                  offset: Offset(0.5, 0.5),
-                                                  blurRadius: 1.0,
-                                                  color: Colors.grey,
-                                                ),
-                                              ],
-                                              fontWeight: FontWeight.w900),
-                                      textAlign: TextAlign.center,
+                              Stack(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.only(bottom: 3),
+                                    child: Image.asset(
+                                      "assets/images/2.png",
+                                      fit: BoxFit.fitWidth,
                                     ),
-
-                                    Gap(30.h),
-                                    const _Widget(
-                                        title:
-                                            "Profitez de tous les cours, fiches TD, et corrigés disponibles."),
-                                    Gap(5.h),
-                                    const _Widget(
-                                        title:
-                                            "Téléchargez vos contenus pour étudier sans connexion Internet."),
-                                    Gap(5.h),
-                                    const _Widget(
-                                        title:
-                                            "Recevez des alertes pour les nouveaux cours et les examens à venir.."),
-                                    Gap(5.h),
-                                    const _Widget(
-                                        title:
-                                            "Téléchargez vos contenus pour étudier sans connexion Internet."),
-                                    Gap(5.h),
-                                    const _Widget(
-                                        title:
-                                            "Visualisez vos progrès académiques grâce à notre tableau de bord interactif."),
-                                    Gap(25.h),
-                                    // Text(
-                                    //   "à seulement 5.000 Fcfa / an.",
-                                    //   style: context.textTheme.titleLarge!
-                                    //       .copyWith(color: AppColors.secondary),
-                                    // ),
-                                    // Gap(20.h),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                width: context.width,
-                                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      Gap(290.h),
-                                      Row(
-                                        children: [
-                                          AppButton(
-                                            child: const Icon(Icons.arrow_back),
-                                            onPressed: () {
-                                              _pageController.previousPage(
-                                                  duration: const Duration(
-                                                      milliseconds: 300),
-                                                  curve: Curves.linear);
-                                            },
-                                          ),
-                                          const Spacer(),
-                                          Text(
-                                            "Code de reduction ou de\nParrainage",
-                                            maxLines: 2,
-                                            style: context
-                                                .textTheme.headlineSmall!
-                                                .copyWith(
-                                                    color: AppColors.black,
-                                                    shadows: [
-                                                      const Shadow(
-                                                        offset:
-                                                            Offset(0.5, 0.5),
-                                                        blurRadius: 1.0,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ],
-                                                    fontWeight:
-                                                        FontWeight.w900),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          const Spacer()
-                                        ],
-                                      ),
-                                      Gap(30.h),
-                                      IgnorePointer(
-                                        ignoring: _discountCodeValue,
-                                        child: Opacity(
-                                          opacity: _discountCodeValue ? 0.5 : 1,
-                                          child: AppInput(
-                                            // formFieldKey: _discountCodeKey,
-                                            hint:
-                                                "Entrer code de reduction si vous en avez un",
-                                            onChange: (value) {
-                                              setState(() {
-                                                _sponsorCodeValue =
-                                                    value.isNotEmpty;
-                                              });
-                                            },
-                                            controller: _discountCodeController,
-                                            keyboardType: TextInputType.text,
-                                            validators: [
-                                              FormBuilderValidators.required()
-                                            ],
-                                            onInputValidated: (value) {
-                                              setState(() {
-                                                _isValid2 = value;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      Gap(30.h),
-                                      IgnorePointer(
-                                        ignoring: _sponsorCodeValue,
-                                        child: Opacity(
-                                          opacity: _sponsorCodeValue ? 0.5 : 1,
-                                          child: AppInput(
-                                            hint:
-                                                "Entrer code de Parrainage si vous en avez un",
-                                            onChange: (value) {
-                                              _discountCodeValue =
-                                                  value.isNotEmpty;
-                                            },
-                                            controller: _sponsorCodeController,
-                                            keyboardType: TextInputType.text,
-                                            onInputValidated: (value) {
-                                              setState(() {
-                                                _isValid2 = value;
-                                              });
-                                            },
-                                            validators: [
-                                              FormBuilderValidators.required(),
-
-                                              // FormBuilderValidators.()
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Gap(30.h),
-                                    ],
                                   ),
-                                ),
-                              ),
-                              Container(
-                                width: context.width,
-                                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                                child: Column(
-                                  children: [
-                                    Gap(290.h),
-                                    Row(
-                                      children: [
-                                        AppButton(
-                                          child: const Icon(Icons.arrow_back),
-                                          onPressed: () {
-                                            _pageController.previousPage(
-                                                duration: const Duration(
-                                                    milliseconds: 300),
-                                                curve: Curves.linear);
-                                          },
-                                        ),
-                                        const Spacer(),
-                                        Container(
-                                          constraints: BoxConstraints(
-                                              maxWidth: context.width - 100.w),
-                                          child: Text(
-                                            "Choisis ton moyen de paiement",
-                                            style: context
-                                                .textTheme.headlineSmall!
-                                                .copyWith(
-                                                    color: AppColors.black,
-                                                    shadows: [
-                                                      const Shadow(
-                                                        offset:
-                                                            Offset(0.5, 0.5),
-                                                        blurRadius: 1.0,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ],
-                                                    fontWeight:
-                                                        FontWeight.w900),
-                                            maxLines: 2,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                      ],
-                                    ),
-                                    Gap(45.h),
-                                    Opacity(
-                                      opacity: _pm != null ? 1 : 0.3,
-                                      child: IgnorePointer(
-                                        ignoring: _pm != null ? false : true,
-                                        child: InternationalPhoneNumberInput(
-                                          // key: _phoneKey,
-                                          fieldKey: _phoneKey,
-                                          onInputChanged:
-                                              (PhoneNumber value) {},
-                                          onInputValidated: (value) {
-                                            setState(() {
-                                              _isValid1 = value;
-                                            });
-                                          },
-                                          initialValue:
-                                              PhoneNumber(isoCode: 'CM'),
-                                          errorMessage:
-                                              "Numero de telephone invalide",
-                                          selectorConfig: const SelectorConfig(
-                                            selectorType: PhoneInputSelectorType
-                                                .BOTTOM_SHEET,
-                                            useBottomSheetSafeArea: true,
-                                            setSelectorButtonAsPrefixIcon: true,
-                                            leadingPadding: 10,
-                                          ),
-                                          inputDecoration: InputDecoration(
-                                              filled: true,
-                                              fillColor: Colors.white,
-                                              border: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color:
-                                                          Colors.grey.shade500,
-                                                      style: BorderStyle.solid),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.r)),
-                                              enabledBorder: OutlineInputBorder(
-                                                  borderSide: const BorderSide(
-                                                      color: AppColors.black,
-                                                      style: BorderStyle.solid),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.r)),
-                                              disabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color:
-                                                          Colors.grey.shade500,
-                                                      style: BorderStyle.solid),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.r)),
-                                              // enabledBorder: InputBorder.none,
-                                              hintStyle: TextStyle(
-                                                  color: Colors.grey.shade500),
-                                              hintText: "Numero de telephone"),
-                                          ignoreBlank: false,
-                                          autoValidateMode: AutovalidateMode
-                                              .onUserInteraction,
-                                          selectorTextStyle: const TextStyle(
-                                              color: Colors.black),
-                                          textFieldController: _phoneController,
-
-                                          formatInput: true,
-                                          keyboardType: const TextInputType
-                                              .numberWithOptions(
-                                              signed: true, decimal: true),
-
-                                          // inputBorder: context.theme.inputDecorationTheme.border!
-                                          //     .copyWith(
-                                          //         borderSide: BorderSide(color: Colors.red)),
-                                        ),
+                                  Positioned(
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    child: Container(
+                                      height: 60.h,
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.white,
+                                        borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20)),
                                       ),
                                     ),
-                                    Gap(20.h),
-                                    AppRadioListTile(
-                                      activeColor: AppColors.primary,
-                                      groupeValue: _pm,
-                                      title: "Orange Money",
-                                      selectedColor: AppColors.primary,
-                                      onChanged: (String? value) {
-                                        setState(() {
-                                          _pm = value!;
-                                        });
-                                      },
-                                      value: "orange",
-                                    ),
-                                    Gap(20.h),
-                                    AppRadioListTile(
-                                      title: "Mobile Money",
-                                      activeColor: AppColors.primary,
-                                      groupeValue: _pm,
-                                      selectedColor: AppColors.primary,
-                                      onChanged: (String? value) {
-                                        setState(() {
-                                          _pm = value!;
-                                        });
-                                      },
-                                      value: "mtn",
-                                    ),
-                                    Gap(30.h),
-                                    Row(
-                                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          "Montant",
-                                          style: context.textTheme.titleLarge!
-                                              .copyWith(
-                                                  color: AppColors.black,
-                                                  shadows: [
-                                                    const Shadow(
-                                                      offset: Offset(0.5, 0.5),
-                                                      blurRadius: 5.0,
-                                                      color: Colors.grey,
-                                                    ),
-                                                  ],
-                                                  fontWeight: FontWeight.w900),
-                                        ),
-                                        const Spacer(),
-                                        Builder(builder: (context) {
-                                          return Text(
-                                            "$_amount Fcfa",
-                                            style: context.textTheme.titleLarge!
-                                                .copyWith(
-                                                    shadows: [
-                                                  const Shadow(
-                                                    offset: Offset(0.5, 0.5),
-                                                    blurRadius: 5.0,
-                                                    color: Colors.grey,
-                                                  ),
-                                                ],
-                                                    color: AppColors.black,
-                                                    fontWeight:
-                                                        FontWeight.w900),
-                                          );
-                                        })
-
-                                        // Text("5000 Fcfa"),
-                                      ],
-                                    ),
-                                    Gap(30.h),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ),
-                        PaymentBottomNavigation(
-                            amount: _amount,
-                            paymentCubit: paymentCubit,
-                            state: state,
-                            currentIndex: _currentIndex,
-                            pm: _pm,
-                            isValid1: _isValid1,
-                            pageController: _pageController,
-                            phoneKey: _phoneKey,
-                            widget: widget,
-                            phoneController: _phoneController,
-                            sponsorCodeController: _sponsorCodeController,
-                            discountCodeController: _discountCodeController,
-                            isValid2: _isValid2),
-                      ],
-                    ),
-                  ),
-                  _isLoading
-                      ? Positioned.fill(
-                          child: Container(
-                            color: Colors.black
-                                .withOpacity(0.5), // Assombrir l'écran
-                            child: const Center(
-                              child:
-                                  CircularProgressIndicator(), // Indicateur de chargement
+                          SizedBox(
+                            height: context.height - 50.h,
+                            child: PageView(
+                              allowImplicitScrolling: true,
+                              controller: _pageController,
+                              physics: const NeverScrollableScrollPhysics(),
+                              onPageChanged: (page) {
+                                setState(() {
+                                  _currentIndex = page;
+                                });
+                              },
+                              children: [
+                                _buildIntroPage(context),
+                                _buildCodeInputPage(context),
+                                _buildPaymentPage(context),
+                              ],
                             ),
                           ),
-                        )
-                      : const SizedBox.shrink()
-                ],
+                          PaymentBottomNavigation(
+                              amount: _amount,
+                              paymentCubit: paymentCubit,
+                              state: state,
+                              currentIndex: _currentIndex,
+                              pm: _pm,
+                              isValid1: _isValid1,
+                              pageController: _pageController,
+                              phoneKey: _phoneKey,
+                              widget: widget,
+                              phoneController: _phoneController,
+                              sponsorCodeController: _sponsorCodeController,
+                              discountCodeController: _discountCodeController,
+                              isValid2: _isValid2),
+                        ],
+                      ),
+                    ),
+                    _isLoading
+                        ? Positioned.fill(
+                            child: Container(
+                              color: Colors.black
+                                  .withOpacity(0.5), // Assombrir l'écran
+                              child: const Center(
+                                child:
+                                    CircularProgressIndicator(), // Indicateur de chargement
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink()
+                  ],
+                ),
               ),
             ),
           ),
         );
       },
     );
+  }
+
+  Widget _buildIntroPage(BuildContext context) {
+    return Container(
+      width: context.width,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Column(
+        children: [
+          Gap(290.h),
+          Text(
+            "Apprends sans limite avec OnBush",
+            style: context.textTheme.headlineMedium!.copyWith(
+              color: AppColors.primary,
+              shadows: [
+                const Shadow(
+                    offset: Offset(0.5, 0.5),
+                    blurRadius: 1.0,
+                    color: Colors.grey)
+              ],
+              fontWeight: FontWeight.w900,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          Gap(30.h),
+          const _Widget(
+              title:
+                  "Profitez de tous les cours, fiches TD, et corrigés disponibles."),
+          Gap(5.h),
+          const _Widget(
+              title:
+                  "Téléchargez vos contenus pour étudier sans connexion Internet."),
+          Gap(5.h),
+          const _Widget(
+              title:
+                  "Recevez des alertes pour les nouveaux cours et les examens à venir.."),
+          Gap(5.h),
+          const _Widget(
+              title:
+                  "Téléchargez vos contenus pour étudier sans connexion Internet."),
+          Gap(5.h),
+          const _Widget(
+              title:
+                  "Visualisez vos progrès académiques grâce à notre tableau de bord interactif."),
+          Gap(25.h),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCodeInputPage(BuildContext context) {
+    return Container(
+      width: context.width,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Gap(290.h),
+            Row(
+              children: [
+                AppButton(
+                  child: const Icon(Icons.arrow_back),
+                  onPressed: () => _pageController.previousPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.linear,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  "Code de reduction ou de\nParrainage",
+                  maxLines: 2,
+                  style: context.textTheme.headlineSmall!.copyWith(
+                    color: AppColors.black,
+                    shadows: [
+                      const Shadow(
+                          offset: Offset(0.5, 0.5),
+                          blurRadius: 1.0,
+                          color: Colors.grey)
+                    ],
+                    fontWeight: FontWeight.w900,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const Spacer(),
+              ],
+            ),
+            Gap(30.h),
+            _buildCodeInputField(
+              context,
+              hint: "Entrer code de reduction si vous en avez un",
+              controller: _discountCodeController,
+              isDisabled: _discountCodeValue,
+              onChanged: (value) {
+                setState(() {
+                  print("value 1 $value");
+                  _sponsorCodeValue = value.isNotEmpty;
+                });
+              },
+            ),
+            Gap(30.h),
+            _buildCodeInputField(
+              context,
+              hint: "Entrer code de Parrainage si vous en avez un",
+              controller: _sponsorCodeController,
+              isDisabled: _sponsorCodeValue,
+              onChanged: (value) {
+                print("value 2 $value");
+
+                _discountCodeValue = value.isNotEmpty;
+              },
+            ),
+            Gap(30.h),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCodeInputField(BuildContext context,
+      {required String hint,
+      required TextEditingController controller,
+      required bool isDisabled,
+      required void Function(String) onChanged}) {
+    return IgnorePointer(
+      ignoring: isDisabled,
+      child: Opacity(
+        opacity: isDisabled ? 0.5 : 1,
+        child: AppInput(
+          hint: hint,
+          onChange: onChanged,
+          controller: controller,
+          keyboardType: TextInputType.text,
+          validators: [FormBuilderValidators.required()],
+          onInputValidated: (value) {
+            setState(() {
+              _isValid2 = value;
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPaymentPage(BuildContext context) {
+    return Container(
+      width: context.width,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Column(
+        children: [
+          Gap(290.h),
+          _buildPaymentHeader(context),
+          Gap(45.h),
+          _buildPhoneInput(context),
+          Gap(20.h),
+          _buildPaymentOption("Orange Money", "orange"),
+          Gap(20.h),
+          _buildPaymentOption("Mobile Money", "mtn"),
+          Gap(30.h),
+          _buildAmountDisplay(context),
+          Gap(30.h),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentHeader(BuildContext context) {
+    return Row(
+      children: [
+        AppButton(
+          child: const Icon(Icons.arrow_back),
+          onPressed: () {
+            _pageController.previousPage(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.linear);
+          },
+        ),
+        const Spacer(),
+        Container(
+          constraints: BoxConstraints(maxWidth: context.width - 100.w),
+          child: Text(
+            "Choisis ton moyen de paiement",
+            style: context.textTheme.headlineSmall!.copyWith(
+              color: AppColors.black,
+              shadows: [
+                const Shadow(
+                    offset: Offset(0.5, 0.5),
+                    blurRadius: 1.0,
+                    color: Colors.grey)
+              ],
+              fontWeight: FontWeight.w900,
+            ),
+            maxLines: 2,
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const Spacer(),
+      ],
+    );
+  }
+
+  Widget _buildPhoneInput(BuildContext context) {
+    return Opacity(
+      opacity: _pm != null ? 1 : 0.3,
+      child: IgnorePointer(
+        ignoring: _pm == null,
+        child: InternationalPhoneNumberInput(
+          fieldKey: _phoneKey,
+          onInputChanged: (_) {},
+          onInputValidated: (value) {
+            setState(() {
+              _isValid1 = value;
+            });
+          },
+          initialValue: PhoneNumber(isoCode: 'CM'),
+          errorMessage: "Numero de telephone invalide",
+          selectorConfig: const SelectorConfig(
+            selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+            useBottomSheetSafeArea: true,
+            setSelectorButtonAsPrefixIcon: true,
+            leadingPadding: 10,
+          ),
+          inputDecoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey.shade500),
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: AppColors.black),
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            hintStyle: TextStyle(color: Colors.grey.shade500),
+            hintText: "Numero de telephone",
+          ),
+          ignoreBlank: false,
+          autoValidateMode: AutovalidateMode.onUserInteraction,
+          selectorTextStyle: const TextStyle(color: Colors.black),
+          textFieldController: _phoneController,
+          formatInput: true,
+          keyboardType: const TextInputType.numberWithOptions(
+              signed: true, decimal: true),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPaymentOption(String title, String value) {
+    return AppRadioListTile(
+      title: title,
+      activeColor: AppColors.primary,
+      groupeValue: _pm,
+      selectedColor: AppColors.primary,
+      onChanged: (String? val) {
+        setState(() {
+          _pm = val!;
+        });
+      },
+      value: value,
+    );
+  }
+
+  Widget _buildAmountDisplay(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          "Montant",
+          style: context.textTheme.titleLarge!.copyWith(
+            color: AppColors.black,
+            shadows: [
+              const Shadow(
+                  offset: Offset(0.5, 0.5), blurRadius: 5.0, color: Colors.grey)
+            ],
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const Spacer(),
+        Text(
+          "$_amount Fcfa",
+          style: context.textTheme.titleLarge!.copyWith(
+            shadows: [
+              const Shadow(
+                  offset: Offset(0.5, 0.5), blurRadius: 5.0, color: Colors.grey)
+            ],
+            color: AppColors.black,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _handlePaymentState(BuildContext context, dynamic state) async {
+    int verificationAttempts = 0;
+    bool isVerifying = false;
+
+    if (state is PaymentSuccess) {
+      if (state.user != null) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        AppSnackBar.showSuccess(
+          message: "Transaction réussie",
+          context: context,
+        );
+
+        context.read<ApplicationCubit>().setUser(state.user);
+        await Future.delayed(const Duration(milliseconds: 1000));
+        context.router.push(const ApplicationRoute());
+      }
+
+      if (state.transactionId == null) {
+        AppSnackBar.showSuccess(
+          message: "Transaction réussie",
+          context: context,
+        );
+
+        await Future.delayed(const Duration(milliseconds: 1300));
+        context.router.popAndPush(const ApplicationRoute());
+      } else {
+        isVerifying = true;
+
+        setState(() {
+          _isLoading = true;
+          hasShownError = false;
+        });
+
+        Completer<void> verificationCompleter = Completer<void>();
+        await paymentCubit.verifying(transactionId: state.transactionId!);
+
+        _timer = Timer.periodic(const Duration(seconds: 15), (timer) async {
+          setState(() {});
+          verificationAttempts++;
+
+          await paymentCubit.verifying(transactionId: state.transactionId!);
+
+          if (verificationAttempts == 2) {
+            timer.cancel();
+            setState(() {
+              _isLoading = false;
+            });
+
+            verificationCompleter.complete();
+          }
+        });
+
+        await verificationCompleter.future;
+        isVerifying = false;
+      }
+    }
+
+    if (state is PercentStateFailure) {
+      AppSnackBar.showError(
+        message: "Code de réduction incorrect",
+        context: context,
+      );
+    }
+
+    if (state is PaymentFailure) {
+      AppSnackBar.showError(
+        message: state.message,
+        context: context,
+      );
+    }
+
+    if (state is PercentStateSucess) {
+      setState(() {
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.linear,
+        );
+
+        _amount = state.percent;
+      });
+    }
+
+    if (state is VerifyingPaymentFailure) {
+      if (state.message != "Transaction en cours") {
+        if (verificationAttempts == 2) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+
+        setState(() {
+          _isLoading = true;
+        });
+
+        if (!(_timer?.isActive ?? false)) {
+          AppSnackBar.showError(
+            message: state.message,
+            context: context,
+          );
+        }
+      } else {
+        if (!hasShownError) {
+          AppSnackBar.showSuccess(
+            message: state.message,
+            context: context,
+          );
+        }
+
+        setState(() {
+          hasShownError = true;
+        });
+
+        if (!(_timer?.isActive ?? false)) {
+          AppSnackBar.showError(
+            message: state.message,
+            context: context,
+          );
+        }
+      }
+    }
+
+    if (state is VerifyingPaymentSuccess) {
+      if (!context.mounted) return;
+
+      AppSnackBar.showSuccess(
+        message: "Transaction réussie",
+        context: context,
+      );
+
+      context.read<ApplicationCubit>().setUser(state.user);
+      await Future.delayed(const Duration(milliseconds: 1000));
+      context.router.push(const ApplicationRoute());
+    }
   }
 }
 

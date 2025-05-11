@@ -21,19 +21,26 @@ abstract class AppImage {
   static const String messageIcon = "assets/icons/message.svg";
   static const String netwoekProblem = "assets/images/network_problem.svg";
   static const String onBush = "assets/icons/onbush_original.svg";
-  static const String courseDownloadedIcon = "assets/icons/course_not_downloaded.svg";
+  static const String allOnBush = "assets/images/onBush.svg";
+  static const String courseDownloadedIcon =
+      "assets/icons/course_not_downloaded.svg";
   static const String downloadButton = "assets/icons/download_icon.svg";
-
+  static const String bugIcon = "assets/icons/bug.svg";
+  static const String clock = "assets/icons/clock.svg";
 
   /// Avatars
-  static const String avatar1 = "assets/avatars/avatar 1.png";
-  static const String avatar2 = "assets/avatars/avatar 2.png";
-  static const String avatar3 = "assets/avatars/avatar 3.png";
-  static const String avatar4 = "assets/avatars/avatar 4.png";
-  static const String avatar5 = "assets/avatars/avatar 5.png";
+  static const String avatar1 = "assets/avatars/avatar1.png";
+  static const String avatar2 = "assets/avatars/avatar2.png";
+  static const String avatar3 = "assets/avatars/avatar3.png";
+  static const String avatar4 = "assets/avatars/avatar4.png";
+  static const String avatar5 = "assets/avatars/avatar5.png";
+  static const String avatar6 = "assets/avatars/avatar6.png";
 
   /// images
   static const String error400 = "assets/images/error_400.svg";
   static const String sponsorImage = "assets/images/5.png";
   static const String logo = "assets/images/logo.png";
+  static const String image1 = "assets/images/1.jpeg";
+  static const String image2 = "assets/images/2.png";
+  static const String image3 = "assets/images/3.jpeg";
 }

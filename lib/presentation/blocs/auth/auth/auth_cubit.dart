@@ -274,6 +274,7 @@ class AuthCubit extends Cubit<AuthState> {
       }, (success) async {
         await _prefs.remove(StorageKeys.authToken);
         await _prefs.remove(StorageKeys.pdfFile);
+        await _prefs.remove(StorageKeys.avatar);
         emit(LogoutSuccess());
       });
     } catch (e) {

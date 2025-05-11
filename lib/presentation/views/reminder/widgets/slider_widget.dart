@@ -33,7 +33,17 @@ class _SliderWidgetState<T> extends State<SliderWidget> {
         children: [
           Text(
             widget.title,
-            style: TextStyle(fontSize: 34.r, color: AppColors.primary),
+            style: TextStyle(
+                fontSize: 34.r,
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+                shadows: [
+                  Shadow(
+                    color: AppColors.primary,
+                    blurRadius: 2,
+                    offset: const Offset(0, 2),
+                  ),
+                ]),
             textAlign: TextAlign.center,
           ),
           Gap(30.h),
@@ -46,7 +56,7 @@ class _SliderWidgetState<T> extends State<SliderWidget> {
                 AppRadioListTile(
                   groupeValue: widget.groupeValue,
                   onChanged: widget.onChanged,
-                  value: elt,
+                  value: widget.sliderOptions.indexOf(elt).toString(),
                   activeColor: AppColors.primary,
                   title: elt,
                 ),

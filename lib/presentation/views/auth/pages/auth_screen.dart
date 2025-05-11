@@ -113,177 +113,182 @@ class _AuthScreenState extends State<AuthScreen> {
           }
         },
         builder: (context, state) {
-          return SingleChildScrollView(
-            child: IgnorePointer(
-              ignoring: state is SearchStateLoading,
-              child: Stack(
-                children: [
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Gap(50.h),
-                        Image.asset(
-                          "assets/images/onbush.png",
-                          width: 200.w,
-                          // height: 300,
-                        ),
-                        Gap(25.h),
-                        AuhSwitcherWidget(
-                          pageController: _pageController,
-                          currentIndex: _currentIndex,
-                        ),
-                        Gap(25.h),
-                        SizedBox(
-                          height: 545.h,
-                          child: PageView(
-                            controller: _pageController,
-                            onPageChanged: (int page) => setState(() {
-                              _currentIndex = page;
-                            }),
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 25.w,
-                                ),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "Accède rapidement à tes cours et à tes révisions en quelques clics.",
-                                      style: context.textTheme.bodyLarge!
-                                          .copyWith(
-                                              fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Gap(100.h),
-                                    AppInput(
-                                      controller: _emailLoginController,
-                                      // label: 'Tel',
-                                      hint: 'Adresse email',
-                                      labelColors:
-                                          AppColors.black.withOpacity(0.7),
-                                      keyboardType: TextInputType.emailAddress,
-                                      autofillHints: const [
-                                        AutofillHints.email
-                                      ],
-                                      validators: [
-                                        FormBuilderValidators.required(
-                                          errorText:
-                                              'Entrer votre adresse email',
-                                        ),
-                                        FormBuilderValidators.email(
-                                            errorText: "E-mail est requis")
-                                        // FormBuilderValidators.()
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 25.w,
-                                ),
-                                child: RegisterWidget(
-                                  key: _registerWidgetState,
-                                  listId: _listId,
-                                  emailController: _emailSignUpController,
-                                  userNameController: _userNameController,
-                                  phoneController: _phoneController,
-                                  birthdayController: _birthdayController,
-                                  genderController: _genderController,
-                                  schoolController: _schoolController,
-                                  studentIdController: _studentIdController,
-                                  academyLevelController:
-                                      _academyLevelController,
-                                  majorStudyController: _majorStudyController,
-                                ),
-                              ),
-                            ],
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: IgnorePointer(
+                ignoring: state is SearchStateLoading,
+                child: Stack(
+                  children: [
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Gap(50.h),
+                          Image.asset(
+                            "assets/images/onbush.png",
+                            width: 200.w,
+                            // height: 300,
                           ),
-                        ),
-                        // Gap(3.h),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 25.w,
+                          Gap(25.h),
+                          AuhSwitcherWidget(
+                            pageController: _pageController,
+                            currentIndex: _currentIndex,
                           ),
-                          child: _currentIndex == 0
-                              ? AppButton(
-                                  loading: state is LoginLoading,
-                                  width: context.width,
-                                  bgColor: AppColors.primary,
-                                  text: "Connectez-vous",
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      context.read<AuthCubit>().login(
-                                            appareil: getIt
-                                                .get<LocalStorage>()
-                                                .getString('device')!,
-                                            email: _emailLoginController.text
-                                                .replaceAll(' ', ''),
-                                          );
-                                    }
-                                  },
-                                )
-                              : AppButton(
-                                  loading: state is LoginLoading ||
-                                      state is RegisterLoading,
-                                  width: context.width - 25.w,
-                                  bgColor: AppColors.primary,
-                                  text: "incrivez-vous",
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      context.read<AuthCubit>().register(
-                                            name:
-                                                _userNameController.text.trim(),
-                                            email: _emailSignUpController.text
-                                                .trim(),
-                                            birthDate: _birthdayController.text
-                                                .replaceAll(' ', ''),
-                                            gender: _genderController.text
-                                                .replaceAll(' ', ''),
-                                            phone: _phoneController.text
-                                                .replaceAll(' ', ''),
-                                            device: getIt
-                                                .get<LocalStorage>()
-                                                .getString('device')!,
-                                    
-                                            role: 'etudiant',
-                                            academyLevel: _listId["level"]!,
-                                            majorStudy: _listId["specialitie"]!,
-                                            schoolId: _listId["college"]!,
-                                            studentId: _studentIdController.text
-                                                .trim(),
-                                          );
-                                      // context.router.pushAll([
-                                      //   OTPInputRoute(
-                                      //       number: _phoneSignUpController.text)
-                                      // ]);
-                                      // _cubit.register(
-                                      //   phone: _phoneLoginController.text,
-                                      //   password: _passwordController.text,
-                                      // );
-                                    }
-                                  },
+                          Gap(25.h),
+                          SizedBox(
+                            height: 470.h,
+                            child: PageView(
+                              controller: _pageController,
+                              onPageChanged: (int page) => setState(() {
+                                _currentIndex = page;
+                              }),
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 25.w,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        "Accède rapidement à tes cours et à tes révisions en quelques clics.",
+                                        style: context.textTheme.bodyLarge!
+                                            .copyWith(
+                                                fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      Gap(100.h),
+                                      AppInput(
+                                        controller: _emailLoginController,
+                                        // label: 'Tel',
+                                        hint: 'Adresse email',
+                                        labelColors:
+                                            AppColors.black.withOpacity(0.7),
+                                        keyboardType:
+                                            TextInputType.emailAddress,
+                                        autofillHints: const [
+                                          AutofillHints.email
+                                        ],
+                                        validators: [
+                                          FormBuilderValidators.required(
+                                            errorText:
+                                                'Entrer votre adresse email',
+                                          ),
+                                          FormBuilderValidators.email(
+                                              errorText: "E-mail est requis")
+                                          // FormBuilderValidators.()
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                        ),
-                        Gap(5.h),
-                      ],
-                    ),
-                  ),
-                  if (state is SearchStateLoading)
-                    Positioned.fill(
-                      child: Container(
-                        color:
-                            Colors.black.withOpacity(0.5), // Assombrir l'écran
-                        child: const Center(
-                          child:
-                              CircularProgressIndicator(), // Indicateur de chargement
-                        ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 25.w,
+                                  ),
+                                  child: RegisterWidget(
+                                    key: _registerWidgetState,
+                                    listId: _listId,
+                                    emailController: _emailSignUpController,
+                                    userNameController: _userNameController,
+                                    phoneController: _phoneController,
+                                    birthdayController: _birthdayController,
+                                    genderController: _genderController,
+                                    schoolController: _schoolController,
+                                    studentIdController: _studentIdController,
+                                    academyLevelController:
+                                        _academyLevelController,
+                                    majorStudyController: _majorStudyController,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Gap(3.h),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 25.w,
+                            ),
+                            child: _currentIndex == 0
+                                ? AppButton(
+                                    loading: state is LoginLoading,
+                                    width: context.width,
+                                    bgColor: AppColors.primary,
+                                    text: "Connectez-vous",
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        context.read<AuthCubit>().login(
+                                              appareil: getIt
+                                                  .get<LocalStorage>()
+                                                  .getString('device')!,
+                                              email: _emailLoginController.text
+                                                  .replaceAll(' ', ''),
+                                            );
+                                      }
+                                    },
+                                  )
+                                : AppButton(
+                                    loading: state is LoginLoading ||
+                                        state is RegisterLoading,
+                                    width: context.width - 25.w,
+                                    bgColor: AppColors.primary,
+                                    text: "incrivez-vous",
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        context.read<AuthCubit>().register(
+                                              name: _userNameController.text
+                                                  .trim(),
+                                              email: _emailSignUpController.text
+                                                  .trim(),
+                                              birthDate: _birthdayController
+                                                  .text
+                                                  .replaceAll(' ', ''),
+                                              gender: _genderController.text
+                                                  .replaceAll(' ', ''),
+                                              phone: _phoneController.text
+                                                  .replaceAll(' ', ''),
+                                              device: getIt
+                                                  .get<LocalStorage>()
+                                                  .getString('device')!,
+                                              role: 'etudiant',
+                                              academyLevel: _listId["level"]!,
+                                              majorStudy:
+                                                  _listId["specialitie"]!,
+                                              schoolId: _listId["college"]!,
+                                              studentId: _studentIdController
+                                                  .text
+                                                  .trim(),
+                                            );
+                                        // context.router.pushAll([
+                                        //   OTPInputRoute(
+                                        //       number: _phoneSignUpController.text)
+                                        // ]);
+                                        // _cubit.register(
+                                        //   phone: _phoneLoginController.text,
+                                        //   password: _passwordController.text,
+                                        // );
+                                      }
+                                    },
+                                  ),
+                          ),
+                          Gap(5.h),
+                        ],
                       ),
                     ),
-                ],
+                    if (state is SearchStateLoading)
+                      Positioned.fill(
+                        child: Container(
+                          color: Colors.black
+                              .withOpacity(0.5), // Assombrir l'écran
+                          child: const Center(
+                            child:
+                                CircularProgressIndicator(), // Indicateur de chargement
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           );

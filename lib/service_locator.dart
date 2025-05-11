@@ -3,6 +3,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:onbush/data/datasources/local/pdf/pdf_local_data_source.dart';
 import 'package:onbush/data/datasources/local/pdf/pdf_local_data_source_impl.dart';
+import 'package:onbush/data/datasources/local/reminder/reminder_local_data_source.dart';
+import 'package:onbush/data/datasources/local/reminder/reminder_local_data_source_impl.dart';
 import 'package:onbush/data/datasources/local/subject/subject_local_data_source.dart';
 import 'package:onbush/data/datasources/local/subject/subject_local_data_source_impl.dart';
 import 'package:onbush/data/datasources/remote/college/college_remote_data_source.dart';
@@ -28,25 +30,30 @@ import 'package:onbush/data/repositories/auth/auth_repository_impl.dart';
 import 'package:onbush/data/repositories/otp/otp_repository_impl.dart';
 import 'package:onbush/data/repositories/payment/payment_repository_impl.dart';
 import 'package:onbush/data/repositories/pdf/pdf_repository_impl.dart';
+import 'package:onbush/data/repositories/reminder/reminder_repository_impl.dart';
 import 'package:onbush/domain/repositories/academic/academic_repository.dart';
 import 'package:onbush/domain/repositories/auth/auth_repository.dart';
 import 'package:onbush/domain/repositories/otp/otp_repository.dart';
 import 'package:onbush/domain/repositories/payment/payment_repository.dart';
 import 'package:onbush/domain/repositories/pdf/pdf_repository.dart';
+import 'package:onbush/domain/repositories/reminder/reminder_repository.dart';
 import 'package:onbush/domain/usecases/academic/academic_usecase.dart';
 import 'package:onbush/domain/usecases/auth/auth_usecase.dart';
 import 'package:onbush/domain/usecases/otp/otp_usecase.dart';
 import 'package:onbush/domain/usecases/payment/payment_usecase.dart';
 import 'package:onbush/domain/usecases/pdf/pdf_usecase.dart';
+import 'package:onbush/domain/usecases/reminder/reminder_usecase.dart';
 import 'package:onbush/presentation/blocs/academic/academy/academy_cubit.dart';
 import 'package:onbush/presentation/blocs/auth/auth/auth_cubit.dart';
 import 'package:onbush/presentation/blocs/otp/otp_bloc.dart';
 import 'package:onbush/presentation/blocs/payment/payment_cubit.dart';
 import 'package:onbush/presentation/blocs/pdf/pdf_file/pdf_file_cubit.dart';
+import 'package:onbush/presentation/blocs/reminder/reminder_cubit.dart';
 import 'package:onbush/presentation/views/dashboard/download/logic/cubit/download_cubit.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:logger/logger.dart';
 import 'package:onbush/core/database/local_storage.dart';
+import 'package:onbush/services/reminder/reminder_motification_service.dart';
 
 import 'core/networking/http_logger_interceptor.dart';
 import 'core/networking/token_interceptor.dart';
@@ -147,6 +154,8 @@ Future<void> setupLocator() async {
         () => OtpRemoteDataSourceImpl(getIt<Dio>(
               instanceName: 'accountApi',
             )))
+    ..registerLazySingleton<ReminderLocalDataSource>(
+        () => ReminderLocalDataSourceImpl(getIt<LocalStorage>()))
 
     //* Repositories
     ..registerLazySingleton<OtpRepository>(() => OtpRepositoryImpl(getIt()))
@@ -162,24 +171,35 @@ Future<void> setupLocator() async {
         pdfRemoteDataSource: getIt(), pdfLocalDataSource: getIt()))
     ..registerLazySingleton<PaymentRepository>(
         () => PaymentRepositoryImpl(getIt()))
+    ..registerLazySingleton<ReminderRepository>(
+        () => ReminderRepositoryImpl(getIt()))
 
     //* UseCases
     ..registerLazySingleton<AcademyUsecase>(() => AcademyUsecase(getIt()))
     ..registerLazySingleton<AuthUseCase>(() => AuthUseCase(getIt()))
     ..registerLazySingleton<PdfUseCase>(() => PdfUseCase(getIt()))
-    ..registerLazySingleton<OtpUseCase>(() => OtpUseCase(getIt()))
+    ..registerLazySingleton<OtpUseCase>(() => OtpUseCase(getIt<OtpRepository>()))
     ..registerLazySingleton<PaymentUseCase>(() => PaymentUseCase(getIt()))
+    ..registerLazySingleton<ReminderUseCase>(
+        () => ReminderUseCase(getIt(), getIt()))
+
+    // Services
+    ..registerLazySingleton<ReminderNotificationService>(
+        () => ReminderNotificationService())
 
     //* Bloccs
     ..registerLazySingleton<ApplicationCubit>(() => ApplicationCubit())
     ..registerLazySingleton<AuthCubit>(
       () => AuthCubit(getIt<AuthUseCase>(), getIt<AcademyUsecase>()),
     )
-    ..registerLazySingleton<OtpBloc>(() => OtpBloc(getIt()))
+    ..registerLazySingleton<OtpBloc>(() => OtpBloc(getIt<OtpUseCase>()))
     ..registerSingleton<DownloadCubit>(DownloadCubit())
     ..registerLazySingleton<PaymentCubit>(() => PaymentCubit(getIt()))
     ..registerLazySingleton<AcademyCubit>(() => AcademyCubit(getIt(), getIt()))
     // ..registerLazySingleton<PdfFileManagerCubit>(() => AcademyCubit(getIt(), getIt()))
+    ..registerLazySingleton<ReminderCubit>(
+      () => ReminderCubit(getIt<ReminderUseCase>()),
+    )
     ..registerFactory<PdfFileCubit>(() => PdfFileCubit(getIt<PdfUseCase>()));
 
   // ..registerSingleton<NetworkCubit>(NetworkCubit());

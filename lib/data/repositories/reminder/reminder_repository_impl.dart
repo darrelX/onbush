@@ -4,10 +4,10 @@ import 'package:onbush/data/datasources/local/reminder/reminder_local_data_sourc
 import 'package:onbush/domain/entities/reminder/reminder_entity.dart';
 import 'package:onbush/domain/repositories/reminder/reminder_repository.dart';
 
-class ReminderRepoaitoryImpl implements ReminderRepository {
+class ReminderRepositoryImpl implements ReminderRepository {
   final ReminderLocalDataSource _reminderLocalDataSource;
 
-  ReminderRepoaitoryImpl(this._reminderLocalDataSource);
+  ReminderRepositoryImpl(this._reminderLocalDataSource);
   // This class is responsible for managing local data related to reminders.
   // It interacts with the local database or storage to perform CRUD operations.
 

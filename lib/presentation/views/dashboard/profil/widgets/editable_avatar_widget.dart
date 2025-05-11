@@ -32,8 +32,8 @@ class EditableAvatarWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20.r))
                 : null,
             margin: EdgeInsets.all(10.r),
-            width: size + 10,
-            height: size + 10,
+            width: size + 12,
+            height: size + 12,
             child: Center(
               child: Stack(
                 children: [
@@ -45,7 +45,7 @@ class EditableAvatarWidget extends StatelessWidget {
                     child: ClipOval(child: image),
                   ),
                   subIcon != null
-                      ? Positioned(bottom: 0, right: 10, child: subIcon!)
+                      ? Positioned(bottom: 0, right: 10.r, child: subIcon!)
                       : const SizedBox.shrink(),
                 ],
               ),
@@ -54,7 +54,7 @@ class EditableAvatarWidget extends StatelessWidget {
           isSelectable
               ? Positioned(
                   bottom: 0,
-                  right: 2.r,
+                  right: 10.r,
                   child: Container(
                     height: 30.r,
                     width: 30.r,

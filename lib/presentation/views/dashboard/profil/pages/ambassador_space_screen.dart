@@ -73,8 +73,8 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
                 _buildMenteesCount(),
                 SizedBox(height: 5.h),
                 Gap(10.h),
-                Expanded(child: _buildMenteesList(state))
-                // _buildMenteesList(state)
+                Expanded(child: _buildMenteesList(state)),
+                Gap(40.h)
               ],
             ),
           ),
@@ -88,9 +88,15 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
     final localStorage = getIt<LocalStorage>();
     return Row(
       children: [
-        Image.asset(
-          localStorage.getString('avatar') ?? '',
-          height: 60.h,
+        Container(
+                   decoration: BoxDecoration(
+            color: AppColors.profileImageColor,
+            borderRadius: BorderRadius.circular(10.r),
+          ),
+          child: Image.asset(
+            localStorage.getString('avatar') ?? '',
+            height: 60.h,
+          ),
         ),
         const Spacer(),
         ReferralOverviewCardWidget(
@@ -130,8 +136,8 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
         onTap: () {
           AppDialog.showDialog(
             context: context,
-            width: context.width - 30.w,
-            height: 380.h,
+            width: 270.w,
+            height: 270.h,
             child: SponsorPopupWidget(sponsorCode: sponsorCode),
           );
         },
@@ -207,14 +213,15 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
 
   /// Affichage en cas d'erreur
   Widget _buildErrorIndicator() {
-    return AppBaseIndicator.error400(
-      message: "Aucun filleul pour le moment",
+    return AppBaseIndicator.unavailableFileDisplay(
+      message: "Probleme de connectivé",
       size: 170.r,
+      spacing: 40.h,
       button: AppButton(
         text: "Recommencer",
         height: 50.h,
         bgColor: AppColors.primary,
-        width: context.width - 90.w,
+        width: context.width,
         onPressed: () => getIt<AuthCubit>().getListMentee(
           email: getIt<ApplicationCubit>().userEntity?.email ?? '',
           device: getIt<LocalStorage>().getString("device") ?? '',

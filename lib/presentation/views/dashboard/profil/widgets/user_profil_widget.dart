@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:onbush/core/constants/colors/app_colors.dart';
 import 'package:onbush/core/database/local_storage.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
@@ -27,15 +29,21 @@ class UserProfileWidget extends StatelessWidget {
       children: [
         AppButton(
           onPressed: onPressed,
-          child: Image.asset(
-            getIt.get<LocalStorage>().getString('avatar')!,
-            height: 105.h,
-            fit: BoxFit.fitHeight,
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.profileImageColor,
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            child: Image.asset(
+              getIt.get<LocalStorage>().getString('avatar')!,
+              height: 90.h,
+              fit: BoxFit.fitHeight,
+            ),
           ),
         ),
         Gap(8.w),
         SizedBox(
-          height: 109.h,
+          height: 90.h,
           width: 239.w,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -53,7 +61,9 @@ class UserProfileWidget extends StatelessWidget {
                         ),
                       ]),
                   overflow: TextOverflow.ellipsis),
-              const Spacer(),
+              // const Spacer(
+              //   flex: 2,
+              // ),
               Text(
                 "Niveau: $level",
                 style: context.textTheme.bodyLarge!.copyWith(

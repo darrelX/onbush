@@ -1,3 +1,4 @@
+import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/core/device_info/device_info.dart';
 import 'package:onbush/core/hash/hash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,7 +30,7 @@ class LocalStorage {
 
     // Définir un avatar par défaut si nécessaire
     if (avatar == null || avatar.isEmpty || avatar == "null") {
-      await setString('avatar', "assets/avatars/avatar 1.png");
+      await setString('avatar', AppImage.avatar1);
     }
   }
 
@@ -60,7 +61,7 @@ class LocalStorage {
 
   // Récupérer un booléen
   bool? getBool(String key) {
-    return  _prefs?.getBool(key);
+    return _prefs?.getBool(key);
   }
 
   // Supprimer une donnée

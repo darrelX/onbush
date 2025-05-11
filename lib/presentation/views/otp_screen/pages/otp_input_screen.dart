@@ -4,9 +4,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
+import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/presentation/blocs/otp/otp_bloc.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
@@ -38,7 +40,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
   bool _isExpired = false;
   String? _error;
   // String? _currentText;
-  late final OtpBloc _bloc = context.read<OtpBloc>();
+  late final OtpBloc _bloc;
 
   String _formatSeconds(int totalSeconds) {
     int minutes = totalSeconds ~/ 60;
@@ -49,6 +51,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
   @override
   void initState() {
     super.initState();
+    _bloc = getIt.get<OtpBloc>();
     _bloc.add(const OtpInitialized());
   }
 
@@ -77,6 +80,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
         backgroundColor: AppColors.white,
       ),
       body: BlocConsumer<OtpBloc, OtpState>(
+        bloc: _bloc,
         listener: (context, state) {
           if (state is OtpSendFailure) {
             setState(() {
@@ -99,10 +103,11 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
           }
           if (state is OtpVerificationSuccess) {
             if (state.user == null) {
+              _bloc.close();
               context.router.push(PriceRoute(email: widget.email));
             } else {
               getIt.get<ApplicationCubit>().setUser(state.user!);
-              context.router.push(const AppInitRoute());
+              context.router.push(const ReminderRoute());
             }
           }
         },
@@ -209,7 +214,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                               text: "Valider",
                               onPressed: () {
                                 if (_formField.currentState!.validate()) {
-                                  context.read<OtpBloc>().add(OtpSubmitted(
+                                  _bloc.add(OtpSubmitted(
                                       type: widget.type,
                                       otp: int.parse(_codeController.text
                                           .replaceAll(' ', '')),
@@ -233,7 +238,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                               text: "Renvoyer le code OTP",
                               onPressed: () {
                                 setState(() {
-                                  context.read<OtpBloc>().add(OtpReset(
+                                  _bloc.add(OtpReset(
                                       type: widget.type,
                                       device: getIt
                                           .get<LocalStorage>()
@@ -250,8 +255,8 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                         ),
                       ),
                       Gap(100.h),
-                      Image.asset(
-                        "assets/images/onbush.png",
+                      SvgPicture.asset(
+                        AppImage.allOnBush,
                         height: 50.h,
                       ),
                       Gap(20.h),

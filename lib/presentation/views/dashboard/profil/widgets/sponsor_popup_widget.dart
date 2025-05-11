@@ -58,8 +58,7 @@ class _SponsorPopupWidgetState extends State<SponsorPopupWidget> {
   }
 
   Future<void> _shareWithSubject() async {
-    String textToShare = """OnBush,
-L'application qui réunit tes cours, anciens sujets et corrigés en un seul lieu. Utilise mon code *${_sponsorCodeController.text}* pour une réduction de 500 FCFA : https://onbush.com/dl?code=${_sponsorCodeController.text}""";
+    String textToShare = """OnBush, L'application qui réunit tes cours, anciens sujets et corrigés en un seul lieu. Utilise mon code *${_sponsorCodeController.text}* pour une réduction de 500 FCFA : https://onbush.com/dl?code=${_sponsorCodeController.text}""";
     const subjectToShare = 'Découvrez cette technologie géniale';
 
     try {

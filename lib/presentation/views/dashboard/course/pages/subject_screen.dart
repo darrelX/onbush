@@ -136,6 +136,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
             .whereType<int>() // Évite les valeurs nulles
             .toSet()
             .map((item) => "Semestre $item"),
+        "Semestre 2"
       ],
     );
   }

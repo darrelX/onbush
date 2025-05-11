@@ -27,7 +27,7 @@ class AcademySemesterTab extends StatelessWidget {
     return AppCarouselWidget(
       carouselController: carouselController,
       height: 40.h,
-      viewportFraction: 0.35,
+      viewportFraction: 0.3,
       children: List.generate(
         listSemester.length,
         (index) {
@@ -35,12 +35,10 @@ class AcademySemesterTab extends StatelessWidget {
           return AppButton(
             onPressed: () => onPressed(index),
             radius: 10.r,
-            width: 120.w,
+            width: 95.w,
             text: listSemester[index],
 
             textColor: isSelected ? selectedText : AppColors.textGrey,
-            // textColor: Color(0xFF969DAC),
-            activeBgColor: isSelected ? selectedColor : null,
             bgColor: isSelected ? selectedColor : AppColors.grey,
           );
         },

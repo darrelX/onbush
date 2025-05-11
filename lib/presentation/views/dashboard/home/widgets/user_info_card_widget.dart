@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
+import 'package:onbush/core/constants/colors/app_colors.dart';
 import 'package:onbush/core/database/local_storage.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
@@ -20,25 +22,35 @@ class UserInfoCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        AppButton(
-          onPressed: () => context.router.push(const ProfilRoute()),
-          child: Image.asset(
-            getIt.get<LocalStorage>().getString('avatar')!,
-            height: 43.h,
-            fit: BoxFit.fitHeight,
+        Center(
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.profileImageColor,
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            child: AppButton(
+              onPressed: () => context.router.push(const ProfilRoute()),
+              child: Image.asset(
+                getIt.get<LocalStorage>().getString('avatar')!,
+                height: 0.06.sh,
+                fit: BoxFit.fitHeight,
+              ),
+            ),
           ),
         ),
         Gap(5.w),
         SizedBox(
-          height: 49.h,
+          height: 0.06.sh,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 "Salut",
-                style: context.textTheme.titleSmall!.copyWith(),
+                style: context.textTheme.titleMedium!.copyWith(),
               ),
               Text(
                 _cubit.userEntity!.name!,
@@ -56,7 +68,7 @@ class UserInfoCardWidget extends StatelessWidget {
         ),
         const Spacer(),
         SizedBox(
-          height: 49.h,
+          height: 0.06.sh,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,

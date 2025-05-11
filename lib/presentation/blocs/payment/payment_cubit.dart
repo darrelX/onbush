@@ -35,8 +35,8 @@ class PaymentCubit extends Cubit<PaymentState> {
 
       result.fold((failure) {
         emit(PaymentFailure(
-            message: Utils.extractErrorMessageFromMap(failure.message,
-                {"0": "imapossible d'initier la transaction"})));
+            message: Utils.extractErrorMessageFromMap(failure,
+                {"0": "impossible d'initier la transaction"})));
       }, (success) {
         if (success is UserEntity) {
           emit(PaymentSuccess(user: success));

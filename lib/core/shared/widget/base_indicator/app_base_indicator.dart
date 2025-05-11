@@ -35,7 +35,8 @@ class AppBaseIndicator {
   static Widget unavailableFileDisplay({
     required String message,
     double? size,
-    required Widget button
+    required Widget button,
+    double? spacing,
   }) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -53,7 +54,7 @@ class AppBaseIndicator {
             textAlign: TextAlign.center,
           ),
         ),
-        Gap(70.h),
+        Gap(spacing ?? 50.h),
         button
       ],
     );

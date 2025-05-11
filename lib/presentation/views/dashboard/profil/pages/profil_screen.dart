@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
@@ -12,6 +13,7 @@ import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../../../core/routing/app_router.dart';
@@ -32,6 +34,15 @@ class _ProfilScreenState extends State<ProfilScreen> {
   void initState() {
     super.initState();
     _authCubit = context.read<AuthCubit>();
+    _initWebViewController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  _initWebViewController() {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..addJavaScriptChannel(
@@ -44,9 +55,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
       )
       ..setNavigationDelegate(
         NavigationDelegate(
-          onProgress: (int progress) {
-            // Update loading bar.
-          },
+          onProgress: (int progress) {},
           onPageStarted: (String url) {},
           onPageFinished: (String url) {},
           onHttpError: (HttpResponseError error) {},
@@ -58,14 +67,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
             return NavigationDecision.navigate;
           },
         ),
-      )
-      ..addJavaScriptChannel(
-        'Toaster',
-        onMessageReceived: (JavaScriptMessage message) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message.message)),
-          );
-        },
       )
       ..loadRequest(Uri.parse('https://onbush237.com'));
   }
@@ -183,7 +184,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
                       ),
                       child: ListTile(
                         onTap: () {
-                          // context.router.push(const TopUpRoute());
+                          _shareWithSubject(
+                              r"Salut Onbush 👋, je voudrais faire une suggestion 💡 !");
                         },
                         leading: SvgPicture.asset(AppImage.messageIcon),
                         title: Text(
@@ -207,9 +209,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
                       ),
                       child: ListTile(
                         onTap: () {
-                          // context.router.push(const TopUpRoute());
+                          _shareWithSubject(
+                              r"Salut Onbush 👋, je voudrais signaler un bug 🐞 !");
                         },
-                        leading: const Icon(Icons.message),
+                        leading: SvgPicture.asset(AppImage.bugIcon),
                         title: Text(
                           'Signalez un bug',
                           style: context.textTheme.bodyLarge?.copyWith(
@@ -223,7 +226,31 @@ class _ProfilScreenState extends State<ProfilScreen> {
                         ),
                       ),
                     ),
-                    Gap(50.h),
+                    Gap(10.h),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: ListTile(
+                        onTap: () {
+                          context.router.push(const ReminderRoute());
+                        },
+                        leading: SvgPicture.asset(AppImage.clock),
+                        title: Text(
+                          'Rappels et alertes',
+                          style: context.textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Color(0xffA7A7AB),
+                        ),
+                      ),
+                    ),
+                    Gap(40.h),
                     AppButton(
                       width: double.infinity,
                       loading: state is LogoutPending,
@@ -242,5 +269,17 @@ class _ProfilScreenState extends State<ProfilScreen> {
         );
       },
     );
+  }
+
+  Future<void> _shareWithSubject(String textToShare) async {
+    try {
+      await Share.share(
+        textToShare,
+        sharePositionOrigin: const Rect.fromLTWH(0, 0, 100, 100),
+      );
+      print('Partage réussi');
+    } catch (e) {
+      print('Erreur lors du partage : $e');
+    }
   }
 }

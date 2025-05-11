@@ -30,6 +30,7 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
     required String discountCode,
   }) async {
     try {
+      final String encodedSponsorCode = Uri.encodeComponent(sponsorCode);
       final Response response =
           await _dioAccountApi.post('/auth/payment/init', data: {
         "appareil": appareil,
@@ -37,7 +38,7 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
         "telephone": phoneNumber,
         "service_paiement": paymentService,
         "montant": amount,
-        "code_Parrain": sponsorCode,
+        "code_parrain": encodedSponsorCode,
         "code_reduction": discountCode
       });
       if (response.data['data'] is String) {
@@ -54,8 +55,9 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
   @override
   Future<int> validateSponsorCode({required String sponsorCode}) async {
     try {
+      final String encodedSponsorCode = Uri.encodeComponent(sponsorCode);
       final Response response = await _dioAccountApi.get(
-        '/code_parrain/$sponsorCode/montant',
+        '/code_parrain/$encodedSponsorCode/montant',
       );
       return response.data['data'];
     } catch (e) {

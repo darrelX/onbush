@@ -125,66 +125,70 @@ class _DownloadScreenState extends State<DownloadScreen> {
                       return matcheCourse && matchesSearch;
                     }).toList();
 
-                    return Column(
-                      children: [
-                        state.listPdfFileEntity.isEmpty
-                            ? Expanded(
-                                child: Center(
-                                  child:
-                                      AppBaseIndicator.unavailableFileDisplay(
-                                    message:
-                                        "Vous avez un probleme de connexion ressayer",
-                                    button: AppButton(
-                                      text: "Recommencer",
-                                      bgColor: AppColors.primary,
-                                      width: context.width,
-                                      onPressed: () =>
-                                          _pdfFileCubit..getPdfFile(),
+                    return Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      child: Column(
+                        children: [
+                          state.listPdfFileEntity.isEmpty
+                              ? Expanded(
+                                  child: Center(
+                                    child:
+                                        AppBaseIndicator.unavailableFileDisplay(
+                                      message:
+                                          "Vous avez un probleme de connexion ressayer",
+                                      button: AppButton(
+                                        text: "Recommencer",
+                                        bgColor: AppColors.primary,
+                                        width: context.width,
+                                        onPressed: () =>
+                                            _pdfFileCubit..getPdfFile(),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Expanded(
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 15.w),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        AppInput(
+                                          hint: "Chercher un cours",
+                                          width: context.width,
+                                          colorBorder: AppColors.textGrey,
+                                          onChange: (value) {
+                                            setState(() {
+                                              _searchQuery = value;
+                                            });
+                                          },
+                                          controller: _courseControler,
+                                          prefix: const Icon(Icons.search),
+                                        ),
+                                        Gap(20.h),
+                                        Expanded(
+                                          child: ListView.separated(
+                                              itemBuilder: (context, index) {
+                                                return PdfFileWidget(
+                                                    pdfFileEntity:
+                                                        _filterListPdfFile[
+                                                            index]);
+                                              },
+                                              separatorBuilder:
+                                                  (context, index) {
+                                                return Gap(20.h);
+                                              },
+                                              itemCount:
+                                                  _filterListPdfFile.length),
+                                        )
+                                        //  PdfFileWidget(pdfFileModel : ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                              )
-                            : Expanded(
-                                child: Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 15.w),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      AppInput(
-                                        hint: "Chercher un cours",
-                                        width: context.width,
-                                        colorBorder: AppColors.textGrey,
-                                        onChange: (value) {
-                                          setState(() {
-                                            _searchQuery = value;
-                                          });
-                                        },
-                                        controller: _courseControler,
-                                        prefix: const Icon(Icons.search),
-                                      ),
-                                      Gap(20.h),
-                                      Expanded(
-                                        child: ListView.separated(
-                                            itemBuilder: (context, index) {
-                                              return PdfFileWidget(
-                                                  pdfFileEntity:
-                                                      _filterListPdfFile[
-                                                          index]);
-                                            },
-                                            separatorBuilder: (context, index) {
-                                              return Gap(20.h);
-                                            },
-                                            itemCount:
-                                                _filterListPdfFile.length),
-                                      )
-                                      //  PdfFileWidget(pdfFileModel : ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                      ],
+                        ],
+                      ),
                     );
                   }
                   return const SizedBox.shrink();

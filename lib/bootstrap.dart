@@ -6,6 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/database/local_storage.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+
 // import 'package:path_provider/path_provider.dart';
 
 _setupApplication() async {
@@ -26,6 +29,7 @@ bootstrap({
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      tz.initializeTimeZones();
       await dotenv.load(fileName: ".env");
       await setupLocator();
       await getIt.get<LocalStorage>().init();

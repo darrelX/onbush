@@ -35,7 +35,6 @@ class _ApplicationState extends State<Application> {
           create: (context) => getIt.get<ApplicationCubit>(),
         ),
         BlocProvider(create: (context) => getIt.get<NetworkCubit>()),
-        BlocProvider(create: (context) => getIt.get<OtpBloc>()),
         BlocProvider(create: (context) => getIt.get<DownloadCubit>()),
       ],
       child: ScreenUtilInit(

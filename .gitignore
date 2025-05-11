@@ -11,6 +11,8 @@
 migrate_working_dir/
 /node/
 /node_modules/
+py.py
+
 
 # IntelliJ related
 *.iml

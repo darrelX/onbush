@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _pdfFileCubit = getIt<PdfFileCubit>()..getPdfFile(maxResults: 3);
+    _pdfFileCubit = getIt<PdfFileCubit>();
     _cubit = getIt<ApplicationCubit>();
   }
 
@@ -76,27 +76,16 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 children: [
                   BlocProvider.value(
-                    value: _pdfFileCubit,
+                    value: _pdfFileCubit..getPdfFile(),
                     child: BlocBuilder<PdfFileCubit, PdfFileState>(
-                      // final _pdfFileCubit
                       builder: (context, state) {
                         if (state is FetchPdfFilePending) {
-                          _buildErrorState();
+                          return _buildErrorState();
                         }
                         if (state is FetchPdfFileFailure) {
-                          buildPdfFiles();
+                          return buildPdfFiles();
                         }
-                        if (_pdfFileCubit.listPdfFileEntity.isNotEmpty) {
-                          buildPdf();
-                        }
-                        return Expanded(
-                          child: Center(
-                            child: Text(
-                              "Aucun fichier disponible",
-                              style: TextStyle(fontSize: 17.r),
-                            ),
-                          ),
-                        );
+                        return buildPdf();
                       },
                     ),
                   ),
@@ -125,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         ..._pdfFileCubit.listPdfFileEntity.map((pdfFilentity) {
-          // print(pdfFilentity.filePath!);
+          print(pdfFilentity.filePath!);
           return ListTile(
             leading: SvgPicture.asset(AppImage.courseOpened),
             title: Text(pdfFilentity.name!),

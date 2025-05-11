@@ -31,37 +31,36 @@ class Utils {
   ) {
     try {
       String? code;
-      print(error.runtimeType);
 
-      // Vérifie si l'erreur est une exception Dio
+      // Gestion des erreurs Dio
       if (error is DioException) {
-        if (error.type == DioExceptionType.connectionTimeout ||
-            error.type == DioExceptionType.receiveTimeout ||
-            error.type == DioExceptionType.sendTimeout) {
-          return error.message!;
+        if ([
+          DioExceptionType.connectionTimeout,
+          DioExceptionType.receiveTimeout,
+          DioExceptionType.sendTimeout,
+        ].contains(error.type)) {
+          return error.message ?? 'Erreur de timeout';
         }
 
-        Response? response = error.response;
-        final Map<String, dynamic> data =
-            response!.data as Map<String, dynamic>;
-        if (data.containsKey('data')) {
-          code = data['data'].toString(); // Récupère le code d'erreur
+        final response = error.response;
+        if (response != null && response.data is Map<String, dynamic>) {
+          final data = response.data as Map<String, dynamic>;
+          code = data['data']?.toString();
         }
-      } else if (error is Map<String, dynamic> && error.containsKey('data')) {
-        code = error['data'].toString(); // Si erreur est un Map directement
-      } else if (error is NetworkException) {
-        code = error.message;
-        print("code $code");
       }
 
-      // Associe le code d'erreur à un message
+      // Erreur sous forme de Map directement
+      else if (error is Map<String, dynamic>) {
+        code = error['data']?.toString();
+      }
+
+      // Associe le code d'erreur à un message de documentation
       if (code != null && errorDocumentation.containsKey(code)) {
         return errorDocumentation[code]!;
       }
 
-      // Message par défaut si aucun code n'est trouvé
       return 'Une erreur inconnue s\'est produite';
-    } catch (e) {
+    } catch (_) {
       return 'Impossible de traiter l\'erreur';
     }
   }

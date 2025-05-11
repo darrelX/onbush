@@ -49,8 +49,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
   late final AuthCubit _authCubit;
   final GlobalKey<EditAvatarScreenState> _avatarGlobalKey =
       GlobalKey<EditAvatarScreenState>();
-    // listId['college'] = getIt.get<ApplicationCubit>().userEntity!.schoolId!;
-
+  // listId['college'] = getIt.get<ApplicationCubit>().userEntity!.schoolId!;
 
   // final GlobalKey<StatelessWidget> f;
 

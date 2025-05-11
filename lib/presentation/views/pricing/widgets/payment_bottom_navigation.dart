@@ -58,91 +58,97 @@ class PaymentBottomNavigation extends StatelessWidget {
       left: 0,
       right: 0,
       child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: _currentIndex != 1
-              ? Opacity(
-                  opacity: (_currentIndex == 0 ||
-                          (_currentIndex == 2 && _pm != null && _isValid1))
-                      ? 1
-                      : 0.5,
-                  child: IgnorePointer(
-                      ignoring: (_currentIndex == 0 ||
-                              (_currentIndex == 2 && _pm != null && _isValid1))
-                          ? false
-                          : true,
-                      child: AppButton(
-                        text: _currentIndex == 0 ? "Continuer" : "Valider",
-                        height: 50.h,
-                        onPressed: () {
-                          if (_currentIndex == 0) {
-                            _pageController.nextPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.linear);
-                          }
-                          if (_currentIndex == 2 &&
-                              _phoneKey.currentState!.validate() &&
-                              _pm != null) {
-                            context.read<PaymentCubit>().initPayment(
-                                appareil: getIt
-                                    .get<LocalStorage>()
-                                    .getString('device')!,
-                                email: widget.email,
-                                phoneNumber:
-                                    _phoneController.text.replaceAll(' ', ''),
-                                paymentService: _pm,
-                                amount: amount,
-                                sponsorCode: _sponsorCodeController.text
-                                    .replaceAll(' ', ''),
-                                discountCode: _discountCodeController.text
-                                    .replaceAll(' ', ''));
-                          }
-                        },
-                        width: context.width - 20.w,
-                        textColor: AppColors.white,
-                        loading: state is PaymentLoading,
-                        bgColor: AppColors.secondary,
-                      )),
-                )
-              : Column(
-                  children: [
-                    IgnorePointer(
-                      ignoring: !_isValid2,
-                      child: Opacity(
-                        opacity: !_isValid2 ? 0.3 : 1,
-                        child: AppButton(
-                          width: context.width,
-                          text: "Valider mon compte",
-                          loading: state is PercentStateLoading,
-                          onPressed: () {
-                            if (_discountCodeController.text.isNotEmpty) {
-                              _paymentCubit.applyDiscountCode(
-                                  reduceCode: _discountCodeController.text);
-                            } else {
-                              _pageController.nextPage(
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.linear);
-                            }
-                          },
-                          textColor: AppColors.white,
-                          bgColor: AppColors.primary,
-                        ),
-                      ),
-                    ),
-                    Gap(20.h),
-                    AppButton(
-                      width: context.width,
-                      text: "Pas de compte? Continuer",
-                      loading: (state is PercentStateLoading),
-                      onPressed: () {
-                        _pageController.nextPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.linear);
-                      },
-                      textColor: AppColors.primary,
-                      bgColor: AppColors.ternary,
-                    )
-                  ],
-                )),
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: _currentIndex == 1
+            ? _buildValidationButtons(context)
+            : _buildContinueButton(context),
+      ),
     );
+  }
+
+  Widget _buildContinueButton(BuildContext context) {
+    final isEnabled =
+        _currentIndex == 0 || (_currentIndex == 2 && _pm != null && _isValid1);
+
+    return Opacity(
+      opacity: isEnabled ? 1 : 0.5,
+      child: IgnorePointer(
+        ignoring: !isEnabled,
+        child: AppButton(
+          text: _currentIndex == 0 ? "Continuer" : "Valider",
+          height: 50.h,
+          onPressed: () => _handleButtonPressed(context),
+          width: context.width - 20.w,
+          textColor: AppColors.white,
+          loading: state is PaymentLoading,
+          bgColor: AppColors.secondary,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildValidationButtons(BuildContext context) {
+    return Column(
+      children: [
+        IgnorePointer(
+          ignoring: !_isValid2,
+          child: Opacity(
+            opacity: !_isValid2 ? 0.3 : 1,
+            child: AppButton(
+              width: context.width,
+              text: "Valider mon compte",
+              loading: state is PercentStateLoading,
+              onPressed: () {
+                if (_discountCodeController.text.isNotEmpty) {
+                  _paymentCubit.applyDiscountCode(
+                      reduceCode: _discountCodeController.text);
+                } else if (_sponsorCodeController.text.isNotEmpty) {
+                  _paymentCubit.validateSponsorCode(
+                      reduceCode: _sponsorCodeController.text);
+                } else {
+                  _pageController.nextPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.linear);
+                }
+              },
+              textColor: AppColors.white,
+              bgColor: AppColors.primary,
+            ),
+          ),
+        ),
+        Gap(20.h),
+        AppButton(
+          width: context.width,
+          text: "Pas de code? Continuer",
+          loading: state is PercentStateLoading,
+          onPressed: () {
+            _pageController.nextPage(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.linear);
+          },
+          textColor: AppColors.primary,
+          bgColor: AppColors.ternary,
+        )
+      ],
+    );
+  }
+
+  void _handleButtonPressed(BuildContext context) {
+    if (_currentIndex == 0) {
+      _pageController.nextPage(
+          duration: const Duration(milliseconds: 300), curve: Curves.linear);
+    } else if (_currentIndex == 2 &&
+        _phoneKey.currentState!.validate() &&
+        _pm != null) {
+      context.read<PaymentCubit>().initPayment(
+            appareil: getIt.get<LocalStorage>().getString('device')!,
+            email: widget.email,
+            phoneNumber: _phoneController.text.replaceAll(' ', ''),
+            paymentService: _pm,
+            amount: amount,
+            sponsorCode: _sponsorCodeController.text.replaceAll(' ', ''),
+            discountCode: _discountCodeController.text.replaceAll(' ', ''),
+          );
+    }
   }
 }
