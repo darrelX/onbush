@@ -7,9 +7,11 @@ part of 'course_model.dart';
 // **************************************************************************
 
 CourseModel _$CourseModelFromJson(Map<String, dynamic> json) => CourseModel(
-      id: (json['id'] as num?)?.toInt(),
+      id: CourseModel._idFromJson(json['id']),
       name: json['nom'] as String?,
       pdfUrl: json['pdf'] as String?,
+      pdfEpreuve: json['pdf_epreuve'] as String?,
+      pdfCorrige: json['pdf_corrige'] as String?,
       courseId: (json['matiere_id'] as num?)?.toInt(),
     );
 
@@ -19,4 +21,6 @@ Map<String, dynamic> _$CourseModelToJson(CourseModel instance) =>
       'nom': instance.name,
       'pdf': instance.pdfUrl,
       'matiere_id': instance.courseId,
+      'pdf_epreuve': instance.pdfEpreuve,
+      'pdf_corrige': instance.pdfCorrige,
     };

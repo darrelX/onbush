@@ -1,7 +1,5 @@
-import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:onbush/core/exceptions/auth/auth_exception.dart';
 import 'package:onbush/data/datasources/remote/user/user_remote_data_source.dart';
 import 'package:onbush/data/models/user/user_model.dart';
 
@@ -77,7 +75,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
           "etablissement_id": schoolId,
           "role": role,
           "filiere_id": majorStudy,
-          "code_Parrain": 0,
+          "code_parrain": 0,
         },
       );
     } catch (e) {
@@ -128,5 +126,29 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     } catch (e) {
       rethrow;
     }
+  }
+
+  @override
+  Future<bool?> connexionVerify(
+      {required String device, required String token}) async {
+    try {
+      final Response response = await _dioAccountApi.post(
+        '/auth/verify/connexion',
+        data: {
+          "appareil": device,
+          "token": token,
+        },
+      );
+
+      final int result = int.parse(response.data["data"]);
+      if (result == 0) {
+        return false;
+      } else if (result == 1) {
+        return true;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return null;
   }
 }

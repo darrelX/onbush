@@ -35,16 +35,12 @@ class PaymentCubit extends Cubit<PaymentState> {
 
       result.fold((failure) {
         emit(PaymentFailure(
-            message: Utils.extractErrorMessageFromMap(failure,
-                {"0": "impossible d'initier la transaction"})));
+            message: Utils.extractErrorMessageFromMap(
+                failure, {"0": "impossible d'initier la transaction"})));
       }, (success) {
-        if (success is UserEntity) {
-          emit(PaymentSuccess(user: success));
-        } else if (success is String) {
-          emit(PaymentSuccess(transactionId: success));
-        }
+        emit(PaymentSuccess(transactionId: success));
       });
-      // print("darrel $transactionId");
+      //
     } catch (e) {
       emit(PaymentFailure(
           message: Utils.extractErrorMessageFromMap(
@@ -54,14 +50,12 @@ class PaymentCubit extends Cubit<PaymentState> {
 
   Future<void> applyDiscountCode({required String reduceCode}) async {
     emit(const PercentStateLoading());
-    log("srtange");
     try {
       final result =
           await _paymentUseCase.applyDiscountCode(reduceCode: reduceCode);
       result.fold((failure) {
         emit(PercentStateFailure(message: Utils.extractErrorMessage(failure)));
       }, (success) {
-        print(success);
         emit(PercentStateSucess(percent: success));
       });
     } catch (e) {
@@ -71,14 +65,14 @@ class PaymentCubit extends Cubit<PaymentState> {
 
   Future<void> validateSponsorCode({required String reduceCode}) async {
     emit(const PercentStateLoading());
+    log("srtange");
+
     try {
       final result =
           await _paymentUseCase.validateSponsorCode(sponsorCode: reduceCode);
       result.fold((failure) {
         emit(PercentStateFailure(message: Utils.extractErrorMessage(failure)));
       }, (success) {
-        print(success);
-
         emit(PercentStateSucess(percent: success));
       });
     } catch (e) {
@@ -86,13 +80,13 @@ class PaymentCubit extends Cubit<PaymentState> {
     }
   }
 
-  Future<void> verifying({required String transactionId}) async {
+  Future<void> verifying(
+      {required String transactionId, required String device}) async {
     emit(const VerifyingPaymentLoading());
     try {
-      final user =
-          await _paymentUseCase.verifying(transactionId: transactionId);
+      final user = await _paymentUseCase.verifying(
+          transactionId: transactionId, device: device);
       user.fold((failure) {
-
         emit(VerifyingPaymentFailure(
           message: Utils.extractErrorMessageFromMap(failure, {
             "0": "Transaction introuvable",
@@ -118,5 +112,9 @@ class PaymentCubit extends Cubit<PaymentState> {
         }),
       ));
     }
+  }
+
+  Future<void> reset() async {
+    emit(const PaymentInitial());
   }
 }

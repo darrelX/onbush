@@ -65,7 +65,7 @@ class _AppButtonState extends State<AppButton> {
 
   @override
   Widget build(BuildContext context) {
-    // print("button $_isPressed");
+    //
     return InkWell(
       onTap: _onTap,
       borderRadius: BorderRadius.circular(15.r),
@@ -80,7 +80,6 @@ class _AppButtonState extends State<AppButton> {
       child: Container(
           height: widget.child == null ? widget.height : null,
           width: widget.width,
-          
           constraints: widget.constraints,
           padding: widget.child == null
               ? EdgeInsets.symmetric(horizontal: 10.w)
@@ -93,7 +92,7 @@ class _AppButtonState extends State<AppButton> {
                     ? widget.activeBgColor
                     : widget.bgColor)
                 : widget.bgColor?.withOpacity(.6),
-                boxShadow: widget.boxShadow,
+            boxShadow: widget.boxShadow,
             border: widget.borderColor != null && widget.child == null
                 ? Border.all(
                     color: widget.borderColor!,

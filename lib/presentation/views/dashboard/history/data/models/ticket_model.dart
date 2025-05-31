@@ -23,7 +23,7 @@ class TicketModel {
       required this.products});
 
   factory TicketModel.fromJson(Map<String, dynamic> json) {
-    // print("dada ${json['total_amount'].runtimeType} ${json['total_amount']}");
+    //
     return TicketModel(
         id: (json['id'] as int).toString() as String?,
         totalAmount: double.parse(json['total_amount'].toString()) as double?,

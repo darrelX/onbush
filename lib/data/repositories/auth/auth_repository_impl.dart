@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import 'package:onbush/core/exceptions/network/network_exception.dart';
 import 'package:onbush/data/datasources/remote/mentee/mentee_remote_data_source.dart';
@@ -47,6 +45,18 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  @override
+  Future<Either<NetworkException, bool?>> connexionVerify(
+      {required String device, required String token}) async {
+    try {
+      final bool? result = await _userRemoteDataSource.connexionVerify(
+          device: device, token: token);
+      return Right(result);
+    } catch (e) {
+      return Left(NetworkException.errorFrom(e));
+    }
+  }
+
   /// register user with the given informations
   @override
   Future<Either<NetworkException, void>> registerUser({
@@ -77,7 +87,6 @@ class AuthRepositoryImpl implements AuthRepository {
           birthDate: birthDate);
       return Right(result);
     } catch (e) {
-      print(e);
       return Left(NetworkException.errorFrom(e));
     }
   }

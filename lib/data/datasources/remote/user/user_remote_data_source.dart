@@ -39,4 +39,6 @@ abstract class UserRemoteDataSource {
       required String email,
       required String birthday,
       required String role});
+
+  Future<bool?> connexionVerify({required String device, required String token});
 }

@@ -11,7 +11,7 @@ class ReminderCubit extends Cubit<ReminderState> {
 
   ReminderCubit(this._reminderUseCase) : super(ReminderInitial());
 
-  Future<void> loadReminders() async {                                                 
+  Future<void> loadReminders() async {
     emit(ReminderLoading());
     try {
       final result = await _reminderUseCase.fetchReminders();
@@ -35,8 +35,6 @@ class ReminderCubit extends Cubit<ReminderState> {
         (_) => loadReminders(), // Reload after adding
       );
     } catch (e) {
-      print("failed to add reminder: $e");
-
       emit(ReminderFailled(e.toString()));
     }
   }

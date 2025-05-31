@@ -29,7 +29,6 @@ class SubjectLocalDataSourceImpl implements SubjectLocalDataSource {
       // Sauvegarde dans le stockage local
       await _localStorage.setStringList(_keySubject, jsonList);
     } catch (e) {
-      print("Erreur lors de la sauvegarde des sujets : ${e.toString()}");
       rethrow;
     }
   }
@@ -62,9 +61,7 @@ class SubjectLocalDataSourceImpl implements SubjectLocalDataSource {
       List<String> jsonList =
           files.map((pdf) => jsonEncode(pdf.toJson())).toList();
       await _localStorage.setStringList(_keySubject, jsonList);
-      print("setStringList a été appelé !");
     } catch (e) {
-      print("Erreur lors de la suppression du fichier PDF : ${e.toString()}");
       rethrow;
     }
   }
@@ -74,7 +71,6 @@ class SubjectLocalDataSourceImpl implements SubjectLocalDataSource {
     try {
       await _localStorage.remove(_keySubject);
     } catch (e) {
-      print("Erreur lors de la suppression du fichier PDF : ${e.toString()}");
       rethrow;
     }
   }

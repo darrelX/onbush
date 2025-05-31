@@ -10,6 +10,9 @@ PdfFileModel _$PdfFileModelFromJson(Map<String, dynamic> json) => PdfFileModel(
       id: json['id'] as String?,
       name: json['name'] as String?,
       filePath: json['filePath'] as String?,
+      updatedDate: json['updatedDate'] == null
+          ? null
+          : DateTime.parse(json['updatedDate'] as String),
       isOpened: json['isOpened'] as bool? ?? false,
       category: json['category'] as String?,
       date:
@@ -21,6 +24,7 @@ Map<String, dynamic> _$PdfFileModelToJson(PdfFileModel instance) =>
       'id': instance.id,
       'name': instance.name,
       'date': instance.date?.toIso8601String(),
+      'updatedDate': instance.updatedDate?.toIso8601String(),
       'category': instance.category,
       'filePath': instance.filePath,
       'isOpened': instance.isOpened,

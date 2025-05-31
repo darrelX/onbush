@@ -139,6 +139,17 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const OnboardingScreen(),
       );
     },
+    PaymentPendingRoute.name: (routeData) {
+      final args = routeData.argsAs<PaymentPendingRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: PaymentPendingScreen(
+          key: args.key,
+          paymentId: args.paymentId,
+          email: args.email,
+        ),
+      );
+    },
     PdfViewRoute.name: (routeData) {
       final args = routeData.argsAs<PdfViewRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -547,6 +558,49 @@ class OnboardingRoute extends PageRouteInfo<void> {
   static const String name = 'OnboardingRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [PaymentPendingScreen]
+class PaymentPendingRoute extends PageRouteInfo<PaymentPendingRouteArgs> {
+  PaymentPendingRoute({
+    Key? key,
+    required String paymentId,
+    required String email,
+    List<PageRouteInfo>? children,
+  }) : super(
+          PaymentPendingRoute.name,
+          args: PaymentPendingRouteArgs(
+            key: key,
+            paymentId: paymentId,
+            email: email,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'PaymentPendingRoute';
+
+  static const PageInfo<PaymentPendingRouteArgs> page =
+      PageInfo<PaymentPendingRouteArgs>(name);
+}
+
+class PaymentPendingRouteArgs {
+  const PaymentPendingRouteArgs({
+    this.key,
+    required this.paymentId,
+    required this.email,
+  });
+
+  final Key? key;
+
+  final String paymentId;
+
+  final String email;
+
+  @override
+  String toString() {
+    return 'PaymentPendingRouteArgs{key: $key, paymentId: $paymentId, email: $email}';
+  }
 }
 
 /// generated route for

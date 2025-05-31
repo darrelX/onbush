@@ -89,7 +89,7 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
     return Row(
       children: [
         Container(
-                   decoration: BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.profileImageColor,
             borderRadius: BorderRadius.circular(10.r),
           ),
@@ -136,8 +136,8 @@ class _AmbassadorSpaceScreenState extends State<AmbassadorSpaceScreen> {
         onTap: () {
           AppDialog.showDialog(
             context: context,
-            width: 270.w,
-            height: 270.h,
+            width: 0.75.sw,
+            height: 0.38.sh,
             child: SponsorPopupWidget(sponsorCode: sponsorCode),
           );
         },

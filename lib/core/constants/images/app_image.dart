@@ -1,3 +1,5 @@
+import 'package:onbush/core/constants/images/enums/enums.dart';
+
 abstract class AppImage {
   static const String home = "assets/icons/home.svg";
   static const String homeActive = "assets/icons/home-active.svg";
@@ -27,6 +29,13 @@ abstract class AppImage {
   static const String downloadButton = "assets/icons/download_icon.svg";
   static const String bugIcon = "assets/icons/bug.svg";
   static const String clock = "assets/icons/clock.svg";
+
+  static const String _basePath = "assets/avatars";
+  static String getAvatarImage(Gender gender, AvatarState state) {
+    final genderStr = gender.name; 
+    final stateStr = state.name;
+    return '$_basePath/${genderStr}_${stateStr}_avatar.png';
+  }
 
   /// Avatars
   static const String avatar1 = "assets/avatars/avatar1.png";

@@ -14,19 +14,17 @@ class PdfUseCase {
   /// Télécharge un PDF et le sauvegarde automatiquement après un succès.
   Future<Either<NetworkException, Stream<double>>> downloadAndSavePdf({
     required String url,
+    required String id,
     required String path,
     required String category,
     required String name,
   }) async {
     try {
-      print("Début du téléchargement...");
-
       final downloadResult =
           await _pdfRepository.downloadPdf(url: url, path: path);
 
       return downloadResult.fold(
         (failure) {
-          print("Échec du téléchargement (downloadPdf renvoie une erreur)");
           return Left(failure);
         },
         (progressStream) {
@@ -36,13 +34,14 @@ class PdfUseCase {
           try {
             progressStream.listen(
               (progress) async {
-                print("Progression: $progress%");
                 controller.add(progress);
 
                 if (progress >= 100.0) {
-                  print("Téléchargement terminé, sauvegarde en cours...");
+                  print(
+                      "url: $url, path: $path, category: $category, name: $name");
 
                   final saveResult = await _pdfRepository.savePdfFileByPath(
+                    id: id,
                     filePath: path,
                     name: name,
                     category: category,
@@ -50,34 +49,27 @@ class PdfUseCase {
 
                   saveResult.fold(
                     (failure) {
-                      print("Erreur lors de la sauvegarde : $failure");
                       controller.addError(failure);
                       controller.close();
                     },
                     (_) {
-                      print("Sauvegarde réussie !");
                       controller.close();
                     },
                   );
                 }
               },
               onError: (error) {
-                print("Erreur détectée dans le Stream : $error");
-                controller.addError(
-                    NetworkException.errorFrom(error));
+                controller.addError(NetworkException.errorFrom(error));
                 controller.close();
                 return Left(NetworkException.errorFrom(error));
               },
               onDone: () {
-                print("Téléchargement terminé avec succès.");
                 controller.close();
               },
               cancelOnError:
                   true, // Ferme automatiquement le stream en cas d'erreur
             );
           } catch (e) {
-            print("Erreur lors de l'écoute du flux de progression : $e");
-
             controller.addError(NetworkException.errorFrom(e));
             controller.close();
             return Left(NetworkException.errorFrom(e));
@@ -87,8 +79,6 @@ class PdfUseCase {
         },
       );
     } catch (e, stackTrace) {
-      print("Exception interceptée : $e");
-      print("StackTrace : $stackTrace");
       return Left(NetworkException.errorFrom(e));
     }
   }

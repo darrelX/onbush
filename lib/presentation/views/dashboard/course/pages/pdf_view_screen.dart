@@ -7,7 +7,6 @@ import 'package:flutter_windowmanager_plus/flutter_windowmanager_plus.dart';
 import 'package:onbush/domain/entities/course/course_entity.dart';
 import 'package:onbush/presentation/blocs/pdf/pdf_file/pdf_file_cubit.dart';
 import 'package:onbush/service_locator.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 @RoutePage()
@@ -53,12 +52,11 @@ class _PdfViewScreenState extends State<PdfViewScreen> {
   Future<void> _loadSecurePdf() async {
     try {
       await _pdfFileCubit.readPdfFile(
+        id: widget.courseEntity.id!.toString(),
         category: widget.category,
         name: widget.courseEntity.name!,
       );
-    } catch (e) {
-      debugPrint("Erreur lors du chargement du PDF : $e");
-    }
+    } catch (e) {}
   }
 
   @override

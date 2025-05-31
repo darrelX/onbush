@@ -8,6 +8,11 @@ abstract class AuthRepository {
     required String device,
   });
 
+    Future<Either<NetworkException, bool?>> connexionVerify({
+    required String device,
+    required String token
+  });
+
   /// login user with the given device id
   Future<Either<NetworkException, dynamic>> login(
       {required String device, required String email});

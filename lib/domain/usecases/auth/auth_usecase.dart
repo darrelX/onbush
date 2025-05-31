@@ -58,6 +58,11 @@ class AuthUseCase {
     return _authRepository.getAllMentees(device: device, email: email);
   }
 
+  Future<Either<NetworkException, bool?>> connexionVerify (
+      {required String device, required String token}) async {
+    return _authRepository.connexionVerify(device: device, token: token);
+  }
+
   Future<Either<NetworkException, void>> editProfil(
       {required String device,
       required String studentId,

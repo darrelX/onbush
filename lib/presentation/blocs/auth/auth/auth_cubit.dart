@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:equatable/equatable.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:onbush/core/database/key_storage.dart';
@@ -45,11 +43,10 @@ class AuthCubit extends Cubit<AuthState> {
       );
       result.fold((failure) {
         emit(LoginFailure(
-            message: Utils.extractErrorMessageFromMap(failure,
-                {"0": "telephone ou pass incorrect", "-1": "compte bloque"})));
+            message: Utils.extractErrorMessageFromMap(
+                failure, {"0": "compte introuvable", "-1": "compte bloqué"})));
       }, (success) {
         if (success is String) {
-          print("success");
           emit(OTpStateSuccess(email: email, type: 'login'));
         } else {
           emit(LoginSuccess(user: success!));
@@ -145,13 +142,24 @@ class AuthCubit extends Cubit<AuthState> {
             device: getIt.get<LocalStorage>().getString('device')!));
         user.fold((failure) {
           emit(CheckAuthStateFailure(
-              message: Utils.extractErrorMessage(failure.message)));
+              message: Utils.extractErrorMessageFromMap(failure, {
+            "0": "Un probleme est survenu",
+            "-1": "Email déjà utilisé",
+            "-2": "Téléphone déjà utilisé",
+            "-3": "Utilisateur non reconnu"
+          })));
         }, (success) {
           emit(CheckAuthStateSuccess(user: success!));
         });
       }
     } catch (e) {
-      emit(CheckAuthStateFailure(message: Utils.extractErrorMessage(e)));
+      emit(CheckAuthStateFailure(
+          message: Utils.extractErrorMessageFromMap(e, {
+        "0": "Un probleme est survenu",
+        "-1": "Email déjà utilisé",
+        "-2": "Téléphone déjà utilisé",
+        "-3": "Utilisateur non reconnu"
+      })));
     }
     // emit(const ConnexionSuccess());
   }
@@ -165,7 +173,6 @@ class AuthCubit extends Cubit<AuthState> {
       result.fold((failure) {
         emit(SearchStateFailure(message: failure.message));
       }, (success) {
-        print(_listAllColleges);
         _listAllColleges.addAll(List.from(success));
         emit(SearchStateSuccess(
             listCollegeModel: _listAllColleges,
@@ -274,7 +281,6 @@ class AuthCubit extends Cubit<AuthState> {
       }, (success) async {
         await _prefs.remove(StorageKeys.authToken);
         await _prefs.remove(StorageKeys.pdfFile);
-        await _prefs.remove(StorageKeys.avatar);
         emit(LogoutSuccess());
       });
     } catch (e) {

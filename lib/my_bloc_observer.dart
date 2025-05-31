@@ -1,41 +1,39 @@
-import 'dart:async';
-
-import 'package:bloc/bloc.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-
-enum Status { connected, disconnected }
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyBlocObserver extends BlocObserver {
-  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
-  Status status = Status.disconnected;
-
-  MyBlocObserver() {
-    _initializeConnectivity();
+  @override
+  void onCreate(BlocBase bloc) {
+    super.onCreate(bloc);
+    print('Bloc créé: ${bloc.runtimeType}');
   }
 
-  void _initializeConnectivity() {
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen(
-      (List<ConnectivityResult> result) {
-        _updateConnectionStatus(result);
-      },
-    );
+  @override
+  void onEvent(Bloc bloc, Object? event) {
+    super.onEvent(bloc, event);
+    print('Nouvel événement dans ${bloc.runtimeType}: $event');
   }
 
-  // Mise à jour de l'état de connexion
-  void _updateConnectionStatus(List<ConnectivityResult> result) {
-    if (result.contains(ConnectivityResult.none)) {
-      status = Status.disconnected;
-      print('Network Status: Disconnected');
-    } else {
-      status = Status.connected;
-      print('Network Status: Connected');
-    }
-  }
-
-  // Vous pouvez aussi ajouter une gestion des changements d'état globaux ici
   @override
   void onChange(BlocBase bloc, Change change) {
     super.onChange(bloc, change);
-    print('Bloc Change: ${bloc.runtimeType}, $change');
+    print('Changement d\'état dans ${bloc.runtimeType}: $change');
+  }
+
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
+    print('Transition dans ${bloc.runtimeType}: $transition');
+  }
+
+  @override
+  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
+    super.onError(bloc, error, stackTrace);
+    print('Erreur dans ${bloc.runtimeType}: $error');
+  }
+
+  @override
+  void onClose(BlocBase bloc) {
+    super.onClose(bloc);
+    print('Bloc fermé: ${bloc.runtimeType}');
   }
 }

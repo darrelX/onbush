@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:onbush/core/exceptions/network/network_exception.dart';
 import 'package:onbush/data/datasources/remote/otp/otp_remote_data_source.dart';
+import 'package:onbush/data/models/user/user_model.dart';
 import 'package:onbush/domain/repositories/otp/otp_repository.dart';
 
 class OtpRepositoryImpl implements OtpRepository {
@@ -18,6 +19,9 @@ class OtpRepositoryImpl implements OtpRepository {
     try {
       final result = await _otpRemoteDataSource.submit(
           code: code, email: email, device: device, role: role, type: type);
+      if (result is UserModel) {
+        return Right(result.toEntity());
+      }
       return Right(result);
     } catch (e) {
       return Left(NetworkException.errorFrom(e));
@@ -31,8 +35,8 @@ class OtpRepositoryImpl implements OtpRepository {
       String role = "etudiant",
       String type = 'register'}) async {
     try {
-      final result =
-          await _otpRemoteDataSource.reSendOtp(email: email, device: device, type:type);
+      final result = await _otpRemoteDataSource.reSendOtp(
+          email: email, device: device, type: type);
       return Right(result);
     } catch (e) {
       return Left(NetworkException.errorFrom(e));

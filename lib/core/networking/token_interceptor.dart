@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:onbush/core/database/key_storage.dart';
 import 'package:onbush/core/database/local_storage.dart';
 import 'package:onbush/service_locator.dart';
 
@@ -12,7 +13,7 @@ class TokenInterceptor extends QueuedInterceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    var token = prefs.getString('token');
+    var token = prefs.getString(StorageKeys.authToken);
     if (token != null) {
       log("Current token $token", name: "TokenInterceptor+onRequest");
       options.headers["userKey"] = token;
@@ -25,7 +26,7 @@ class TokenInterceptor extends QueuedInterceptor {
     //     options.method = 'POST';
     //   }
     // } catch (e) {
-    //   print(e);
+    //
     // }
 
     return handler.next(options);
@@ -55,7 +56,7 @@ class TokenInterceptor extends QueuedInterceptor {
   //       return handler.reject(err);
   //     }
 
-  //     debugPrint(err.response.toString());
+  //     debug
   //   }
 
   //   return handler.next(err);

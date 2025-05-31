@@ -1,13 +1,12 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:onbush/core/bottom_navigation_bar/bottom_navigation_bar.dart';
-import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
-import 'package:onbush/core/constants/colors/app_colors.dart';
 import 'package:onbush/core/shared/widget/onbush_app_bar.dart';
+import 'package:onbush/presentation/blocs/pdf/pdf_manager/pdf_manager_cubit.dart';
+import 'package:onbush/presentation/views/dashboard/home/pages/home_screen.dart';
+import 'package:onbush/service_locator.dart';
 
 @RoutePage()
 class ApplicationScreen extends StatefulWidget {
@@ -50,15 +49,7 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
                   title: "Profil",
                 ),
                 toolbarHeight: 70.h,
-                automaticallyImplyLeading: false
-
-                // actions: [
-                //   SvgPicture.asset(
-                //     'assets/icons/settings.svg',
-                //   ),
-                //   const Gap(10),
-                // ],
-                );
+                automaticallyImplyLeading: false);
           default:
             return AppBar();
         }
@@ -70,6 +61,9 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
         AmbassadorSpaceRoute(),
       ],
       bottomNavigationBuilder: (_, tabsRouter) {
+        if (tabsRouter.activeIndex == 0) {
+          getIt<PdfManagerCubit>().loadAll(maxResults: 3);
+        }
         return BottomNivagatorBar(
           selectedIndex: tabsRouter.activeIndex,
           onDestinationSelected: tabsRouter.setActiveIndex,

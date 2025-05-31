@@ -71,7 +71,7 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
       // backgroundColor: AppColors.white,
       appBar: AppBar(
         title: Text(
-          "Verification du numero",
+          "Verification de l'adresse email",
           style: context.textTheme.titleLarge!
               .copyWith(fontWeight: FontWeight.bold),
         ),
@@ -107,19 +107,14 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
               context.router.push(PriceRoute(email: widget.email));
             } else {
               getIt.get<ApplicationCubit>().setUser(state.user!);
-              context.router.push(const ReminderRoute());
+              context.router.push(const ApplicationRoute());
             }
           }
         },
         builder: (context, state) {
-          print("state $state ");
           if (state is OtpLoadingState) {
             return Container(
-              decoration: const BoxDecoration(
-                  // borderRadius: BorderRadius.vertical(
-                  //   top: Radius.circular(30),
-                  // ),
-                  color: Colors.white),
+              decoration: const BoxDecoration(color: Colors.white),
               child: const Center(
                 child: CircularProgressIndicator(),
               ),
@@ -237,20 +232,12 @@ class _OtpInputScreenState extends State<OTPInputScreen> {
                               loading: state is OtpVerifying,
                               text: "Renvoyer le code OTP",
                               onPressed: () {
-                                setState(() {
-                                  _bloc.add(OtpReset(
-                                      type: widget.type,
-                                      device: getIt
-                                          .get<LocalStorage>()
-                                          .getString('device')!,
-                                      email: widget.email));
-
-                                  if (state is OtpVerificationSuccess) {
-                                    print("Success");
-                                  } else if (state is OtpVerificationFailure) {
-                                    print("No Success");
-                                  }
-                                });
+                                _bloc.add(OtpReset(
+                                    type: widget.type,
+                                    device: getIt
+                                        .get<LocalStorage>()
+                                        .getString('device')!,
+                                    email: widget.email));
                               }),
                         ),
                       ),

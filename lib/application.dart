@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onbush/presentation/blocs/auth/auth/auth_cubit.dart';
-import 'package:onbush/presentation/blocs/otp/otp_bloc.dart';
+import 'package:onbush/presentation/blocs/payment/payment_cubit.dart';
+import 'package:onbush/presentation/blocs/pdf/pdf_manager/pdf_manager_cubit.dart';
 import 'package:onbush/presentation/views/dashboard/download/logic/cubit/download_cubit.dart';
 import 'package:onbush/l10n/l10n.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
@@ -36,30 +37,36 @@ class _ApplicationState extends State<Application> {
         ),
         BlocProvider(create: (context) => getIt.get<NetworkCubit>()),
         BlocProvider(create: (context) => getIt.get<DownloadCubit>()),
+        BlocProvider(create: (context) => getIt.get<PaymentCubit>()),
+        BlocProvider(create: (context) => getIt.get<PdfManagerCubit>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 812),
         child: MaterialApp.router(
-          title: 'onbush',
-          localizationsDelegates: const [
-            AppLocalizations.delegate, // Add this line
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: L10n.all,
-          debugShowCheckedModeBanner: false,
-          theme: buildLightTheme(),
-          locale: const Locale('en'),
-          darkTheme: buildLightTheme(),
-          routerConfig: _appRouter.config(
-              // navigatorObservers: () => [MyObserver()],
-              ),
-          themeMode: ThemeMode.dark,
-          builder: (context, child) => _UnFocusWrapper(
-            child: child,
-          ),
-        ),
+            title: 'onbush',
+            localizationsDelegates: const [
+              AppLocalizations.delegate, // Add this line
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: L10n.all,
+            debugShowCheckedModeBanner: false,
+            theme: buildLightTheme(),
+            locale: const Locale('en'),
+            darkTheme: buildLightTheme(),
+            routerConfig: _appRouter.config(
+                // navigatorObservers: () => [MyObserver()],
+                ),
+            themeMode: ThemeMode.dark,
+            builder: (context, child) {
+              final mediaQueryData = MediaQuery.of(context);
+              return MediaQuery(
+                data: mediaQueryData.copyWith(
+                    textScaler: const TextScaler.linear(1.0)),
+                child: _UnFocusWrapper(child: child),
+              );
+            }),
       ),
     );
   }

@@ -123,7 +123,7 @@
 //                   text: widget.title1,
 //                   onPressed: () {
 //                     if (_formKey.currentState!.validate()) {
-//                       print(_number);
+//
 //                       // _cubit.login(
 //                       //   phone: _phoneController.text,
 //                       //   password: _passwordController.text,

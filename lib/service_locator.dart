@@ -48,6 +48,7 @@ import 'package:onbush/presentation/blocs/auth/auth/auth_cubit.dart';
 import 'package:onbush/presentation/blocs/otp/otp_bloc.dart';
 import 'package:onbush/presentation/blocs/payment/payment_cubit.dart';
 import 'package:onbush/presentation/blocs/pdf/pdf_file/pdf_file_cubit.dart';
+import 'package:onbush/presentation/blocs/pdf/pdf_manager/pdf_manager_cubit.dart';
 import 'package:onbush/presentation/blocs/reminder/reminder_cubit.dart';
 import 'package:onbush/presentation/views/dashboard/download/logic/cubit/download_cubit.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
@@ -178,7 +179,8 @@ Future<void> setupLocator() async {
     ..registerLazySingleton<AcademyUsecase>(() => AcademyUsecase(getIt()))
     ..registerLazySingleton<AuthUseCase>(() => AuthUseCase(getIt()))
     ..registerLazySingleton<PdfUseCase>(() => PdfUseCase(getIt()))
-    ..registerLazySingleton<OtpUseCase>(() => OtpUseCase(getIt<OtpRepository>()))
+    ..registerLazySingleton<OtpUseCase>(
+        () => OtpUseCase(getIt<OtpRepository>()))
     ..registerLazySingleton<PaymentUseCase>(() => PaymentUseCase(getIt()))
     ..registerLazySingleton<ReminderUseCase>(
         () => ReminderUseCase(getIt(), getIt()))
@@ -194,13 +196,16 @@ Future<void> setupLocator() async {
     )
     ..registerLazySingleton<OtpBloc>(() => OtpBloc(getIt<OtpUseCase>()))
     ..registerSingleton<DownloadCubit>(DownloadCubit())
-    ..registerLazySingleton<PaymentCubit>(() => PaymentCubit(getIt()))
+    ..registerFactory<PaymentCubit>(() => PaymentCubit(getIt()))
     ..registerLazySingleton<AcademyCubit>(() => AcademyCubit(getIt(), getIt()))
-    // ..registerLazySingleton<PdfFileManagerCubit>(() => AcademyCubit(getIt(), getIt()))
+    ..registerLazySingleton<PdfManagerCubit>(
+      () => PdfManagerCubit(getIt<PdfUseCase>()),
+    )
     ..registerLazySingleton<ReminderCubit>(
       () => ReminderCubit(getIt<ReminderUseCase>()),
     )
-    ..registerFactory<PdfFileCubit>(() => PdfFileCubit(getIt<PdfUseCase>()));
+    ..registerFactory<PdfFileCubit>(
+        () => PdfFileCubit(getIt<PdfUseCase>(), getIt<PdfManagerCubit>()));
 
   // ..registerSingleton<NetworkCubit>(NetworkCubit());
 }

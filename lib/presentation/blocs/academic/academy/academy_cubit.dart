@@ -132,6 +132,7 @@ class AcademyCubit extends Cubit<AcademyState> {
           (failure) => emit(CourseStateFailure(message: failure.message)),
           (courses) {
             updatedCourses = _updateCourseStatus(courses, savePdfFileResult);
+
             listCourseEntity.addAll(updatedCourses);
             emit(CourseStateSuccess(listCourseEntity: listCourseEntity));
           },
@@ -159,11 +160,12 @@ class AcademyCubit extends Cubit<AcademyState> {
       Status status = Status.notDownloaded;
 
       savePdfFileResult.fold(
-        (error) =>
-            null, // Si la base de données échoue, on garde le statut par défaut
+        (error) {
+          return null;
+        }, // Si la base de données échoue, on garde le statut par défaut
         (savedFiles) {
           final matchingFile = savedFiles.firstWhere(
-            (file) => file.name == course.name,
+            (file) => file.id == course.id,
             orElse: () => PdfFileEntity(name: '', filePath: '', category: ''),
           );
 
@@ -180,6 +182,8 @@ class AcademyCubit extends Cubit<AcademyState> {
         name: course.name,
         pdfUrl: course.pdfUrl,
         courseId: course.courseId,
+        pdfEpreuve: course.pdfEpreuve,
+        pdfCorrige: course.pdfCorrige,
         status: status,
       );
     }).toList();

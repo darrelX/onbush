@@ -1,10 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
+import 'package:onbush/core/database/key_storage.dart';
 import 'package:onbush/core/database/local_storage.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
@@ -34,7 +34,7 @@ class UserInfoCardWidget extends StatelessWidget {
             child: AppButton(
               onPressed: () => context.router.push(const ProfilRoute()),
               child: Image.asset(
-                getIt.get<LocalStorage>().getString('avatar')!,
+                getIt.get<LocalStorage>().getString(StorageKeys.avatar)!,
                 height: 0.06.sh,
                 fit: BoxFit.fitHeight,
               ),

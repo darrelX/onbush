@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import 'package:onbush/core/exceptions/local/database_exception.dart';
 import 'package:onbush/core/exceptions/network/network_exception.dart';
@@ -79,7 +77,7 @@ class AcademyRepositoryImpl implements AcademyRepository {
     try {
       final result =
           await _specialityRemoteDataSource.getAllSpecialities(schoolId);
-      print("object");
+
       return Right(result.map((elt) => elt.toEntity()).toList());
     } catch (e) {
       return Left(NetworkException.errorFrom(e));

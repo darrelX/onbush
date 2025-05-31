@@ -21,11 +21,9 @@ class DownloadCubit extends Cubit<DownloadState> {
         final FileStat stats = await file.stat();
         return now.difference(stats.modified).inHours;
       } else {
-        print('Le fichier n\'existe pas : $filePath');
         return null;
       }
     } catch (e) {
-      print('Erreur lors de la récupération des métadonnées du fichier : $e');
       return null;
     }
   }
@@ -42,9 +40,7 @@ class DownloadCubit extends Cubit<DownloadState> {
           pdfFiles.add(entity);
         }
       }
-    } catch (e) {
-      print('Erreur lors de l\'exploration des fichiers PDF : $e');
-    }
+    } catch (e) {}
     return pdfFiles;
   }
 
@@ -76,7 +72,6 @@ class DownloadCubit extends Cubit<DownloadState> {
         );
       }
     } catch (e) {
-      print('Erreur lors de la conversion des fichiers en modèles : $e');
       rethrow;
     }
     return pdfModels;
@@ -109,9 +104,8 @@ class DownloadCubit extends Cubit<DownloadState> {
 
       // return allPdfFiles.take(maxResults).toList();
     } catch (e) {
-      print('Erreur lors de la récupération des fichiers récents : $e');
       final errorMessage = Utils.extractErrorMessage(e);
-      print('Erreur dans `downloadAllPdfs` : $errorMessage');
+
       emit(DownloadFailure(message: errorMessage));
     }
   }
@@ -160,7 +154,6 @@ class DownloadCubit extends Cubit<DownloadState> {
 
       return pdfModels;
     } catch (e) {
-      print('Erreur lors du chargement des PDF : $e');
       return [];
     }
   }
@@ -183,7 +176,6 @@ class DownloadCubit extends Cubit<DownloadState> {
 
       return folderNames;
     } catch (e) {
-      print('Erreur lors de la récupération des dossiers : $e');
       return [];
     }
   }
@@ -196,7 +188,7 @@ class DownloadCubit extends Cubit<DownloadState> {
       emit(DownloadSuccess(listPdfModel: pdfModels));
     } catch (e) {
       final errorMessage = Utils.extractErrorMessage(e);
-      print('Erreur dans `downloadAllPdfs` : $errorMessage');
+
       emit(DownloadFailure(message: errorMessage));
     }
   }

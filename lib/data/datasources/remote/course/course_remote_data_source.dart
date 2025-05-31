@@ -6,6 +6,4 @@ abstract class CourseRemoteDataSource {
     required int subjectId,
     required String category,
   });
-
-  
 }

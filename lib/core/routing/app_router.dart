@@ -10,6 +10,7 @@ import 'package:onbush/presentation/views/dashboard/course/pages/pdf_view_screen
 import 'package:onbush/presentation/views/dashboard/download/pages/download_pdf_view_screen.dart';
 import 'package:onbush/presentation/views/dashboard/profil/pages/edit_avatar_screen.dart';
 import 'package:onbush/presentation/views/dashboard/profil/pages/edit_profil_screen.dart';
+import 'package:onbush/presentation/views/pricing/pages/payment_pending_screen.dart';
 import 'package:onbush/presentation/views/pricing/pages/price_screen.dart';
 import 'package:onbush/presentation/views/dashboard/course/pages/subject_screen.dart';
 import 'package:onbush/presentation/views/dashboard/download/pages/download_screen.dart';
@@ -42,7 +43,7 @@ class AppRouter extends _$AppRouter {
           path: '/dashboard',
           children: [
             AutoRoute(
-              path: '',
+              path: 'home',
               page: HomeRoute.page,
             ),
             AutoRoute(
@@ -77,6 +78,7 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: DownloadRoute.page),
         AutoRoute(page: ReminderRoute.page),
         AutoRoute(page: LoaderRoute.page),
+        AutoRoute(page: PaymentPendingRoute.page),
 
         // AutoRoute(page: ForgetPasswordRoute.page),
         // AutoRoute(page: NewPasswordRoute.page),

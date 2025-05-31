@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:onbush/core/database/key_storage.dart';
 import 'package:onbush/presentation/blocs/payment/payment_cubit.dart';
 import 'package:onbush/presentation/views/pricing/pages/price_screen.dart';
 import 'package:onbush/service_locator.dart';
@@ -141,7 +142,8 @@ class PaymentBottomNavigation extends StatelessWidget {
         _phoneKey.currentState!.validate() &&
         _pm != null) {
       context.read<PaymentCubit>().initPayment(
-            appareil: getIt.get<LocalStorage>().getString('device')!,
+            appareil:
+                getIt.get<LocalStorage>().getString(StorageKeys.deviceId)!,
             email: widget.email,
             phoneNumber: _phoneController.text.replaceAll(' ', ''),
             paymentService: _pm,

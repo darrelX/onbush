@@ -50,9 +50,7 @@ class _PinCodeWidgetState extends State<PinCodeWidget> {
           keyboardType: const TextInputType.numberWithOptions(
               signed: true, decimal: true),
           onCompleted: (v) {
-            setState(() {
-              print("Completed");
-            });
+            setState(() {});
           },
 
           // inputFormatters: [

@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
@@ -41,45 +42,51 @@ class CourseScreen extends StatefulWidget {
 
 class _CourseScreenState extends State<CourseScreen> {
   late final AcademyCubit _academyCubit;
-  int _currentIndex = 0;
-  String _searchQuery = "";
   final CarouselSliderController _carouselController =
       CarouselSliderController();
+
+  int _currentIndex = 0;
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     _academyCubit = getIt<AcademyCubit>();
-    _fetchCourses();
+    _fetchCourses(); // Chargement initial
   }
 
+  /// Recharge la liste des cours (optionnellement sans forcer le refresh complet)
   Future<void> _fetchCourses({bool fullRefresh = true}) async {
     final subjectId = widget.subjectEntity.id;
     if (subjectId != null) {
-      await _academyCubit.fetchCourseEntity(
-        subjectId: subjectId,
-        category: widget.category.apiLabel,
-        fullRefresh: fullRefresh,
-      );
-      setState(() {});
+      await _academyCubit
+          .fetchCourseEntity(
+            subjectId: subjectId,
+            category: widget.category.apiLabel,
+            fullRefresh: fullRefresh,
+          )
+          .then((_) => setState(() {}));
     }
   }
 
-  Future<void> _onRefresh() async => _fetchCourses();
+  Future<void> _onRefresh() async {
+    await _fetchCourses(fullRefresh: true);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.quaternaire,
       appBar: AppBar(
-        title: Text(widget.subjectEntity.name ?? 'Inconnu'),
+        centerTitle: true,
+        title: Text(
+          widget.subjectEntity.name ?? 'Inconnu',
+          style: context.textTheme.titleLarge!.copyWith(color: AppColors.white),
+        ),
         actions: [
           AppButton(
             child: Image.asset(AppImage.downloadIcon),
-            onPressed: () => context.router.pushAndPopUntil(
-              const DownloadRoute(),
-              predicate: (_) => false,
-            ),
+            onPressed: () => context.router.push(const DownloadRoute()),
           ),
         ],
       ),
@@ -96,34 +103,31 @@ class _CourseScreenState extends State<CourseScreen> {
                 style: context.textTheme.headlineSmall,
               ),
             ),
+            if (widget.category == CategoryEnum.sn ||
+                widget.category == CategoryEnum.retake) ...[
+              Gap(20.h),
+              _buildSnTabs(),
+            ],
             Gap(25.h),
-            Expanded(child: _buildCourseList())
+            Expanded(child: _buildCourseList()),
           ],
         ),
       ),
     );
   }
 
+  /// Zone principale affichant la liste des cours
   Widget _buildCourseList() {
     return BlocBuilder<AcademyCubit, AcademyState>(
       bloc: _academyCubit,
       builder: (context, state) {
-        if (state is CourseStateFailure) return _buildErrorState();
-        if (state is CourseStateLoading) return _buildLoadingIndicator();
-
-        final courses = _getFilteredCourses();
-
-        if (courses.isEmpty) {
-          return AppBaseIndicator.unavailableFileDisplay(
-            message: "Aucune ressource disponible pour le moment",
-            button: AppButton(
-              text: "Recommencer",
-              bgColor: AppColors.primary,
-              width: context.width,
-              onPressed: _onRefresh,
-            ),
-          );
+        if (state is CourseStateFailure) {
+          return _buildErrorState();
+        } else if (state is CourseStateLoading) {
+          return _buildLoadingIndicator();
         }
+
+        final filteredCourses = _getFilteredCourses();
 
         return Column(
           children: [
@@ -131,25 +135,19 @@ class _CourseScreenState extends State<CourseScreen> {
               padding: EdgeInsets.symmetric(horizontal: 10.w),
               child: _buildSearchInput(),
             ),
-            // Gap(20.h),
-            // if (widget.category == CategoryEnum.examen ||
-            //     widget.category == CategoryEnum.cc)
-            //   _buildSemesterTabs(),
-            Gap(20.h),
-            // widget.category == CategoryEnum.cc ||
-            //         widget.category == CategoryEnum.examen
-            //     ? _buildSemesterTabs()
-            //     : const SizedBox.shrink(),
             Gap(20.h),
             Expanded(
               child: ListView.separated(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
+                itemCount: filteredCourses.length,
                 separatorBuilder: (_, __) => Gap(10.h),
-                itemCount: courses.length,
                 itemBuilder: (context, index) {
+                  final course = filteredCourses[index];
                   return BlocProvider(
-                    create: (_) => getIt<PdfFileCubit>(),
-                    child: _buildCourseItem(courses[index]),
+                    create: (context) => getIt<PdfFileCubit>(),
+                    child: Builder(builder: (context) {
+                      return _buildCourseItem(course, context);
+                    }),
                   );
                 },
               ),
@@ -160,38 +158,45 @@ class _CourseScreenState extends State<CourseScreen> {
     );
   }
 
+  /// Champ de recherche pour filtrer les cours
   Widget _buildSearchInput() {
     return AppInput(
-      hint: "Chercher un cours",
+      hint: 'Chercher un cours',
       hintStyle: const TextStyle(color: AppColors.textGrey),
       width: context.width,
       colorBorder: AppColors.transparent,
       contentPadding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),
-      onChange: _onSearchChanged,
       prefix: Padding(
         padding: EdgeInsets.symmetric(vertical: 12.h),
         child: SvgPicture.asset(AppImage.searchIcon),
       ),
+      onChange: (value) {
+        setState(() {
+          _searchQuery = value.trim().toLowerCase();
+        });
+      },
     );
   }
 
+  /// Indicateur de chargement
   Widget _buildLoadingIndicator() {
     return Center(
       child: SizedBox(
-        width: 100.0.r,
-        height: 100.0.r,
+        width: 100.r,
+        height: 100.r,
         child: const CircularProgressIndicator(),
       ),
     );
   }
 
+  /// État d’erreur si pas de cours disponibles
   Widget _buildErrorState() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: AppBaseIndicator.unavailableFileDisplay(
-        message: "Aucune ressource disponible pour le moment",
+        message: 'Aucune ressource disponible pour le moment',
         button: AppButton(
-          text: "Recommencer",
+          text: 'Recommencer',
           bgColor: AppColors.primary,
           width: context.width,
           onPressed: _onRefresh,
@@ -200,49 +205,56 @@ class _CourseScreenState extends State<CourseScreen> {
     );
   }
 
-  Widget _buildSemesterTabs() {
+  /// Onglets "Épreuves" / "Corrigés" pour CategoryEnum.sn et CategoryEnum.retake
+  Widget _buildSnTabs() {
     return AcademySemesterTab(
       selectedText: AppColors.white,
       selectedIndex: _currentIndex,
       selectedColor: AppColors.primary,
       carouselController: _carouselController,
       onPressed: (index) {
-        setState(() => _currentIndex = index);
-        _fetchCourses();
+        setState(() {
+          _currentIndex = index;
+        });
       },
-      listSemester: const ["Controle Continu", "Examens", "Rattrapage"],
+      listSemester: const ['Épreuves', 'Corrigés'],
     );
   }
 
-  void _onSearchChanged(String value) {
-    setState(() {
-      _searchQuery = value.toLowerCase();
-    });
-  }
-
+  /// Filtre la liste des cours en fonction de l’onglet actif et de la recherche
   List<CourseEntity> _getFilteredCourses() {
+    final query = _searchQuery.trim().toLowerCase();
     return _academyCubit.listCourseEntity.where((course) {
-      return course.name?.toLowerCase().contains(_searchQuery) ?? false;
+      // 1) Filtrage selon l’onglet sélectionné
+      final hasEpreuveOrPdfUrl = course.pdfEpreuve?.isNotEmpty == true ||
+          course.pdfUrl?.isNotEmpty == true;
+      final hasCorrige = course.pdfCorrige?.isNotEmpty == true;
+
+      final matchesTab = (_currentIndex == 0 && hasEpreuveOrPdfUrl) ||
+          (_currentIndex == 1 && hasCorrige) ||
+          (_currentIndex > 1);
+
+      // 2) Filtrage selon le texte de recherche (sur le nom)
+      final nameLower = course.name?.toLowerCase() ?? '';
+      final matchesSearch = query.isEmpty || nameLower.contains(query);
+
+      return matchesTab && matchesSearch;
     }).toList();
   }
 
-  Widget _buildCourseItem(CourseEntity course) {
+  /// Affiche un item de cours dans la liste
+  Widget _buildCourseItem(CourseEntity course, BuildContext context) {
     return Container(
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(9.r)),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(9.r),
+      ),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         onTap: () {
-          log(course.status.toString());
-          if (course.status != Status.notDownloaded) {
-            context.router
-                .push(
-                  PdfViewRoute(
-                    // category: "widget.category",
-                    category: widget.category.label.toLowerCase(),
-                    courseEntity: course,
-                  ),
-                )
-                .then((_) => _fetchCourses(fullRefresh: false));
+          if (course.status == Status.notDownloaded) {
+            _downloadCourse(course, context);
+          } else {
+            _openPdfView(course);
           }
         },
         leading: _buildDownloadButton(course),
@@ -256,21 +268,27 @@ class _CourseScreenState extends State<CourseScreen> {
                 : AppColors.black,
           ),
         ),
-        trailing: Icon(Icons.arrow_forward_ios,
-            size: 16.r, color: AppColors.sponsorButton),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 16.r,
+          color: AppColors.sponsorButton,
+        ),
       ),
     );
   }
 
+  /// Bouton indiquant le statut de téléchargement ou l’avancement en pourcentage
   Widget _buildDownloadButton(CourseEntity course) {
     return BlocConsumer<PdfFileCubit, PdfFileState>(
       listener: (context, state) {
         if (state is SavePdfFileSuccess) {
-          log("Téléchargement terminé pour ${course.name}");
+          log('Téléchargement terminé pour ${course.name}');
           _fetchCourses(fullRefresh: false);
-        }
-        if (state is PdfFileFailed) {
-          AppSnackBar.showError(message: state.message, context: context);
+        } else if (state is PdfFileFailed) {
+          AppSnackBar.showError(
+            message: state.message,
+            context: context,
+          );
         }
       },
       builder: (context, state) {
@@ -278,47 +296,68 @@ class _CourseScreenState extends State<CourseScreen> {
             state is PdfFileLoading && course.status == Status.notDownloaded;
         final progress = isDownloading ? state.percent / 100 : 0.0;
 
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (isDownloading)
-              CircularPercentIndicator(
-                radius: 19.r,
-                lineWidth: 2.r,
-                percent: progress,
-                center: Text("${(progress * 100).toInt()}%",
-                    style: TextStyle(fontSize: 10.r)),
-                progressColor: AppColors.secondary,
-              ),
-            if (!isDownloading)
-              AppButton(
-                bgColor: AppColors.grey,
-                onPressed: () {
-                  final pdfCubit = context.read<PdfFileCubit>();
-                  if (course.pdfUrl != null && course.name != null) {
-                    pdfCubit.downloadAndSaveFile(
-                      url: course.pdfUrl!,
-                      category: widget.category.apiLabel.toLowerCase(),
-                      name: course.name!,
-                    );
-                  }
-                },
-                child: SvgPicture.asset(
-                  _getCourseIcon(course.status),
-                  height: 30.r,
-                  width: 30.r,
-                ),
-              ),
-          ],
+        if (isDownloading) {
+          return CircularPercentIndicator(
+            radius: 19.r,
+            lineWidth: 2.r,
+            percent: progress,
+            center: Text(
+              '${(progress * 100).toInt()}%',
+              style: TextStyle(fontSize: 10.r),
+            ),
+            progressColor: AppColors.secondary,
+          );
+        }
+
+        return SvgPicture.asset(
+          _getCourseIcon(course.status),
+          height: 30.r,
+          width: 30.r,
         );
       },
     );
   }
 
+  /// Lance le téléchargement du fichier PDF pour le cours
+  void _downloadCourse(CourseEntity course, BuildContext context) {
+    final url = (widget.category == CategoryEnum.sn ||
+            widget.category == CategoryEnum.cc)
+        ? (_currentIndex == 0 ? course.pdfEpreuve! : course.pdfCorrige!)
+        : course.pdfUrl!;
+
+    context.read<PdfFileCubit>().downloadAndSaveFile(
+          url: url,
+          category: widget.category.label.toLowerCase(),
+          name: course.name!,
+          id: course.id.toString(),
+        );
+  }
+
+  /// Ouvre la vue d’affichage du PDF existant
+  void _openPdfView(CourseEntity course) {
+    context.router
+        .push(
+      PdfViewRoute(
+        category: widget.category.label.toLowerCase(),
+        courseEntity: course,
+      ),
+    )
+        .then((_) {
+      // Après fermeture, on fait un fetch sans full refresh pour mettre à jour l’état
+      _fetchCourses(fullRefresh: false);
+    });
+  }
+
+  /// Retourne le chemin de l’icône selon le statut
   String _getCourseIcon(Status status) {
-    return switch (status) {
-      Status.downloaded || Status.isOpened => AppImage.courseOpened,
-      _ => AppImage.courseDownloadedIcon,
-    };
+    switch (status) {
+      case Status.downloaded:
+      case Status.isOpened:
+        return AppImage.courseOpened;
+      case Status.notDownloaded:
+      // case Status.isDownloaded: // selon votre enum, adapter si nécessaire
+      default:
+        return AppImage.courseDownloadedIcon;
+    }
   }
 }

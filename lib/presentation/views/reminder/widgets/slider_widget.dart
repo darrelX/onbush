@@ -37,11 +37,11 @@ class _SliderWidgetState<T> extends State<SliderWidget> {
                 fontSize: 34.r,
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
-                shadows: [
+                shadows: const [
                   Shadow(
                     color: AppColors.primary,
                     blurRadius: 2,
-                    offset: const Offset(0, 2),
+                    offset: Offset(0, 2),
                   ),
                 ]),
             textAlign: TextAlign.center,

@@ -2,8 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
+import 'package:onbush/core/constants/images/app_image.dart';
+import 'package:onbush/core/database/key_storage.dart';
 import 'package:onbush/presentation/blocs/auth/auth/auth_cubit.dart';
 import 'package:onbush/presentation/views/auth/widgets/auh_switcher_widget.dart';
 import 'package:onbush/presentation/views/auth/widgets/register_widget.dart';
@@ -68,12 +71,12 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
+      resizeToAvoidBottomInset: true,
       body: BlocConsumer<AuthCubit, AuthState>(
         // bloc: _cubit,
         listener: (context, state) {
-          print(state);
           if (state is LoginFailure) {
-            if (state.message == "compte bloque") {
+            if (state.message == "compte bloqué") {
               context.router.push(PriceRoute(
                   email: _emailLoginController.text.replaceAll(' ', '')));
             }
@@ -96,7 +99,7 @@ class _AuthScreenState extends State<AuthScreen> {
           }
 
           if (state is LoginSuccess) {
-            // print(state.user.avatar);
+            //
             context.read<ApplicationCubit>().setUser(state.user);
             context.router.push(
               const ApplicationRoute(),
@@ -113,8 +116,8 @@ class _AuthScreenState extends State<AuthScreen> {
           }
         },
         builder: (context, state) {
-          return SafeArea(
-            child: SingleChildScrollView(
+          return SingleChildScrollView(
+            child: SafeArea(
               child: IgnorePointer(
                 ignoring: state is SearchStateLoading,
                 child: Stack(
@@ -125,10 +128,10 @@ class _AuthScreenState extends State<AuthScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Gap(50.h),
-                          Image.asset(
-                            "assets/images/onbush.png",
-                            width: 200.w,
+                          Gap(30.h),
+                          SvgPicture.asset(
+                            AppImage.onBush,
+                            width: 80.w,
                             // height: 300,
                           ),
                           Gap(25.h),
@@ -138,7 +141,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                           Gap(25.h),
                           SizedBox(
-                            height: 470.h,
+                            height: 0.63.sh,
                             child: PageView(
                               controller: _pageController,
                               onPageChanged: (int page) => setState(() {
@@ -205,7 +208,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               ],
                             ),
                           ),
-                          // Gap(3.h),
+                          // Spacer(),
                           Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal: 25.w,
@@ -236,6 +239,13 @@ class _AuthScreenState extends State<AuthScreen> {
                                     text: "incrivez-vous",
                                     onPressed: () {
                                       if (_formKey.currentState!.validate()) {
+                                        // sauvegarder les données
+                                        context
+                                            .read<ApplicationCubit>()
+                                            .setUserGender(_genderController
+                                                .text
+                                                .replaceAll(' ', ''));
+
                                         context.read<AuthCubit>().register(
                                               name: _userNameController.text
                                                   .trim(),
@@ -250,7 +260,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                                   .replaceAll(' ', ''),
                                               device: getIt
                                                   .get<LocalStorage>()
-                                                  .getString('device')!,
+                                                  .getString(
+                                                      StorageKeys.deviceId)!,
                                               role: 'etudiant',
                                               academyLevel: _listId["level"]!,
                                               majorStudy:
@@ -260,19 +271,11 @@ class _AuthScreenState extends State<AuthScreen> {
                                                   .text
                                                   .trim(),
                                             );
-                                        // context.router.pushAll([
-                                        //   OTPInputRoute(
-                                        //       number: _phoneSignUpController.text)
-                                        // ]);
-                                        // _cubit.register(
-                                        //   phone: _phoneLoginController.text,
-                                        //   password: _passwordController.text,
-                                        // );
                                       }
                                     },
                                   ),
                           ),
-                          Gap(5.h),
+                          Gap(20.h),
                         ],
                       ),
                     ),

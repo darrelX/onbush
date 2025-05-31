@@ -21,7 +21,7 @@ class CarouselWidget extends StatefulWidget {
 class _CarouselWidgetState extends State<CarouselWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 800.h,
       width: context.width,
       child: PageView(

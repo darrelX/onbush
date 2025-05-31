@@ -14,7 +14,7 @@ class GameHistoryRepository {
 
       List<dynamic> data = response.data['data'] as List<dynamic>;
       int total = response.data['total'] as int;
-      // print("darrel $total");
+      //
       List<GameHistoryModel> gameHistoryList = data
           .map(
               (item) => GameHistoryModel.fromJson(item as Map<String, dynamic>))
@@ -22,8 +22,6 @@ class GameHistoryRepository {
 
       return GameHistoryModels.fromJson(total, gameHistoryList);
     } catch (e) {
-      print(e.toString());
-
       rethrow;
     }
   }

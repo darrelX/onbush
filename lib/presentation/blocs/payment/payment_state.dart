@@ -22,11 +22,13 @@ final class PaymentLoading extends PaymentState {
 }
 
 final class PaymentSuccess extends PaymentState {
-  final String? transactionId;
-  final UserEntity? user;
-  const PaymentSuccess({ this.transactionId, this.user});
+  final String transactionId;
+  const PaymentSuccess({
+    required this.transactionId,
+  });
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [transactionId];
 }
 
 final class PaymentFailure extends PaymentState {

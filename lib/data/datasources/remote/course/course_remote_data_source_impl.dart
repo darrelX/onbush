@@ -18,9 +18,10 @@ class CourseRemoteDataSourceImpl implements CourseRemoteDataSource {
         "/matiere/$subjectId/$category",
       );
       List<dynamic> data = response.data['data'] as List<dynamic>;
-      return data
-          .map((item) => CourseModel.fromJson(item as Map<String, dynamic>))
-          .toList();
+      // return data
+      //     .map((item) => CourseModel.fromJson(item as Map<String, dynamic>))
+      //     .toList();
+      return data.expand((json) => CourseModel.fromJsonList(json)).toList();
     } catch (e) {
       rethrow;
     }

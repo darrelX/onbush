@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:onbush/domain/entities/pdf_file/pdf_file_entity.dart';
 import 'package:onbush/domain/usecases/pdf/pdf_usecase.dart';
+import 'package:onbush/presentation/blocs/pdf/pdf_manager/pdf_manager_cubit.dart';
 import 'package:path_provider/path_provider.dart';
 
 part 'pdf_file_state.dart';
@@ -13,14 +14,15 @@ class PdfFileCubit extends Cubit<PdfFileState> {
   final PdfUseCase _pdfUseCase;
   StreamSubscription<double>? _downloadSubscription;
   final List<PdfFileEntity> listPdfFileEntity = [];
+  final PdfManagerCubit _pdfManagerCubit; // 👈 Injecte-le ici
 
-  PdfFileCubit(this._pdfUseCase) : super(PdfFileInitial());
+  PdfFileCubit(this._pdfUseCase, this._pdfManagerCubit)
+      : super(PdfFileInitial());
 
-  PdfFileCubit create() {
-    return PdfFileCubit(_pdfUseCase);
-  }
-
-  Future<String> _getSecurePdfPath(String category, String courseName) async {
+  Future<String> _getSecurePdfPath({
+    required String category,
+    required String courseName,
+  }) async {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final pdfDirectory = Directory("${directory.path}/$category");
@@ -28,7 +30,6 @@ class PdfFileCubit extends Cubit<PdfFileState> {
       // Retourne le chemin sécurisé du fichier PDF
       return '${pdfDirectory.path}/$courseName.pdf';
     } catch (e) {
-      print("Erreur lors de la récupération du chemin du PDF: $e");
       return "";
     }
   }
@@ -37,9 +38,11 @@ class PdfFileCubit extends Cubit<PdfFileState> {
     required String url,
     required String category,
     required String name,
+    required String id,
   }) async {
     try {
-      String path = await _getSecurePdfPath(category, name);
+      String path =
+          await _getSecurePdfPath(category: category, courseName: name);
       // Vérifier si le PDF existe déjà
       final existingFile = await _pdfUseCase.getPdfFileByPath(path);
 
@@ -49,7 +52,7 @@ class PdfFileCubit extends Cubit<PdfFileState> {
           emit(const PdfFileLoading(percent: 0));
 
           final result = await _pdfUseCase.downloadAndSavePdf(
-              url: url, path: path, category: category, name: name);
+              id: id, url: url, path: path, category: category, name: name);
 
           result.fold((failure) {
             emit(PdfFileFailed(message: failure.message));
@@ -58,27 +61,16 @@ class PdfFileCubit extends Cubit<PdfFileState> {
             _downloadSubscription = success.listen((progress) async {
               emit(PdfFileLoading(percent: progress));
               if (progress >= 100) {
-                // final pdfFileEntity = await _pdfUseCase.getPdfFileByPath(path);
-
-                // pdfFileEntity.fold(
-                //   (failure) {
-                //     emit(PdfFileFailed(message: failure.message));
-                //   },
-                //   (success) {
-                //     _downloadSubscription?.cancel();
-                //     emit(SavePdfFileSuccess(pdfFileEntity: success));
-                //   },
-                // );
                 _downloadSubscription?.cancel();
                 emit(const SavePdfFileSuccess());
               }
             }, onError: (failure) {
-              print("error");
               emit(PdfFileFailed(message: failure.message));
             });
           });
         },
-        (pdfFileEntity) {
+        (pdfFileEntity) async {
+          await _pdfManagerCubit.loadAll();
           // Le fichier existe déjà, on émet directement le succès
           emit(const SavePdfFileSuccess());
         },
@@ -89,12 +81,31 @@ class PdfFileCubit extends Cubit<PdfFileState> {
   }
 
   Future<void> readPdfFile(
-      {required String category, required String name}) async {
+      {required String category,
+      required String name,
+      required String id}) async {
     try {
-      String path = await _getSecurePdfPath(category, name);
+      String path =
+          await _getSecurePdfPath(category: category, courseName: name);
       // Vérifier si le PDF existe déjà
       final existingFile =
           await _pdfUseCase.getPdfFileByPath(path, isOpened: true);
+      existingFile.fold((failure) {
+        emit(PdfFileFailed(message: failure.toString()));
+      }, (pdfFileEntity) {
+        emit(ReadPdfFileSuccess(pdfFileEntity: pdfFileEntity));
+      });
+    } catch (e) {
+      emit(PdfFileFailed(message: e.toString()));
+    }
+  }
+
+  Future<void> readLocalPdfFile({required PdfFileEntity pdfFileEntity}) async {
+    try {
+      print("Reading PDF file: ${pdfFileEntity}");
+      final existingFile = await _pdfUseCase
+          .getPdfFileByPath(pdfFileEntity.filePath!, isOpened: true);
+
       existingFile.fold((failure) {
         emit(PdfFileFailed(message: failure.toString()));
       }, (pdfFileEntity) {
@@ -117,6 +128,8 @@ class PdfFileCubit extends Cubit<PdfFileState> {
             .where((pdfFileEntity) => pdfFileEntity.isOpened == true)
             .toList();
         listPdfFileEntity.addAll(result);
+        _pdfManagerCubit.loadAll();
+
         emit(FetchPdfFileSuccess(listPdfFileEntity: success));
       });
     } catch (e) {

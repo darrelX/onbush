@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:onbush/core/database/local_storage.dart';
 import 'package:onbush/data/datasources/local/reminder/reminder_local_data_source_impl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:onbush/data/models/reminder/reminder_model.dart';
 
 class ReminderLocalDataSourceImpl implements ReminderLocalDataSource {
@@ -25,7 +24,6 @@ class ReminderLocalDataSourceImpl implements ReminderLocalDataSource {
         return [];
       }
     } catch (e) {
-      print("Error fetching reminders: $e");
       rethrow;
     }
   }
@@ -42,7 +40,6 @@ class ReminderLocalDataSourceImpl implements ReminderLocalDataSource {
       final jsonString = json.encode(encodedList);
       await _localStorage.setString(_remindersKey, jsonString);
     } catch (e) {
-      print("Error saving reminder: $e");
       rethrow;
     }
   }
@@ -57,7 +54,6 @@ class ReminderLocalDataSourceImpl implements ReminderLocalDataSource {
       final jsonString = json.encode(encodedList);
       await _localStorage.setString(_remindersKey, jsonString);
     } catch (e) {
-      print("Error deleting reminder: $e");
       rethrow;
     }
   }

@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:onbush/data/datasources/remote/payment/payment_remote_data_source.dart';
 import 'package:onbush/data/models/user/user_model.dart';
@@ -8,11 +7,12 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
   PaymentRemoteDataSourceImpl(this._dioAccountApi);
 
   @override
-  Future<UserModel?> verifying({required String transactionId}) async {
+  Future<UserModel?> verifying(
+      {required String transactionId, required String device}) async {
     try {
       final Response response = await _dioAccountApi.post(
           '/auth/payment/status',
-          data: {"transaction_id": transactionId});
+          data: {"transaction_id": transactionId, "appareil": device});
       return UserModel.fromJson(response.data["data"]);
     } catch (e) {
       rethrow;
@@ -31,6 +31,7 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
   }) async {
     try {
       final String encodedSponsorCode = Uri.encodeComponent(sponsorCode);
+      final String encodedDiscountCode = Uri.encodeComponent(discountCode);
       final Response response =
           await _dioAccountApi.post('/auth/payment/init', data: {
         "appareil": appareil,
@@ -39,7 +40,7 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
         "service_paiement": paymentService,
         "montant": amount,
         "code_parrain": encodedSponsorCode,
-        "code_reduction": discountCode
+        "code_reduction": encodedDiscountCode
       });
       if (response.data['data'] is String) {
         return response.data['data'];
@@ -68,8 +69,9 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
   @override
   Future<int> applyDiscountCode({required String reduceCode}) async {
     try {
+      final String encodedDiscountCode = Uri.encodeComponent(reduceCode);
       final Response response = await _dioAccountApi.get(
-        '/code_reduction/$reduceCode/montant',
+        '/code_reduction/$encodedDiscountCode/montant',
       );
       return response.data['data'];
     } catch (e) {

@@ -26,8 +26,8 @@ class PaymentUseCase {
   }
 
   Future<Either<NetworkException, UserEntity?>> verifying(
-      {required String transactionId}) {
-    return _paymentRepository.verifying(transactionId: transactionId);
+      {required String transactionId, required String device}) async {
+    return _paymentRepository.verifying(transactionId: transactionId, device: device);
   }
 
   Future<Either<NetworkException, int>> validateSponsorCode(

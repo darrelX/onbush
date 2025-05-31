@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:onbush/data/models/user/user_model.dart';
 
 abstract class PaymentRemoteDataSource {
@@ -14,7 +13,7 @@ abstract class PaymentRemoteDataSource {
   });
 
 
-  Future<UserModel?> verifying({required String transactionId});
+  Future<UserModel?> verifying({required String transactionId, required String device});
 
   Future<int> validateSponsorCode({required String sponsorCode});
 

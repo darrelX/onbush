@@ -6,7 +6,10 @@ import 'package:onbush/core/constants/images/app_image.dart';
 
 class AppBaseIndicator {
   static Widget error400(
-      {required String message, required Widget button, double? size}) {
+      {required String message,
+      required Widget button,
+      double? size,
+      double? spacing}) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -17,7 +20,7 @@ class AppBaseIndicator {
           width: size,
           height: size,
         ),
-        Gap(30.h),
+        Gap(spacing ?? 30.h),
         Text(
           message,
           style: TextStyle(
@@ -26,7 +29,7 @@ class AppBaseIndicator {
           ),
           textAlign: TextAlign.center,
         ),
-        Gap(20.h),
+        Gap(50.h),
         button,
       ],
     );

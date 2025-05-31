@@ -30,22 +30,22 @@ extension DateTimeExtensions on DateTime {
   String timeAgoShort({DateTime? compareTo}) {
     final DateTime now = compareTo ?? DateTime.now();
     final Duration diff = now.difference(this);
+    print("Différence entre $now et $this: $diff");
 
     if (diff.inMinutes < 1) {
       return "À l'instant";
     } else if (diff.inHours < 1) {
-      return "${diff.inMinutes}m";
+      return "Il y'a ${diff.inMinutes}m";
     } else if (diff.inDays < 1) {
       int hours = diff.inHours;
       int minutes = diff.inMinutes % 60;
-      return minutes > 0 ? "${hours}h${minutes}m" : "${hours}h";
+      return minutes > 0 ? "Il y'a ${hours}h${minutes}m" : "${hours}h";
     } else if (diff.inDays < 30) {
-      return "${diff.inDays}j";
+      return "Il y'a  ${diff.inDays}j";
     } else if (diff.inDays < 365) {
-      return "${diff.inDays ~/ 30}m";
+      return "Il y'a ${diff.inDays ~/ 30}m";
     } else {
-      return "${diff.inDays ~/ 365}a";
+      return "Il y'a ${diff.inDays ~/ 365}a";
     }
   }
 }
-

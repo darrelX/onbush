@@ -36,10 +36,10 @@ class PaymentRepositoryImpl extends PaymentRepository {
 
   @override
   Future<Either<NetworkException, UserEntity?>> verifying(
-      {required String transactionId}) async {
+      {required String transactionId, required String device}) async {
     try {
       final result = await _paymentRemoteDataSource.verifying(
-          transactionId: transactionId);
+          transactionId: transactionId, device: device);
       return Right(result?.toEntity());
     } catch (e) {
       return Left(NetworkException.errorFrom(e));

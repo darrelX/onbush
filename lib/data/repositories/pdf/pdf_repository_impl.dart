@@ -51,6 +51,7 @@ class PdfRepositoryImpl implements PdfRepository {
     try {
       final result =
           await _pdfLocalDataSource.getAllPdfFile(maxResults: maxResults);
+
       return Right(result.map((e) => e.toEntity()).toList());
     } catch (e) {
       return Left(DatabaseException.fromError(e));
@@ -94,11 +95,12 @@ class PdfRepositoryImpl implements PdfRepository {
   @override
   Future<Either<DatabaseException, void>> savePdfFileByPath(
       {required String filePath,
+      required String id,
       required String category,
       required String name}) async {
     try {
-      final result =
-          await _pdfLocalDataSource.savePdfFileByPath(filePath, category, name);
+      final result = await _pdfLocalDataSource.savePdfFileByPath(
+          id: id, filePath: filePath, category: category, name: name);
       return Right(result);
     } catch (e) {
       return Left(DatabaseException.fromError(e));

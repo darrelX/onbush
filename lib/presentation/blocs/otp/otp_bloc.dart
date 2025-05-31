@@ -49,6 +49,7 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
           countDown: totalDuration,
         ));
       }, (success) {
+        print("Elan $success");
         if (success is UserEntity) {
           emit(OtpVerificationSuccess(countDown: totalDuration, user: success));
           _cancelTimer();

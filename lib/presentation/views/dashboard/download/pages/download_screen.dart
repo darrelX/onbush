@@ -24,179 +24,161 @@ class DownloadScreen extends StatefulWidget {
 
 class _DownloadScreenState extends State<DownloadScreen> {
   int _currentIndex = 0;
-  List<PdfFileEntity> _filterListPdfFile = [];
-  final List<String> _category = ["Tout", "cours", "TD", "normales"];
-  final TextEditingController _courseControler = TextEditingController();
   String _searchQuery = '';
+  final List<String> _category = ["Tout", "cours", "TD", "normales"];
+  final TextEditingController _courseController = TextEditingController();
   late final PdfFileCubit _pdfFileCubit = getIt<PdfFileCubit>();
 
-  @override
-  void initState() {
-    super.initState();
-    // context.read<PdfFileCubit>().downloadAllPdfs();
+  Widget _buildCategorySelector() {
+    return SizedBox(
+      height: 45.h,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        separatorBuilder: (_, __) => Gap(5.w),
+        itemCount: _category.length,
+        itemBuilder: (context, index) {
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 7.w),
+            child: AppButton(
+              text: _category[index],
+              width: 90.w,
+              radius: 9.r,
+              textColor: index == _currentIndex
+                  ? Colors.grey.shade200
+                  : Colors.black45,
+              bgColor:
+                  index == _currentIndex ? AppColors.primary : AppColors.grey,
+              onPressed: () {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      backgroundColor: AppColors.primary,
+      actions: [
+        Image.asset(AppImage.downloadIconCircle),
+        Gap(20.w),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.quaternaire,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        actions: [
-          Image.asset(AppImage.downloadIconCircle),
-          Gap(20.w),
-        ],
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Gap(20.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.w),
-            child: Text("Vos telechargements",
-                style: context.textTheme.headlineSmall!.copyWith()),
-          ),
-          Gap(20.h),
-          Container(
-            height: 45.h,
-            // padding: EdgeInsets.symmetric(horizontal: 15.w),
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              separatorBuilder: (context, index) {
-                return Gap(5.w);
-              },
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 7.w),
-                  child: AppButton(
-                    text: _category[index],
-                    width: 90.w,
-                    radius: 9.r,
-                    textColor: index == _currentIndex
-                        ? Colors.grey.shade200
-                        : Colors.black45,
-                    onPressed: () {
-                      setState(() {
-                        _currentIndex = index;
-                      });
-                    },
-                    // width: 110.w,
-                    bgColor: index == _currentIndex
-                        ? AppColors.primary
-                        : AppColors.grey,
-                  ),
-                );
-                // }
-              },
-              itemCount: _category.length,
-              // shrinkWrap: true,
+      appBar: _buildAppBar(),
+      body: BlocProvider.value(
+        value: _pdfFileCubit..getPdfFile(maxResults: -1),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Gap(20.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.w),
+              child: Text("Vos téléchargements",
+                  style: context.textTheme.headlineSmall),
             ),
-          ),
-          Gap(30.h),
-          BlocProvider.value(
-            value: _pdfFileCubit..getPdfFile(maxResults: -1),
-            child: Expanded(
-              child: BlocConsumer<PdfFileCubit, PdfFileState>(
-                listener: (context, state) async {},
-                builder: (context, state) {
-                  print(state);
-                  if (state is FetchPdfFileFailure) {
-                    return AppBaseIndicator.error400(
-                      message: "Aucun fichier disponible",
-                      button: AppButton(
-                        text: "Recommencer",
-                        bgColor: AppColors.primary,
-                        width: context.width,
-                        onPressed: () => _pdfFileCubit..getPdfFile(),
-                      ),
-                    );
-                  }
-                  if (state is FetchPdfFilePending) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (state is FetchPdfFileSuccess) {
-                    _filterListPdfFile =
-                        state.listPdfFileEntity.where((pdfFileEntity) {
-                      final matcheCourse = _currentIndex == 0 ||
-                          pdfFileEntity.category == _category[_currentIndex];
-                      final matchesSearch = pdfFileEntity.name!
-                          .toLowerCase()
-                          .contains(_searchQuery.toLowerCase());
-                      return matcheCourse && matchesSearch;
-                    }).toList();
-
-                    return Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.w),
-                      child: Column(
-                        children: [
-                          state.listPdfFileEntity.isEmpty
-                              ? Expanded(
-                                  child: Center(
-                                    child:
-                                        AppBaseIndicator.unavailableFileDisplay(
-                                      message:
-                                          "Vous avez un probleme de connexion ressayer",
-                                      button: AppButton(
-                                        text: "Recommencer",
-                                        bgColor: AppColors.primary,
-                                        width: context.width,
-                                        onPressed: () =>
-                                            _pdfFileCubit..getPdfFile(),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Expanded(
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 15.w),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        AppInput(
-                                          hint: "Chercher un cours",
-                                          width: context.width,
-                                          colorBorder: AppColors.textGrey,
-                                          onChange: (value) {
-                                            setState(() {
-                                              _searchQuery = value;
-                                            });
-                                          },
-                                          controller: _courseControler,
-                                          prefix: const Icon(Icons.search),
-                                        ),
-                                        Gap(20.h),
-                                        Expanded(
-                                          child: ListView.separated(
-                                              itemBuilder: (context, index) {
-                                                return PdfFileWidget(
-                                                    pdfFileEntity:
-                                                        _filterListPdfFile[
-                                                            index]);
-                                              },
-                                              separatorBuilder:
-                                                  (context, index) {
-                                                return Gap(20.h);
-                                              },
-                                              itemCount:
-                                                  _filterListPdfFile.length),
-                                        )
-                                        //  PdfFileWidget(pdfFileModel : ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                        ],
-                      ),
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
+            // Gap(20.h),
+            // _buildCategorySelector(),
+            Gap(20.h),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 7.w),
+                child: _buildPdfFileBloc(),
               ),
             ),
-          )
+          ],
+        ),
+      ),
+    );
+  }
+
+  // -- FONCTIONS MODULAIRES -- //
+
+  Widget _buildPdfFileBloc() {
+    return BlocConsumer<PdfFileCubit, PdfFileState>(
+      listener: (_, __) {},
+      builder: (context, state) {
+        if (state is FetchPdfFileFailure) {
+          return _buildErrorIndicator("Aucun fichier disponible");
+        }
+
+        if (state is FetchPdfFilePending) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state is FetchPdfFileSuccess) {
+          final filteredList = state.listPdfFileEntity.where((pdf) {
+            final matchCategory =
+                _currentIndex == 0 || pdf.category == _category[_currentIndex];
+            final matchSearch =
+                pdf.name!.toLowerCase().contains(_searchQuery.toLowerCase());
+            return matchCategory && matchSearch;
+          }).toList();
+
+          return _buildPdfList(filteredList, state.listPdfFileEntity.isEmpty);
+        }
+
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  Widget _buildPdfList(List<PdfFileEntity> filteredList, bool isEmptyList) {
+    if (isEmptyList) {
+      return _buildErrorIndicator("Aucun fichier téléchargé");
+    }
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 15.w),
+      child: Column(
+        children: [
+          AppInput(
+            hint: "Chercher un cours",
+            width: context.width,
+            controller: _courseController,
+            colorBorder: AppColors.textGrey,
+            onChange: (val) {
+              setState(() {
+                _searchQuery = val;
+              });
+            },
+            prefix: const Icon(Icons.search),
+          ),
+          Gap(20.h),
+          Expanded(
+            child: ListView.separated(
+              itemCount: filteredList.length,
+              separatorBuilder: (_, __) => Gap(20.h),
+              itemBuilder: (context, index) {
+                return PdfFileWidget(pdfFileEntity: filteredList[index]);
+              },
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildErrorIndicator(String message) {
+    return Center(
+      child: AppBaseIndicator.error400(
+        message: message,
+        spacing: 20.h,
+        button: AppButton(
+          text: "Recommencer",
+          bgColor: AppColors.primary,
+          width: context.width,
+          onPressed: () => _pdfFileCubit.getPdfFile(),
+        ),
       ),
     );
   }

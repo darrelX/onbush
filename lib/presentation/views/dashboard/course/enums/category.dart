@@ -1,8 +1,8 @@
 enum CategoryEnum{
   cours,
   td,
-  assessments,
-  solutions,
+  sn,
   cc,
+  retake,
   other
 }

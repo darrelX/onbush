@@ -13,6 +13,7 @@ class PdfFileModel extends Equatable
   final String? id; // ✅ Modification du type en String
   final String? name;
   final DateTime? date;
+  final DateTime? updatedDate;
   final String? category;
   final String? filePath;
   final bool isOpened;
@@ -21,10 +22,12 @@ class PdfFileModel extends Equatable
     String? id, // ✅ Génération automatique d'un UUID si id est null
     required this.name,
     required this.filePath,
+    DateTime? updatedDate,
     this.isOpened = false,
     required this.category,
     DateTime? date,
   })  : date = date ?? DateTime.now(),
+        updatedDate = updatedDate ?? DateTime.now(),
         id = id ?? const Uuid().v4(); // ✅ Génération de l'UUID ici
 
   factory PdfFileModel.fromJson(Map<String, dynamic> json) {
@@ -33,7 +36,8 @@ class PdfFileModel extends Equatable
   Map<String, dynamic> toJson() => _$PdfFileModelToJson(this);
 
   @override
-  List<Object?> get props => [id, name, date, category, filePath, isOpened];
+  List<Object?> get props =>
+      [id, name, date, category, filePath, isOpened, updatedDate];
 
   @override
   PdfFileEntity toEntity() {
@@ -44,6 +48,7 @@ class PdfFileModel extends Equatable
       filePath: filePath,
       date: date,
       category: category,
+      updatedDate: updatedDate, // Ajout de updatedDate
     );
   }
 
@@ -56,6 +61,7 @@ class PdfFileModel extends Equatable
       date: model?.date,
       category: model?.category,
       isOpened: model?.isOpened ?? false,
+      updatedDate: model?.updatedDate, // Ajout de updatedDate
     );
   }
 
@@ -74,6 +80,7 @@ class PdfFileModel extends Equatable
       date: date ?? this.date,
       category: category ?? this.category,
       isOpened: isOpened ?? this.isOpened,
+      updatedDate: DateTime.now(),
     );
   }
 }

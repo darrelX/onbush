@@ -52,7 +52,7 @@ class _PdfFileWidgetState extends State<PdfFileWidget> {
               color: AppColors.black,
             ),
             Gap(20.w),
-            Flexible(
+            Expanded(
               child: Container(
                 // color: AppColors.red,
                 child: Column(
@@ -70,7 +70,7 @@ class _PdfFileWidgetState extends State<PdfFileWidget> {
                         overflow: TextOverflow.clip,
                       ),
                     ),
-                    // Spacer(),
+                    Spacer(),
                     Align(
                       alignment: Alignment.topRight,
                       child: SizedBox(
@@ -84,7 +84,7 @@ class _PdfFileWidgetState extends State<PdfFileWidget> {
                                   fontSize: 13.r, color: Colors.grey.shade600),
                             ),
                             Text(
-                              "Il y'a ${widget.pdfFileEntity.date?.timeAgoShort()}",
+                              "${widget.pdfFileEntity.updatedDate?.timeAgoShort()}",
                               style: context.textTheme.bodyLarge!.copyWith(
                                   fontSize: 13.r, color: Colors.grey.shade600),
                             ),

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:android_intent_plus/android_intent.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:onbush/domain/entities/reminder/reminder_entity.dart';
@@ -32,7 +31,6 @@ class ReminderNotificationService {
     try {
       final isAllowed = await isExactAlarmPermissionGranted();
       if (!isAllowed) {
-        print("Permission 'SCHEDULE_EXACT_ALARM' non accordée");
         return;
       }
 
@@ -46,58 +44,64 @@ class ReminderNotificationService {
 
       const notificationDetails = NotificationDetails(android: androidDetails);
 
-      final notificationsPerDay = (reminder.frequencyPerWeek! / 7).ceil();
+      final now = DateTime.now();
+      final tzNow = tz.TZDateTime.now(tz.local);
 
-      for (int i = 0; i < reminder.preferredTimes.length; i++) {
-        if (i >= notificationsPerDay) break;
+      final totalNotifications = reminder.frequencyPerWeek ?? 0;
+      final notificationsPerDay = (totalNotifications / 7).ceil();
 
-        final time = reminder.preferredTimes[i];
-        final today = DateTime.now();
+      // On s'assure qu'il y a au moins une heure préférée
+      if (reminder.preferredTimes.isEmpty) {
+        return;
+      }
+
+      // Générer les horaires à utiliser : on répète si besoin
+      final expandedTimes = List.generate(
+        notificationsPerDay,
+        (i) => reminder.preferredTimes[i % reminder.preferredTimes.length],
+      );
+
+      for (int i = 0; i < expandedTimes.length; i++) {
+        final time = expandedTimes[i];
 
         final scheduledDate = DateTime(
-          today.year,
-          today.month,
-          today.day,
+          now.year,
+          now.month,
+          now.day,
           time.hour,
           time.minute,
         );
 
-        final tzDateTime = tz.TZDateTime.from(scheduledDate, tz.local);
+        var tzDateTime = tz.TZDateTime.from(scheduledDate, tz.local);
+
+        // Si l'heure est déjà passée aujourd'hui, planifier pour demain
+        if (tzDateTime.isBefore(tzNow)) {
+          tzDateTime = tzDateTime.add(const Duration(days: 1));
+        }
 
         final notificationId = '${reminder.id}-$i'.hashCode;
-        print("manouchou Notification ID: $notificationId");
-        print("manouchou Scheduled Date: $scheduledDate");
 
         await flutterLocalNotificationsPlugin.zonedSchedule(
           notificationId,
           'Rappel',
           'C’est le moment de votre rappel.',
-          tzDateTime.isBefore(tz.TZDateTime.now(tz.local))
-              ? tzDateTime.add(const Duration(days: 1))
-              : tzDateTime,
+          tzDateTime,
           notificationDetails,
           matchDateTimeComponents: DateTimeComponents.time,
           androidScheduleMode: AndroidScheduleMode.exact,
         );
-        print("manouchou Scheduled Date: $scheduledDate");
       }
     } catch (e) {
-      print("Erreur dans scheduleReminder: ${e.toString()}");
       rethrow;
     }
   }
 
-// Future<void> cancelReminder(ReminderEntity reminder) async {
-//   for (int i = 0; i < reminder.preferredTimes.length; i++) {
-//     await flutterLocalNotificationsPlugin.cancel('${reminder.id}-$i'.hashCode);
-//   }
-// }
   Future<void> cancelAllReminders() async {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
   Future<bool> isExactAlarmPermissionGranted() async {
-    if (!Platform.isAndroid) return true; // Pas concerné sur iOS
+    if (!Platform.isAndroid) return true;
 
     const methodChannel = MethodChannel('check_exact_alarm');
 
@@ -106,19 +110,14 @@ class ReminderNotificationService {
           await methodChannel.invokeMethod('isExactAlarmAllowed') ?? false;
 
       if (isGranted) {
-        print("[ExactAlarm] Permission accordée.");
         return true;
       }
 
       print(
           "[ExactAlarm] Permission non accordée. Redirection vers les paramètres...");
 
-      // Rediriger l'utilisateur vers les paramètres de permission d'alarmes exactes
-      const intent = AndroidIntent(
-        action: 'android.settings.REQUEST_SCHEDULE_EXACT_ALARM',
-        data: 'package:com.example.onbush',
-      );
-      await intent.launch();
+      // Appel de la fonction séparée
+      // await redirectToExactAlarmPermissionSettings();
 
       return false;
     } on PlatformException catch (e) {
@@ -126,13 +125,18 @@ class ReminderNotificationService {
           "[ExactAlarm] Erreur lors de la vérification de la permission : $e");
       return false;
     } on MissingPluginException {
-      print("[ExactAlarm] Méthode native non implémentée.");
       return false;
     } catch (e) {
-      print("[ExactAlarm] Erreur inattendue : $e");
       return false;
     }
   }
 
-  
+  /// Fonction utilitaire séparée pour ouvrir les paramètres de permission d'alarmes exactes
+  Future<void> redirectToExactAlarmPermissionSettings() async {
+    const intent = AndroidIntent(
+      action: 'android.settings.REQUEST_SCHEDULE_EXACT_ALARM',
+      data: 'package:com.example.onbush', // À remplacer si nécessaire
+    );
+    await intent.launch();
+  }
 }

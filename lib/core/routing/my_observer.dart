@@ -19,19 +19,18 @@ class MyObserver extends AutoRouteObserver {
 
   @override
   void didPush(Route route, Route? previousRoute) {
-    print('New route pushed: ${route.settings.name}');
     super.didPush(route, previousRoute);
   }
 
   // // only override to observer tab routes
   // @override
   // void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {
-  //   print('Tab route visited: ${route.name}');
+  //
   // }
 
   // @override
   // void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {
-  //   print('Tab route re-visited: ${route.name}');
+  //
   // }
 
   @override
@@ -45,7 +44,6 @@ class MyObserver extends AutoRouteObserver {
   void _initializeConnectivity() {
     _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
       (List<ConnectivityResult> result) {
-        print("darrel $result");
         _updateConnectionStatus(result);
       },
     );
@@ -56,12 +54,8 @@ class MyObserver extends AutoRouteObserver {
     if (result.contains(ConnectivityResult.none)) {
       status = Status.disconnected;
       _hasShownInitialConnection = true;
-
-      print('Network Status: Disconnected');
     } else {
       status = Status.connected;
-
-      print('Network Status: Connected');
     }
     if (_hasShownInitialConnection) {
       _showConnectivitySnackBar();
@@ -75,11 +69,9 @@ class MyObserver extends AutoRouteObserver {
     if (navigator?.context != null &&
         ScaffoldMessenger.maybeOf(navigator!.context) != null) {
       // Vérifiez si la route actuelle est différente de `ApplicationRoute`
-      // print("darrel $_currentRoute");
+      //
       if (_currentRoute != null || _currentRoute != "AppInitRoute") {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          print("darrel 9 $_currentRoute");
-
           var snackBar = SnackBar(
             content: Text(message),
             backgroundColor:

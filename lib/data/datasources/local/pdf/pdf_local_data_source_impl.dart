@@ -24,24 +24,29 @@ class PdfLocalDataSourceImpl implements PdfLocalDataSource {
             _keyPdfFiles, List<String>.from(jsonList));
       }
     } catch (e) {
-      print("Erreur lors de la sauvegarde du fichier PDF : ${e.toString()}");
       rethrow;
     }
   }
 
   @override
   Future<void> savePdfFileByPath(
-      String filePath, String category, String name) async {
+      {required String? filePath,
+      required String? id,
+      required String? category,
+      required String? name}) async {
     try {
       List<PdfFileModel> files = await getAllPdfFile();
 
       // Vérifier si le fichier est déjà sauvegardé
       if (!files.any((f) => f.filePath == filePath)) {
         PdfFileModel newPdfFile = PdfFileModel(
+          id: id,
           filePath: filePath,
           category: category,
           name: name,
         );
+        print(
+            "Saving PDF file: $newPdfFile with filePath: $filePath, id: $id, category: $category, name: $name");
 
         files.add(newPdfFile);
         List<String> jsonList =
@@ -51,7 +56,6 @@ class PdfLocalDataSourceImpl implements PdfLocalDataSource {
             _keyPdfFiles, List<String>.from(jsonList));
       }
     } catch (e) {
-      print("Erreur lors de la sauvegarde du fichier PDF : ${e.toString()}");
       rethrow;
     }
   }
@@ -85,11 +89,8 @@ class PdfLocalDataSourceImpl implements PdfLocalDataSource {
         // Réenregistrer la liste des fichiers mis à jour
         await _localStorage.setStringList(
             _keyPdfFiles, List<String>.from(jsonList));
-      } else {
-        print("Fichier PDF non trouvé pour la mise à jour.");
-      }
+      } else {}
     } catch (e) {
-      print("Erreur lors de la mise à jour du fichier PDF : ${e.toString()}");
       rethrow;
     }
   }
@@ -106,6 +107,14 @@ class PdfLocalDataSourceImpl implements PdfLocalDataSource {
               jsonDecode(jsonStr) as Map<String, dynamic>))
           .toList();
 
+      // Sort by date descending (most recent first)
+      pdfList.sort((a, b) {
+        if (a.updatedDate == null && b.updatedDate == null) return 0;
+        if (a.updatedDate == null) return 1;
+        if (b.updatedDate == null) return -1;
+        return b.updatedDate!.compareTo(a.updatedDate!);
+      });
+
       return (maxResults > 0) ? pdfList.take(maxResults).toList() : pdfList;
     } catch (e) {
       rethrow;
@@ -121,9 +130,7 @@ class PdfLocalDataSourceImpl implements PdfLocalDataSource {
       List<String> jsonList =
           files.map((pdf) => jsonEncode(pdf.toJson())).toList();
       await _localStorage.setStringList(_keyPdfFiles, jsonList);
-      print("setStringList a été appelé !");
     } catch (e) {
-      print("Erreur lors de la suppression du fichier PDF : ${e.toString()}");
       rethrow;
     }
   }
@@ -135,7 +142,6 @@ class PdfLocalDataSourceImpl implements PdfLocalDataSource {
       List<PdfFileModel> files = await getAllPdfFile();
       return files.any((pdf) => pdf.filePath == pdfPath);
     } catch (e) {
-      print("Erreur lors de la vérification du fichier PDF : ${e.toString()}");
       rethrow;
     }
   }
@@ -175,7 +181,9 @@ class PdfLocalDataSourceImpl implements PdfLocalDataSource {
 
       // Si isOpened est true, on définit l'état de pdfFile.isOpened
       if (isOpened) {
-        await updatePdfFile(pdfFile.copyWith(isOpened: true));
+        await updatePdfFile(pdfFile.copyWith(
+          isOpened: true,
+        ));
       }
 
       return pdfFile;

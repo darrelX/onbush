@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:onbush/core/constants/images/app_image.dart';
+import 'package:onbush/core/constants/images/enums/enums.dart';
+import 'package:onbush/core/database/key_storage.dart';
 import 'package:onbush/domain/entities/user/user_entity.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/database/local_storage.dart';
@@ -22,8 +25,23 @@ class ApplicationCubit extends Cubit<ApplicationState> {
       userEntity = user;
       pref.setString('token', user.id!);
     }
+  }
 
-    // emit(ApplicationStateInitial(user: user!));
+  // ✅ Enregistrer le genre
+  Future<void> setUserGender(String gender) async {
+    await pref.setString(StorageKeys.sexe, gender);
+    if (gender == "male") {
+      pref.setString(StorageKeys.avatar, AppImage.avatar4);
+    } else {
+      pref.setString(StorageKeys.avatar, AppImage.avatar6);
+    }
+  }
+
+  // ✅ Récupérer le genre
+  Gender getUserGender() {
+    final genderStr = pref.getString(StorageKeys.sexe);
+    if (genderStr == null) return Gender.male;
+    return GenderExtension.fromString(genderStr);
   }
 
   // Future<void> fetchSubjectModel() async {
@@ -109,6 +127,4 @@ class ApplicationCubit extends Cubit<ApplicationState> {
   //             status: Status.failure, error: Utils.extractErrorMessage(e))));
   //   }
   // }
-
-
 }

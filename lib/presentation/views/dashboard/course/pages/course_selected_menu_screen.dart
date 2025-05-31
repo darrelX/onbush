@@ -52,13 +52,13 @@ class _CourseSelectionMenuScreenState extends State<CourseSelectionMenuScreen> {
             ),
             Gap(20.h),
             _buildCourseItem(
-              title: 'Epreuves',
+              title: 'Session Normale',
               iconPath: AppImage.pencil,
-              category: CategoryEnum.assessments,
+              category: CategoryEnum.sn,
               onTap: () {
                 context.router.push(CourseRoute(
                     subjectEntity: widget.subjectEntity,
-                    category: CategoryEnum.assessments));
+                    category: CategoryEnum.sn));
               },
             ),
             Gap(20.h),
@@ -74,13 +74,24 @@ class _CourseSelectionMenuScreenState extends State<CourseSelectionMenuScreen> {
             ),
             Gap(20.h),
             _buildCourseItem(
-              title: 'corriges',
-              iconPath: AppImage.courseMark,
-              category: CategoryEnum.solutions,
+              title: 'Controle Continu',
+              iconPath: AppImage.pencil,
+              category: CategoryEnum.cc,
               onTap: () {
                 context.router.push(CourseRoute(
                     subjectEntity: widget.subjectEntity,
-                    category: CategoryEnum.solutions));
+                    category: CategoryEnum.cc));
+              },
+            ),
+            Gap(20.h),
+            _buildCourseItem(
+              title: 'Rattrapage',
+              iconPath: AppImage.pencil,
+              category: CategoryEnum.retake,
+              onTap: () {
+                context.router.push(CourseRoute(
+                    subjectEntity: widget.subjectEntity,
+                    category: CategoryEnum.retake));
               },
             ),
           ],

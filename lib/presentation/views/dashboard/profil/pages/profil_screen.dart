@@ -14,6 +14,7 @@ import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/constants/colors/app_colors.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../../../core/routing/app_router.dart';
@@ -29,6 +30,7 @@ class ProfilScreen extends StatefulWidget {
 class _ProfilScreenState extends State<ProfilScreen> {
   late final AuthCubit _authCubit;
   late final WebViewController _controller;
+  bool _hasError = false;
 
   @override
   void initState() {
@@ -59,16 +61,14 @@ class _ProfilScreenState extends State<ProfilScreen> {
           onPageStarted: (String url) {},
           onPageFinished: (String url) {},
           onHttpError: (HttpResponseError error) {},
-          onWebResourceError: (WebResourceError error) {},
-          onNavigationRequest: (NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
-              return NavigationDecision.prevent;
-            }
-            return NavigationDecision.navigate;
+          onWebResourceError: (WebResourceError error) {
+            setState(() {
+              _hasError = true;
+            });
           },
         ),
       )
-      ..loadRequest(Uri.parse('https://onbush237.com'));
+      ..loadRequest(Uri.parse(dotenv.env['ONBUSH_WEBSITE']!));
   }
 
   @override
@@ -76,7 +76,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is LogoutSuccess) {
-          print("object");
           context.router.push(const AuthRoute());
         }
       },
@@ -272,14 +271,15 @@ class _ProfilScreenState extends State<ProfilScreen> {
   }
 
   Future<void> _shareWithSubject(String textToShare) async {
-    try {
-      await Share.share(
-        textToShare,
-        sharePositionOrigin: const Rect.fromLTWH(0, 0, 100, 100),
-      );
-      print('Partage réussi');
-    } catch (e) {
-      print('Erreur lors du partage : $e');
+    var phoneNumber = "${dotenv.env['WHATSAPP_PHONE_NUMBER']}"; // Inclure l'indicatif pays pour WhatsApp
+    final message = Uri.encodeComponent(textToShare);
+    final whatsappUrl = 'https://wa.me/$phoneNumber?text=$message';
+
+    if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
+      await launchUrl(Uri.parse(whatsappUrl),
+          mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Impossible d\'ouvrir WhatsApp';
     }
   }
 }

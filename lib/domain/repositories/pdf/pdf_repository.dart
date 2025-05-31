@@ -23,6 +23,7 @@ abstract class PdfRepository {
 
   Future<Either<DatabaseException, void>> savePdfFileByPath(
       {required String filePath,
+      required String id,
       required String category,
       required String name});
 

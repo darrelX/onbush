@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
@@ -8,6 +7,7 @@ import 'package:onbush/core/constants/colors/app_colors.dart';
 import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/core/extensions/context_extensions.dart';
 import 'package:onbush/core/routing/app_router.dart';
+import 'package:onbush/core/shared/widget/app_dialog.dart';
 import 'package:onbush/core/shared/widget/buttons/app_button.dart';
 import 'package:onbush/presentation/blocs/reminder/reminder_cubit.dart';
 import 'package:onbush/presentation/views/reminder/widgets/slider_widget.dart';
@@ -27,11 +27,12 @@ class _ReminderScreenState extends State<ReminderScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   late final ReminderCubit _reminderCubit;
-
   final Map<String, int?> _reminder = {
     "objective": null,
     "time": null,
   };
+  final ReminderNotificationService _notificationService =
+      ReminderNotificationService();
 
   String? _selectedObjective;
   String? _selectedTime;
@@ -52,43 +53,91 @@ class _ReminderScreenState extends State<ReminderScreen> {
   }
 
   Future<void> _onNext() async {
-    final isObjectiveSelected = _currentPage == 0 && _selectedObjective != null;
-    final isTimeSelected = _currentPage == 1 && _selectedTime != null;
-
-    if (isObjectiveSelected) {
+    if (_isObjectiveStepValid()) {
       _goToNextPage();
-    } else if (isTimeSelected) {
-      if (await ReminderNotificationService().isExactAlarmPermissionGranted()) {
-        // await ReminderNotificationService().scheduleReminder(_reminder);
-      } else {
-        print("Permission 'SCHEDULE_EXACT_ALARM' non accordée");
-        return;
-      }
-      await _reminderCubit.addReminder(_reminder).then((_) {
-        _goToNextPage();
-      }).catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Erreur lors de l'ajout du rappel : $error"),
-          ),
-        );
-      });
+      return;
+    }
 
+    if (_isTimeStepValid()) {
+      await _handleTimeStep();
+      return;
+    }
+
+    _showValidationMessage();
+  }
+
+  bool _isObjectiveStepValid() =>
+      _currentPage == 0 && _selectedObjective != null;
+
+  bool _isTimeStepValid() => _currentPage == 1 && _selectedTime != null;
+
+  Future<void> _handleTimeStep() async {
+    final notificationService = ReminderNotificationService();
+
+    if (await notificationService.isExactAlarmPermissionGranted()) {
       context.router.push(const LoaderRoute());
     } else {
-      _showValidationMessage();
+      _showPermissionDialog();
+
+      return;
     }
+
+    await _addReminderWithHandling();
+
+    // context.router.push(const LoaderRoute());
+  }
+
+  void _showPermissionDialog() {
+    AppDialog.showDialog(
+      context: context,
+      height: 0.25.sh,
+      width: 0.47.sw,
+      child: _buildAuthorizationPopp(),
+    );
+  }
+
+  Future<void> _addReminderWithHandling() async {
+    try {
+      await _reminderCubit.addReminder(_reminder);
+    } catch (error) {
+      _showErrorSnackBar("Erreur lors de l'ajout du rappel : $error");
+    }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  Widget _buildAuthorizationPopp() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Text(
+          "Autoriser Onbush a vous envoyer des notifications",
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.bold,
+            color: AppColors.black,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        AppButton(
+          text: "Aller dans les paramètres",
+          textColor: AppColors.white,
+          bgColor: AppColors.primary,
+          onPressed: () {
+            _notificationService.redirectToExactAlarmPermissionSettings();
+          },
+        ),
+      ],
+    );
   }
 
   void _goToNextPage() {
     _pageController.nextPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  void _goToPreviousPage() {
-    _pageController.previousPage(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
@@ -125,7 +174,6 @@ class _ReminderScreenState extends State<ReminderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(_reminder);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -160,7 +208,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
 
   Widget _buildPageView() {
     return SizedBox(
-      height: 460.h,
+      height: 480.h,
       child: PageView(
         controller: _pageController,
         physics: _scrollPhysics,
@@ -233,7 +281,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: AppButton(
-        text: _currentPage == 1 ? "Terminer" : "Suivant",
+        text: _currentPage == 1 ? "Enregistrer les changements" : "Suivant",
         textColor: AppColors.white,
         width: context.width - 40.w,
         bgColor: ((_selectedObjective != null && _currentPage == 0) ||

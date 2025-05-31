@@ -3,6 +3,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:onbush/core/constants/images/app_image.dart';
 import 'package:onbush/presentation/blocs/auth/auth/auth_cubit.dart';
 import 'package:onbush/service_locator.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
@@ -23,9 +25,7 @@ class _AppInitScreenState extends State<AppInitScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-    context
-        .read<AuthCubit>()
-        .connexion();
+      context.read<AuthCubit>().connexion();
     });
   }
 
@@ -44,7 +44,6 @@ class _AppInitScreenState extends State<AppInitScreen> {
     return Scaffold(
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
-          print("state $state");
           if (state is CheckAuthStateFailure || state is AuthInitial) {
             context.router.pushAndPopUntil(
               const AuthRoute(),
@@ -57,6 +56,7 @@ class _AppInitScreenState extends State<AppInitScreen> {
             getIt.get<ApplicationCubit>().setUser(state.user);
             context.router.pushAndPopUntil(
               const ApplicationRoute(),
+              // PriceRoute(email: state.user.email!),
               predicate: (route) => false,
             );
           }
@@ -74,8 +74,8 @@ class _AppInitScreenState extends State<AppInitScreen> {
               child: ZoomIn(
                 duration: const Duration(milliseconds: 3200),
                 from: 1.5,
-                child: Image.asset(
-                  'assets/images/onbush.png',
+                child: SvgPicture.asset(
+                  AppImage.allOnBush,
                   width: context.width - 200.w,
                   // color: AppColors.white,
                 ),

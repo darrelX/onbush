@@ -131,7 +131,7 @@ class _AppInputState extends State<AppInput> {
           ? _isObscure = widget.hideText!
           : _isObscure = true;
       // if (FormBuilderValidators.compose(widget.validators) == null) {
-      //   print("ok");
+      //
       //   widget.onInputValidated!(true);
       // }
     });

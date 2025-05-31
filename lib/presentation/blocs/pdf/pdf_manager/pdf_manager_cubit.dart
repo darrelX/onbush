@@ -1,43 +1,71 @@
-// import 'package:bloc/bloc.dart';
-// import 'package:equatable/equatable.dart';
-// import 'package:onbush/domain/entities/pdf_file/pdf_file_entity.dart';
-// import 'package:onbush/domain/usecases/pdf/pdf_usecase.dart';
+import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:onbush/domain/entities/pdf_file/pdf_file_entity.dart';
+import 'package:onbush/domain/usecases/pdf/pdf_usecase.dart';
 
-// part 'pdf_manager_state.dart';
+part 'pdf_manager_state.dart';
 
-// class PdfFileManagerCubit extends Cubit<PdfManagerState> {
-//   final PdfUseCase _pdfUseCase;
+class PdfManagerCubit extends Cubit<PdfManagerState> {
+  final PdfUseCase _pdfUseCase;
 
-//   PdfFileManagerCubit(this._pdfUseCase) : super(PdfManagerInitial());
+  List<PdfFileEntity> allPdfs = [];
 
-//   Future<void> fetchPdfFiles({int maxResults = 3}) async {
-//     emit(PdfFileManagerLoading());
-//     try {
-//       final result = await _pdfUseCase.getAllPdfFile(maxResults: maxResults);
-//       result.fold((failure) {
-//         emit(PdfFileManagerFailure(message: failure.message));
-//       }, (success) {
-//         emit(PdfFileManagerSuccess(listPdfFileEntity: success));
-//       });
-//     } catch (e) {
-//       emit(PdfFileManagerFailure(message: e.toString()));
-//     }
-//   }
+  PdfManagerCubit(this._pdfUseCase) : super(PdfManagerInitial());
 
-//   void addOrUpdatePdfFile(PdfFileEntity pdfFile) {
-//     if (state is PdfFileManagerSuccess) {
-//       final currentList = List<PdfFileEntity>.from(
-//           (state as PdfFileManagerSuccess).listPdfFileEntity);
-      
-//       // Vérifier si le fichier existe déjà
-//       final index = currentList.indexWhere((file) => file.path == pdfFile.path);
-//       if (index != -1) {
-//         currentList[index] = pdfFile; // Mise à jour
-//       } else {
-//         currentList.add(pdfFile); // Ajout
-//       }
-      
-//       emit(PdfFileManagerSuccess(listPdfFileEntity: currentList));
-//     }
-//   }
-// }
+  /// Charge tous les PDF
+  Future<void> loadAll({int maxResults = -1}) async {
+    emit(PdfManagerLoading());
+    try {
+      final result = await _pdfUseCase.getAllPdfFile(maxResults: maxResults);
+      result.fold(
+        (failure) {
+          emit(PdfManagerError(message: failure.message));
+        },
+        (pdfs) {
+          allPdfs = pdfs;
+
+          emit(PdfManagerLoaded(filtered: pdfs, all: pdfs));
+        },
+      );
+    } catch (e) {
+      emit(PdfManagerError(message: e.toString()));
+    }
+  }
+
+  /// Applique un filtre sur les PDF déjà chargés
+  void applyFilter({String? category, String searchQuery = ''}) {
+    if (state is! PdfManagerLoaded) return;
+
+    final filtered = allPdfs.where((pdf) {
+      final matchCategory =
+          category == null || category == "Tout" || pdf.category == category;
+      final matchSearch =
+          pdf.name?.toLowerCase().contains(searchQuery.toLowerCase()) ?? false;
+      return matchCategory && matchSearch;
+    }).toList();
+
+    emit(PdfManagerLoaded(filtered: filtered, all: allPdfs));
+  }
+
+  /// Met à jour ou ajoute un PDF existant (après un download, par exemple)
+  void updateOrAdd(PdfFileEntity pdf) {
+    final index = allPdfs.indexWhere((p) => p.filePath == pdf.filePath);
+    if (index != -1) {
+      allPdfs[index] = pdf;
+    } else {
+      allPdfs.add(pdf);
+    }
+
+    // Réappliquer le filtre actuel
+    if (state is PdfManagerLoaded) {
+      applyFilter();
+    } else {
+      emit(PdfManagerLoaded(filtered: allPdfs, all: allPdfs));
+    }
+  }
+
+  void clear() {
+    allPdfs.clear();
+    emit(PdfManagerInitial());
+  }
+}

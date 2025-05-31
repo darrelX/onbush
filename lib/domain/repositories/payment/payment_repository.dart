@@ -14,7 +14,7 @@ abstract class PaymentRepository {
   });
 
   Future<Either<NetworkException, UserEntity?>> verifying(
-      {required String transactionId});
+      {required String transactionId, required String device});
 
   Future<Either<NetworkException, int>> validateSponsorCode(
       {required String sponsorCode});

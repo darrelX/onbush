@@ -12,7 +12,7 @@ class ReminderEntity extends Equatable {
     String? id,
     required this.frequencyPerWeek,
     required this.preferredTimes,
-  }) : this.id = id ?? const Uuid().v4();
+  }) : id = id ?? const Uuid().v4();
 
   
   ReminderModel toReminderModel() {

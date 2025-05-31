@@ -56,7 +56,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
   Future<void> _initialValues() async {
     _authCubit = getIt<AuthCubit>();
     listId['college'] = getIt.get<ApplicationCubit>().userEntity!.schoolId!;
-    // print(getIt.get<ApplicationCubit>().userEntity!.schoolId!);
+    //
     emailController.text = getIt.get<ApplicationCubit>().userEntity!.email!;
     userNameController.text = getIt.get<ApplicationCubit>().userEntity!.name!;
     phoneController.text =
@@ -134,6 +134,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
       AppImage.avatar3,
       AppImage.avatar4,
       AppImage.avatar5,
+      AppImage.avatar6,
     ];
 
     // _avatarGlobalKey.currentState.

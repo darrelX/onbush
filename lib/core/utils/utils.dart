@@ -33,20 +33,11 @@ class Utils {
       String? code;
 
       // Gestion des erreurs Dio
-      if (error is DioException) {
-        if ([
-          DioExceptionType.connectionTimeout,
-          DioExceptionType.receiveTimeout,
-          DioExceptionType.sendTimeout,
-        ].contains(error.type)) {
-          return error.message ?? 'Erreur de timeout';
+      if (error is NetworkException) {
+        if (errorDocumentation.containsKey(error.message.toString())) {
+          return errorDocumentation[error.message.toString()]!;
         }
-
-        final response = error.response;
-        if (response != null && response.data is Map<String, dynamic>) {
-          final data = response.data as Map<String, dynamic>;
-          code = data['data']?.toString();
-        }
+        return error.message;
       }
 
       // Erreur sous forme de Map directement
