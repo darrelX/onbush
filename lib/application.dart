@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:onbush/l10n/app_localizations.dart';
 import 'package:onbush/presentation/blocs/auth/auth/auth_cubit.dart';
 import 'package:onbush/presentation/blocs/payment/payment_cubit.dart';
 import 'package:onbush/presentation/blocs/pdf/pdf_manager/pdf_manager_cubit.dart';
 import 'package:onbush/presentation/views/dashboard/download/logic/cubit/download_cubit.dart';
 import 'package:onbush/l10n/l10n.dart';
-import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:onbush/core/application/cubit/application_cubit.dart';
 import 'package:onbush/core/connectivity/bloc/network_cubit.dart';
 

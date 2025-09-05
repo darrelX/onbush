@@ -5,7 +5,6 @@ import 'package:onbush/core/bottom_navigation_bar/bottom_navigation_bar.dart';
 import 'package:onbush/core/routing/app_router.dart';
 import 'package:onbush/core/shared/widget/onbush_app_bar.dart';
 import 'package:onbush/presentation/blocs/pdf/pdf_manager/pdf_manager_cubit.dart';
-import 'package:onbush/presentation/views/dashboard/home/pages/home_screen.dart';
 import 'package:onbush/service_locator.dart';
 
 @RoutePage()

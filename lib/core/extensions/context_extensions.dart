@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import 'package:onbush/l10n/app_localizations.dart';
+
+
 
 extension ThemeDataX on BuildContext {
   Brightness get brightness => Theme.of(this).brightness;
