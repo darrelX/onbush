@@ -1,4 +1,4 @@
-## flutter_ecommerce_app 
+## OnBush App
 
 OnBush App is an innovative learning platform designed to support students in their academic journey. The app provides comprehensive course summaries, access to solved exam papers, and other educational resources to help students study efficiently. It also includes advanced features such as an ambassador referral system, enabling users to share the app and earn rewards.
 
