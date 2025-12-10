@@ -1424,7 +1424,7 @@ Les URLs des API sont définies dans le fichier `.env`:
 ```env
 API_ACCOUNT = "https://api.accounts.onbush237.com/v1"
 API_DATA = "https://api.data.onbush237.com/v1"
-API_KEY = "your-secret-api-key"
+API_KEY = "YOUR_API_KEY_HERE"  # Replace with your actual API key
 ```
 
 ### APIs utilisées
